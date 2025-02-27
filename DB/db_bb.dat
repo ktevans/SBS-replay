@@ -1098,7 +1098,7 @@ bb.gemphi = 179.534
 
 # new straight-track results using x,y,z angles instead of theta,phi:
 bb.gemorigin_xyz = -0.21364 0.03929 3.119995
-bb.gemangles_xyz = -0.09598 -8.82304 0.23577
+##bb.gemangles_xyz = -0.09598 -8.82304 0.23577
 
 # NOTE: ZSIEVE = 1.59074
 
@@ -1384,7 +1384,7 @@ bb.C_pth1 = 0.0
 #bb.gemphi = 178.704
 
 bb.gemorigin_xyz = -0.19821 0.03879 2.69704
-bb.gemangles_xyz = -0.11286 -8.61695 0.09501
+##bb.gemangles_xyz = -0.11286 -8.61695 0.09501
 
 bb.optics_order = 2
 #bb.optics_parameters = 
@@ -2210,7 +2210,7 @@ bb.optics_parameters =
 
 # new zero-field alignment with ZSIEVE fixed at 1.18232 m based on surveyed magnet distance
 bb.gemorigin_xyz = -0.199655 0.025317 2.71246
-bb.gemangles_xyz = 0.1752 -8.626 -0.0500
+##bb.gemangles_xyz = 0.1752 -8.626 -0.0500
 
 # initial guesses at BigBite GEM constraint centering and widths:
 #bb.frontconstraint_x0 = 0.033

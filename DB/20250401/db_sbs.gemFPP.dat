@@ -1723,5 +1723,9 @@ sbs.gemFPP.dump_geometry_info = 1
 sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run1126.dat
 sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run1126.dat
 
+---------[ 2025-04-03 00:00:00 ] 
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFPP_run2022.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFPP_run2022.dat
+
 
 # # #################### END TIME-DEPENDENT PEDESTAL FILES #########################

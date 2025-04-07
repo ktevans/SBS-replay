@@ -1110,6 +1110,9 @@ sbs.gemFT.dump_geometry_info = 1
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run1610.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run1610.dat
 
+---------[ 2025-04-03 00:00:00 ] 
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run2022.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run2022.dat
 
 
 # ###################### END TIME-DEPENDENT PARAMETERS #############

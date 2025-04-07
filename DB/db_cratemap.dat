@@ -337,3 +337,25 @@
 
 ==== Crate 58 type vme
 11 3561 3561
+
+==== Crate 64 type vme Bank Decoding
+# slot  model   bank
+  11     514     86
+==== Crate 65 type vme Bank Decoding
+# slot  model   bank
+  11     514     86
+==== Crate 66 type vme Bank Decoding
+# slot  model   bank
+  11     514     86
+==== Crate 67 type vme Bank Decoding
+# slot  model   bank
+  11     514     86
+==== Crate 68 type vme Bank Decoding
+# slot  model   bank
+  11     514     86
+==== Crate 69 type vme Bank Decoding
+# slot  model   bank
+11     514     86
+==== Crate 70 type vme Bank Decoding
+# slot  model   bank
+  11     514     86

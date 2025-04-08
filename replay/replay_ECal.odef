@@ -1,34 +1,34 @@
 # ADC from calorimeter
-variable earm.ecal.e
+#variable earm.ecal.e
 # variable earm.ecal.e_c
-variable earm.ecal.againblk
-variable earm.ecal.eblk
+#variable earm.ecal.againblk
+#variable earm.ecal.eblk
 # variable earm.ecal.eblk_c
-variable earm.ecal.rowblk
-variable earm.ecal.colblk
-variable earm.ecal.x
-variable earm.ecal.y
-variable earm.ecal.nblk
-variable earm.ecal.idblk
-variable earm.ecal.atimeblk
-variable earm.ecal.index
-block earm.ecal.clus*
-variable earm.ecal.nclus
-block earm.ecal.clus_blk.*
-variable earm.ecal.ngoodADChits
+#variable earm.ecal.rowblk
+#variable earm.ecal.colblk
+#variable earm.ecal.x
+#variable earm.ecal.y
+#variable earm.ecal.nblk
+#variable earm.ecal.idblk
+#variable earm.ecal.atimeblk
+#variable earm.ecal.index
+#block earm.ecal.clus*
+#variable earm.ecal.nclus
+#block earm.ecal.clus_blk.*
+#variable earm.ecal.ngoodADChits
 
-block earm.tr.*
+#block earm.tr.*
 
 #
-variable earm.ecal.a_time
-variable earm.ecal.a_amp_p
-variable earm.ecal.a_p
-variable earm.ecal.ped
-variable earm.ecal.adcrow
-variable earm.ecal.adccol
-variable earm.ecal.adcelemID
-variable earm.ecal.adcxpos
-variable earm.ecal.adcypos
+#variable earm.ecal.a_time
+#variable earm.ecal.a_amp_p
+#variable earm.ecal.a_p
+#variable earm.ecal.ped
+#variable earm.ecal.adcrow
+#variable earm.ecal.adccol
+#variable earm.ecal.adcelemID
+#variable earm.ecal.adcxpos
+#variable earm.ecal.adcypos
 
 #
 # variable earm.ecal.scinttrig.a_time
@@ -41,6 +41,50 @@ variable earm.ecal.adcypos
 
 # Waveform data (think carefully before turning these on)
 #block earm.ecal.*samp*
+
+# Variables provided by M.Jones 4/4/2025
+variable earm.ecal.a_p
+variable earm.ecal.a_c
+variable earm.ecal.amp_p
+variable earm.ecal.adcelemID
+variable earm.ecal.adcrow
+variable earm.ecal.adccol
+variable earm.ecal.adcxpos
+variable earm.ecal.adcypos
+variable earm.ecal.a_time
+variable earm.ecal.ped
+variable earm.ecal.nclus
+variable earm.ecal.e
+variable earm.ecal.adctime
+variable earm.ecal.atimeblk
+variable earm.ecal.eblk
+variable earm.ecal.atimeblk
+variable earm.ecal.eblk
+variable earm.ecal.rowblk
+variable earm.ecal.colblk
+variable earm.ecal.nblk
+variable earm.ecal.idblk
+variable earm.ecal.index
+variable earm.ecal.x
+variable earm.ecal.y
+variable earm.ecal.clus_blk.e
+variable earm.ecal.clus_blk.x
+variable earm.ecal.clus_blk.y
+variable earm.ecal.clus_blk.row
+variable earm.ecal.clus_blk.col
+variable earm.ecal.clus_blk.atime
+variable earm.ecal.clus_blk.id
+variable earm.ecal.clus.e
+variable earm.ecal.clus.atimeblk
+variable earm.ecal.clus.row
+variable earm.ecal.clus.col
+variable earm.ecal.clus.id
+variable earm.ecal.clus.atime
+variable earm.ecal.clus.eblk
+variable earm.ecal.clus.nblk
+variable earm.ecal.clus.x
+variable earm.ecal.clus.y
+
 
 ## --- *** creating diagnostic histograms --- ***
 

@@ -332,6 +332,25 @@
 19	250	3	# ECAL FADC
 20	250	3	# ECAL FADC
 
+==== Crate 63 type vme
+3	527	9	# CDet Vetroc TDC
+4	527	9	# CDet Vetroc TDC
+5	527	9	# CDet Vetroc TDC
+6	527	9	# CDet Vetroc TDC
+7	527	9	# CDet Vetroc TDC
+8	527	9	# CDet Vetroc TDC
+9	527	9	# CDet Vetroc TDC
+10	527	9	# CDet Vetroc TDC
+11	527	9	# CDet Vetroc TDC
+12	527	9	# CDet Vetroc TDC
+13	527	9	# CDet Vetroc TDC
+14	527	9	# CDet Vetroc TDC
+15	527	9	# CDet Vetroc TDC
+16	527	9	# CDet Vetroc TDC
+17	527	9	# CDet Vetroc TDC
+18	527	9	# CDet Vetroc TDC
+19	527	9	# CDet Vetroc TDC
+
 ---------[ 2025-01-01 00:00:00 ] # Adding new GEM VTP
 # SBS GEMs.
 

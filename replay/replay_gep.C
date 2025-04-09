@@ -134,7 +134,7 @@ Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0)
         for( UInt_t iseg = firstsegment; iseg < firstsegment + maxsegments; ++iseg )
         {
             TString codafilename;
-            codafilename.Form("%s_%u.evio.%u", fname_prefix, runnum, istream);
+            codafilename.Form("%s_%u.evio.%u.%u", fname_prefix, runnum, istream, iseg);
             cout << "codafilename = " << codafilename << endl;
             filenames.emplace_back(codafilename.Data());
         }
@@ -222,7 +222,7 @@ Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0)
     // Clean up.
     analyzer->Close();
     delete analyzer;
-    gHaCuts->Clear();
+    //gHaCuts->Clear();
     gHaVars->Clear();
     gHaPhysics->Delete();
     gHaApps->Delete();

@@ -30,6 +30,7 @@
 #include "LHRSScalerEvtHandler.h"
 #include "SBSScalerEvtHandler.h"
 #include "SBSScalerHelicity.h"
+#include "SBSGEPHeepCoinModule.h"
 #include "SBSVTP.h"
 
 using namespace std;
@@ -93,7 +94,9 @@ Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0)
 
     //It seems necessary to add the SBS "golden track" for certain physics modules.
     gHaPhysics->Add( new THaGoldenTrack( "SBS.gold", "SBS golden track", "sbs" ) );
-
+    // Add the "H(e,e'p) coincidence module"
+    gHaPhysics->Add( new SBSGEPHeepCoinModule( "heep", "H(e,e'p) GEP-style", "earm","sbs" ) );
+    
     // add decoder
     THaApparatus* decL = new THaDecData("DL", "Misc. Decoder Data");
     gHaApps->Add( decL );

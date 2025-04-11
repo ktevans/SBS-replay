@@ -234,6 +234,8 @@ sbs.hcaldist = 10.0
 
 earm.theta = 29.46
 earm.pcentral = 3.42
-earm.ecaldist = 8.0
+# changing ECAL "effective z" to remove correlation between dx and x
+earm.ecaldist = 8.14
+#earm.ecaldist = 8.0
 
 

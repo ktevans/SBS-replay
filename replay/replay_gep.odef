@@ -8,6 +8,7 @@
 #include "replay_FPPGEM_gep.odef"
 #include "replay_helicity.odef"
 #include "replay_gepheep.odef"
+#include "replay_sbs.odef"
 
 block g.*
 

@@ -292,7 +292,9 @@ bb.magdist = 1.5515
 --------[ 2024-10-01 00:00:00 ] # start of GEP
 
 # nominal beam energy for spring 2025 run:
-ebeam = 6.476
+#ebeam = 6.476
+# estimate beam energy from HALLA:p after beam startup.
+ebeam = 6.466 
 
 # nominal kinematics for SBS:
 sbs.theta = -25.7
@@ -306,5 +308,6 @@ sbs.hcaldist = 10.0
 
 earm.theta = 29.46
 earm.pcentral = 3.42
-earm.ecaldist = 8.0
+# changing ecal dist from nominal to"effective distance" of 8.14 m to remove incident-angle correlation
+earm.ecaldist = 8.14
 

@@ -1163,11 +1163,11 @@ sbs.forwardoptics_parameters =
 # for real data, set wider limits (or perhaps no limits) until we understand what's going on with the GEM alignments:
 sbs.frontconstraint_x0 = 0.0 0.0
 sbs.frontconstraint_y0 = 0.0 0.0
-sbs.frontconstraintwidth_x = 0.1 0.02
-sbs.frontconstraintwidth_y = 0.1 0.02
+sbs.frontconstraintwidth_x = 0.3 0.7
+sbs.frontconstraintwidth_y = 0.2 0.3
 
 
 sbs.backconstraint_x0 = 0.0 0.037
 sbs.backconstraint_y0 = 0.0 0.0
-sbs.backconstraintwidth_x = 0.1 0.25
-sbs.backconstraintwidth_y = 0.1 0.21
+sbs.backconstraintwidth_x = 0.3 1.0
+sbs.backconstraintwidth_y = 0.2 1.0

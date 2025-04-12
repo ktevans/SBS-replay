@@ -67,10 +67,10 @@ th2d hTDC_vs_clus_ID 'HCAL TDC vs Module >> Consult expert if no data in few cha
 # (macro) HCal Trigger ADC Time
 
 # Page 4: HCal Trigger ADC Time (Individual Sums)
-th2d hADCt_hcalT_r 'HCal Trigger Sum r-{1-10} ADC Time; hcal trig ch; time [ns]' sbs.trig.adcelemID[I] sbs.trig.a_time[I] 11 0. 11. 240 0 240
+#th2d hADCt_hcalT_r 'HCal Trigger Sum r-{1-10} ADC Time; hcal trig ch; time [ns]' sbs.trig.adcelemID[I] sbs.trig.a_time[I] 11 0. 11. 240 0 240
 
 # Page 6: HCal Trigger ADC Amplitude (Individual Sums)
-th2d hADCamp_hcalT_r 'HCal Trigger Sum r-{1-10} ADC Amplitude; hcal trig Ch; amplitude [mV]' sbs.trig.adcelemID[I] sbs.trig.a_amp_p[I] 10 0.5 10.5 500 0 500
+#th2d hADCamp_hcalT_r 'HCal Trigger Sum r-{1-10} ADC Amplitude; hcal trig Ch; amplitude [mV]' sbs.trig.adcelemID[I] sbs.trig.a_amp_p[I] 10 0.5 10.5 500 0 500
 
 # Page 7: Cluster Plots
 th1d hNClus_vs_elem_hcal 'Number of clusters per event : HCAL; N' sbs.hcal.nclus 20 0 20  #Multiplicity
@@ -80,7 +80,7 @@ th2d hClusE_vs_elem_hcal 'Primary Cluster Energy vs element ID : HCAL; channel; 
 
 # Page 8: Cluster Heatmap
 th2d hClus_pos_hcal 'Position of best cluster : HCal; Column; Row' sbs.hcal.colblk sbs.hcal.rowblk 12 0 12 24 0 24 sbs.hcal.nclus>0
-th2d hClus_pos_hcal_cut 'Position of best cluster : HCal coincidence; Column; Row' sbs.hcal.colblk sbs.hcal.rowblk 12 0 12 24 0 24 sbs.hcal.nclus>0&&(g.trigbits==4||g.trigbits==5)
+#th2d hClus_pos_hcal_cut 'Position of best cluster : HCal coincidence; Column; Row' sbs.hcal.colblk sbs.hcal.rowblk 12 0 12 24 0 24 sbs.hcal.nclus>0&&(g.trigbits==4||g.trigbits==5)
 
 # Page 9: HCal ADC Time
 # (macro) ADC Time No LED

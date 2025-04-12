@@ -44,7 +44,7 @@ Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0)
     SBSGEPEArm* earm = new SBSGEPEArm("earm", "GEP electron arm");
     // // ECal
     SBSECal* ecal =  new SBSECal("ecal", "ECal");
-    ecal->SetDataOutputLevel(1);
+    ecal->SetDataOutputLevel(2);
     ecal->SetStoreRawHits(kTRUE); // Enabling writing out waveform information.
     earm->AddDetector( ecal );
     // // ECal VTP
@@ -176,7 +176,7 @@ Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0)
 
     if ( nevents > 0 )
     {
-        outfilename.Form("%s/%s_replayed_%u_stream%d_%d_seg%u_%u_firstevent%ld_nevent_%ld.root", prefix.Data(), fname_prefix, runnum, 
+        outfilename.Form("%s/%s_replayed_%u_stream%d_%d_seg%u_%u_firstevent%ld_nevent%ld.root", prefix.Data(), fname_prefix, runnum, 
         0, maxstream, firstsegment, lastsegment, firstevent, nevents);
     }
     else

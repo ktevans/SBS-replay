@@ -130,6 +130,7 @@ Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0)
     if ( prefix != "/adaqeb2/data1" ) pathlist.push_back( "/adaqeb2/data1" );
     if ( prefix != "/adaqeb3/data1" ) pathlist.push_back( "/adaqeb3/data1" );
     if ( prefix != "/cache/halla/sbs/GEp/raw" ) pathlist.push_back( "/cache/halla/sbs/GEp/raw" );
+    if ( prefix != "/cache/mss/halla/sbs/GEp/raw" ) pathlist.push_back( "/cache/mss/halla/sbs/GEp/raw" );
 
     for ( const auto& path : pathlist ) cout << "search paths = " << path << endl;
 

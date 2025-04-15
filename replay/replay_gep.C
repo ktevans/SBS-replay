@@ -66,6 +66,9 @@ Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0)
     hcal->SetStoreRawHits(kFALSE);
     hcal->SetStoreEmptyElements(kFALSE);
     harm->AddDetector( hcal );
+    // VTP
+    SBSVTP* hcalvtp = new SBSVTP("hcal.vtp", "HCal VTP");
+      harm->AddDetector( hcalvtp );
     // // HCal trigs
     SBSGenericDetector* sbstrig = new SBSGenericDetector("trig","HCal trigs");
     sbstrig->SetModeADC(SBSModeADC::kWaveform);

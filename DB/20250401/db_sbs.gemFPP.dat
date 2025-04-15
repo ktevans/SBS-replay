@@ -1621,7 +1621,9 @@ sbs.gemFPP.gridbinwidthx = 0.01
 sbs.gemFPP.gridbinwidthy = 0.01
 sbs.gemFPP.gridedgetolerancex = 0.0025
 sbs.gemFPP.gridedgetolerancey = 0.0025
-sbs.gemFPP.trackchi2cut = 50.0
+#sbs.gemFPP.trackchi2cut = 50.0
+# chi2 cut by num hits =  4  5  6  7  8
+sbs.gemFT.trackchi2cut = 15 20 25 30 30 
 
 # Adjust the grid bins and chi2 here during the alignment. Comment them out aftert the alignment is complete.
 #For alignment with cosmics, we want to start with wider grid bins and a loose chi2 cut for tracking:
@@ -1715,6 +1717,14 @@ sbs.gemFPP.dump_geometry_info = 1
 sbs.gemFPP.useconstraint = 1
 sbs.gemFPP.suppressfirstlast = -1
 
+---------[ 2025-04-13 18:06:00 ] # getting ready for zero-field running
+
+sbs.gemFPP.multitracksearch = 0
+
+--------[ 2025-04-14 17:19:00 ] # done with zero-field, back to field-on running
+
+sbs.gemFPP.multitracksearch = 1
+
 # ###################### END TIME-DEPENDENT CLUSTERING PARAMETERS #############
 
 
@@ -1729,12 +1739,12 @@ sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run1126.dat
 sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run1126.dat
 
 ---------[ 2025-04-03 00:00:00 ] 
-sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFPP_run2022.dat
-sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFPP_run2022.dat
+sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run2022.dat
+sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run2022.dat
 
 ---------[ 2025-04-10 00:00:00 ] 
-sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFPP_run2373.dat
-sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFPP_run2373.dat
+sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run2373.dat
+sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run2373.dat
 
 
 sbs.gemFPP.m0.position =      -0.9433552    -0.001362632        2.101819
@@ -1868,6 +1878,10 @@ sbs.gemFPP.m30.position =      0.09505515    -0.001167081        2.803432
 sbs.gemFPP.m30.angle =      -0.3133168     0.005098081     -0.05867106
 sbs.gemFPP.m31.position =       0.6069644    -0.002024573        2.846608
 sbs.gemFPP.m31.angle =       0.4172923       0.4597239      -0.1952052
+
+---------[ 2025-04-15 10:20:00 ] 
+sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run2375.dat
+sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run2375.dat
 
 
 # # #################### END TIME-DEPENDENT PEDESTAL FILES #########################

@@ -61,7 +61,7 @@ void efficiency_hit_map(TString hdidhit, TString hshouldhit, int layer=0, int op
   else if ( option == 2 )
   {
     Hdid->GetXaxis()->SetRangeUser(-0.3,0.3);
-    Hdid->GetYaxis()->SetRangeUser(-1.0,1.0);
+    Hdid->GetYaxis()->SetRangeUser(-1.0-.176,1.0-.176);
     Hdid->SetTitle(Form("Layer %i, Efficiency = %g",layer,efficiency*100));
   }
 

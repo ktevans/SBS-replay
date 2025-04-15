@@ -640,9 +640,14 @@ earm.ecal.adc.gain = 0.01 # 0.001
 # AJRP: let's make this a little more conservative at the beginning in case there are inaccuracies in the position database.
 # 7 cm should capture anything within 1.5X the nominal center-to-center block spacing of the seed.
 earm.ecal.Rmax_dis = 0.07
-## Mininum energy  for a cluster center (not really used right now)
+## Mininum energy  for a cluster center
 earm.ecal.emin  = 0.005
-earm.ecal.emin_clSeed = 0.005
+#earm.ecal.emin_clSeed = 0.005
+# AJRP 4/14/2025: set some conservative limits here to cut down on cluster multiplicities per event:
+earm.ecal.emin_clSeed = 0.2
+earm.ecal.emin_clTotal = 1.0
+
+
 ## Maximum time difference between cluster seed & additional clusters [Default = 1000ns]
 earm.ecal.tmax = 1000.0
 

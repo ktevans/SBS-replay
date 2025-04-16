@@ -36,7 +36,7 @@
 using namespace std;
 
 void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const char *fname_prefix="gep5", UInt_t firstsegment=0, UInt_t maxsegments=1, 
-Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0)
+		Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0, Int_t firststream=0)
 {
     THaAnalyzer* analyzer = new THaAnalyzer;
     
@@ -136,7 +136,11 @@ Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0)
 
     vector<string> filenames;
 
-    for ( Int_t istream = 0; istream <= maxstream; ++istream )
+    maxstream = std::max(0,std::min(2,maxstream));
+    
+    firststream = std::max(0,std::min(maxstream,firststream));
+    
+    for ( Int_t istream = firststream; istream <= maxstream; ++istream )
     {
         for( UInt_t iseg = firstsegment; iseg < firstsegment + maxsegments; ++iseg )
         {

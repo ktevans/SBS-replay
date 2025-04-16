@@ -1,6 +1,7 @@
 # Add cuts here
 
 Block: Physics
+GoodFrontTrack sbs.tr.n>0
 
-
-Physics_master 1
+#Physics_master 1
+Physics_master GoodFrontTrack

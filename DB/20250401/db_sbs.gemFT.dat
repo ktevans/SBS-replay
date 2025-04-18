@@ -1179,5 +1179,8 @@ sbs.gemFT.m13.angle =       0.9247449        1.344922      0.02679168
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run2735.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run2735.dat
 
+---------[ 2025-04-16 16:16:00 ] 
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run2818.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run2818.dat
 
 # ###################### END TIME-DEPENDENT PARAMETERS #############

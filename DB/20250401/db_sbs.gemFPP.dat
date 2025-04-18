@@ -1716,6 +1716,7 @@ sbs.gemFPP.dump_geometry_info = 1
 
 sbs.gemFPP.useconstraint = 1
 sbs.gemFPP.suppressfirstlast = -1
+sbs.gemFPP.multitracksearch = 1
 
 ---------[ 2025-04-13 18:06:00 ] # getting ready for zero-field running
 

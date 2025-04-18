@@ -1120,6 +1120,8 @@ sbs.gemFT.pmax = 7.0
 sbs.gemFT.useconstraint = 1
 sbs.gemFT.suppressfirstlast = -1
 
+sbs.gemFT.multitracksearch = 1
+
 ---------[ 2025-04-13 18:06:00 ] # getting ready for zero-field running
 
 sbs.gemFT.useopticsconstraint = 0

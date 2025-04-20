@@ -1078,10 +1078,18 @@ sbs.optics_parameters =
 ----------[ 2024-10-01 00:00:00 ] # start GEP:
 
 # FT origin is 16.5 cm above beam height
-sbs.gemorigin_xyz = -0.165 0.0 3.685
+#sbs.gemorigin_xyz = -0.165 0.0 3.685
+
+# global alignment with single C foil suggests GEM first layer is at
+#sbs.gemorigin_xyz = -0.1522 -0.0079 3.5719 
 
 # let's put this entry in here in case it's "mandatory"
-sbs.gemangles_xyz = 0.0 0.0 0.0
+#sbs.gemangles_xyz = 0.0 0.0 0.0
+
+# updated global FT alignment after internal alignment with straight-through:
+sbs.gemorigin_xyz =    -0.153507   -0.0068747      3.61869
+sbs.gemangles_xyz =    0.0702184    -0.393578     0.352327
+
 
 # optics coordinate system is centered at beam height (probably not ideal but that's what g4sbs optics fitting code uses):
 sbs.optics_origin = 0.0 0.0 3.685
@@ -1161,16 +1169,17 @@ sbs.forwardoptics_parameters =
 # set initial constraint offsets and widths for testing:
 
 # for real data, set wider limits (or perhaps no limits) until we understand what's going on with the GEM alignments:
-sbs.frontconstraint_x0 = -0.01 0.0
-sbs.frontconstraint_y0 = -0.01 0.0
-sbs.frontconstraintwidth_x = 0.03 0.07
-sbs.frontconstraintwidth_y = 0.03 0.07
+# we'll keep these here for now until done with global straight-through alignment:
+sbs.frontconstraint_x0 = 0.0 0.0
+sbs.frontconstraint_y0 = 0.0 0.0
+sbs.frontconstraintwidth_x = 0.06 0.07
+sbs.frontconstraintwidth_y = 0.06 0.07
 
+sbs.backconstraint_x0 = 0.0 0.0
+sbs.backconstraint_y0 = 0.0 0.0
+sbs.backconstraintwidth_x = 0.06 0.3
+sbs.backconstraintwidth_y = 0.06 0.3
 
-sbs.backconstraint_x0 = -0.02 0.037
-sbs.backconstraint_y0 = -0.0125 0.0
-sbs.backconstraintwidth_x = 0.03 0.3
-sbs.backconstraintwidth_y = 0.03 0.25
 
 ---------[ 2025-04-13 18:06:00 ] # getting ready for zero-field running
 
@@ -1195,6 +1204,17 @@ sbs.backconstraint_y0 = -0.0096 -0.011
 sbs.backconstraintwidth_x = 0.03 0.2
 sbs.backconstraintwidth_y = 0.02 0.2
 
+# attempting to update these after alignment: needed offsets "should" be ~zero now
+sbs.frontconstraint_x0 = 0.0 0.01
+sbs.frontconstraint_y0 = 0.0 -0.007
+sbs.frontconstraintwidth_x = 0.05 0.12
+sbs.frontconstraintwidth_y = 0.05 0.1
+
+sbs.backconstraint_x0 = 0.0 0.041
+sbs.backconstraint_y0 = 0.0 0.0167
+sbs.backconstraintwidth_x = 0.05 0.15
+sbs.backconstraintwidth_y = 0.05 0.15
+
 --------[ 2025-04-14 17:19:00 ] # done with zero-field, back to field-on running
 
 sbs.geptrackingmode = 1
@@ -1215,3 +1235,15 @@ sbs.backconstraint_y0 = -0.0125 0.0
 sbs.backconstraintwidth_x = 0.03 0.3
 sbs.backconstraintwidth_y = 0.03 0.25
 
+
+# for real data, set wider limits (or perhaps no limits) until we understand what's going on with the GEM alignments:
+# temporarily relax front tracker region-of-interest constraints after realignment:
+sbs.frontconstraint_x0 = 0.0 0.0
+sbs.frontconstraint_y0 = 0.0 0.0
+sbs.frontconstraintwidth_x = 0.06 0.07
+sbs.frontconstraintwidth_y = 0.06 0.07
+
+sbs.backconstraint_x0 = 0.0 0.0
+sbs.backconstraint_y0 = 0.0 0.0
+sbs.backconstraintwidth_x = 0.06 0.3
+sbs.backconstraintwidth_y = 0.06 0.3

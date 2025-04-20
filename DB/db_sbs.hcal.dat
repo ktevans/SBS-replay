@@ -1572,9 +1572,10 @@ sbs.hcal.adc.timeoffset = 0.0
 # GEM coordinates (we might need to modify the code too, oh wait, nope, the code already does this correctly). 
 # since HCAL is 10 m from the target and our initial guess for the origin of the GEM coordinate system is 3.685 m from target, HCAL z position should be 
 # 6.315 m (initial guess, will need adjustment)
-sbs.hcal.position = 0.165 0.0 6.315
 
-
+# adjusting HCAL position relative to aligned GEM coordinate system 
+# (AJRP 4/20/2025):
+sbs.hcal.position = 0.1535 0.0 6.3813
 
 
 
@@ -1721,3 +1722,10 @@ sbs.hcal.adc.gain =
 0.00175 0.00403728 0.00120509 0.000843067 0.00121312 0.00136144 0.00109364 0.000833814 0.0013025 0.00171401 0.00315617 0.00308539
 0.00731553 0.00733844 0.000338846 0.000558649 0.000609703 0.00124431 0.000763998 0.00159659 0.00195007 0.00122355 0.00263376 0.00416878
 
+
+# let's go ahead and put in some sensible offline clustering thresholds:
+sbs.hcal.emin = 0.005 # 5 MeV, hit threshold.
+sbs.hcal.emin_clSeed = 0.01 # 10 MeV, cluster seed threshold (offline)
+sbs.hcal.emin_clTotal = 0.02 # 20 MeV, cluster total threshold (offline) 
+
+sbs.hcal.tmax = 100.0 # will shrink when we do FADC time alignment

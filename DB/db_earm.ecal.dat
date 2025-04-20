@@ -721,7 +721,7 @@ earm.ecal.emin_clTotal = 1.0
 
 
 ## Maximum time difference between cluster seed & additional clusters [Default = 1000ns]
-earm.ecal.tmax = 1000.0
+earm.ecal.tmax = 100.0
 
 # ECAL shower shape correction parameters (probably don't want to turn these on until calibrated:
 

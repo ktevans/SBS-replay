@@ -204,7 +204,7 @@ void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const cha
 
     prefix = gSystem->Getenv("LOG_DIR");
     analyzer->SetSummaryFile(Form("%s/%s_%d_stream%d_%d_seg%d_%d.log", prefix.Data(), fname_prefix, runnum,
-	    0, maxstream, firstsegment, lastsegment));
+	    firststream, maxstream, firstsegment, lastsegment));
 
     prefix = gSystem->Getenv("SBS_REPLAY");
     prefix += "/replay/";

@@ -17,6 +17,7 @@ void coinTRIGdiff(){
   TH1D *h1_ECAL = new TH1D("h1_ECAL","ECAL Trig time; ns", 400, 0., 400.);
   TH1D *h1_HCAL = new TH1D("h1_HCAL","HCAL Trig time; ns", 400, 0., 400.);
   TH1D *h1_COIN = new TH1D("h1_COIN","COIN Trig time; ns", 400, 0., 400.);
+  TH1D *h1_COINmatch = new TH1D("h1_COINmatch","COIN-Match Trig time; ns", 400, 0., 400.);
   TH1D *h1_calDiff = new TH1D("h1_calDiff","HCal/ECAL Difference; ns", 500, -250, 250);
   TH1D *h1_RF_time = new TH1D("h1_RF_time","Accelerator RF Time; ns;",320, 0.,320.);
 
@@ -48,7 +49,7 @@ void coinTRIGdiff(){
     //if( bb_sh_nclus==0 || sbs_hcal_nclus==0 ) continue;
 
 
-    Double_t coin_time=-1., hcal_time=-1., ecal_time=-1., rf_time=-1.;
+    Double_t coin_time=-1., coinMatch_time=-1, hcal_time=-1., ecal_time=-1., rf_time=-1.;
 
     bool anyHCALRF = false;
     
@@ -57,13 +58,16 @@ void coinTRIGdiff(){
 	rf_time = hcal_reftdc[ihit];
 	anyHCALRF = true;
       }
-      if( hcal_reftdc_elemID[ihit]==4 ){ //BigBite trigger time:
+      if( hcal_reftdc_elemID[ihit]==4 ){ //coin-Match trigger time:
+	coinMatch_time = hcal_reftdc[ihit];
+      }
+      if( hcal_reftdc_elemID[ihit]==5 ){ //coin trigger time:
 	coin_time = hcal_reftdc[ihit];
       }
-      if( hcal_reftdc_elemID[ihit]==5 ){ //BigBite trigger time:
+      if( hcal_reftdc_elemID[ihit]==6 ){ //ecal trigger time:
 	ecal_time = hcal_reftdc[ihit];
       }
-      if( hcal_reftdc_elemID[ihit]==6 ){ //BigBite trigger time:
+      if( hcal_reftdc_elemID[ihit]==7 ){ //hcal trigger time:
 	hcal_time = hcal_reftdc[ihit];
       }
     }
@@ -77,36 +81,40 @@ void coinTRIGdiff(){
       if(hcal_time>=0) h1_HCAL->Fill(hcal_time);
       if(ecal_time>=0 && hcal_time>=0) h1_calDiff->Fill(ecal_time-hcal_time);
       if(coin_time>=0) h1_COIN->Fill(coin_time);
+      if(coinMatch_time>=0) h1_COINmatch->Fill(coinMatch_time);
       
       h1_RF_time->Fill(rf_time);
       
     //}
   }
   
-  pads->cd(1)->SetLogy();
-  h1_ECAL->SetStats(0);
+  pads->cd(1);//->SetLogy();
+  //h1_ECAL->SetStats(0);
   h1_ECAL->Draw();
 
-  pads->cd(2)->SetLogy();
-  h1_HCAL->SetStats(0);
+  pads->cd(2);//->SetLogy();
+  //h1_HCAL->SetStats(0);
   h1_HCAL->Draw();
 
-  pads->cd(3)->SetLogy();
-  h1_calDiff->SetStats(0);
+  pads->cd(3);//->SetLogy();
+  //h1_calDiff->SetStats(0);
   h1_calDiff->Draw();
 
   TString stitle;
   
-  pads->cd(4)->SetLogy();
-  h1_COIN->SetStats(0);
+  pads->cd(4);//->SetLogy();
+  //h1_COIN->SetStats(0);
   h1_COIN->Draw();
 
-  pads->cd(5)->SetLogy();
+  pads->cd(5);//->SetLogy();
+  //h1_COINmatch->SetStats(0);
+  h1_COINmatch->Draw();
+
+  pads->cd(6);//->SetLogy();
   h1_RF_time->SetTitle(stitle.Format("RF time HCAL (N bad = %d);ns;events", nbadRF_HCAL));
-  h1_RF_time->SetStats(0);
+  //h1_RF_time->SetStats(0);
   h1_RF_time->Draw();
 
-  pads->cd(6)->SetLogz();
  
  
   cout << "Processed macro with " << nevents << " entries." << endl;

@@ -3,5 +3,6 @@
 Block: Physics
 GoodFrontTrack sbs.tr.n>0
 
-#Physics_master 1
-Physics_master GoodFrontTrack
+Physics_master 1
+# for online replays don't require a track.
+#Physics_master GoodFrontTrack

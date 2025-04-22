@@ -36,7 +36,7 @@
 using namespace std;
 
 void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const char *fname_prefix="gep5", UInt_t firstsegment=0, UInt_t maxsegments=1, 
-		Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0, Int_t firststream=0)
+		Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0, Int_t firststream=0, Int_t dogems=1)
 {
     THaAnalyzer* analyzer = new THaAnalyzer;
     
@@ -80,12 +80,12 @@ void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const cha
     bool pm = ( pedestalmode != 0 );
     gemFT->SetPedestalMode( pm );
     gemFT->SetMakeCommonModePlots( cmplots );
-    harm->AddDetector( gemFT );
+    if( dogems != 0 )harm->AddDetector( gemFT );
     // // FPP GEMs
     SBSGEMPolarimeterTracker* gemFPP = new SBSGEMPolarimeterTracker("gemFPP", "Focal plane polarimeter");
     gemFPP->SetPedestalMode( pm );
     gemFPP->SetMakeCommonModePlots( cmplots );
-    harm->AddDetector( gemFPP );
+    if ( dogems != 0 )harm->AddDetector( gemFPP );
     
     gHaApps->Add(harm);
 
@@ -93,12 +93,12 @@ void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const cha
     // Region of interest module for FT and ECal communication.
     SBSGEPRegionOfInterestModule* ROI = new SBSGEPRegionOfInterestModule("FTROI", "GEP region of interest calculation", THaAnalyzer::kCoarseRecon);
 
-    analyzer->AddInterStage( ROI );
+    if( dogems != 0 ) analyzer->AddInterStage( ROI );
 
     //It seems necessary to add the SBS "golden track" for certain physics modules.
     gHaPhysics->Add( new THaGoldenTrack( "SBS.gold", "SBS golden track", "sbs" ) );
     // Add the "H(e,e'p) coincidence module"
-    gHaPhysics->Add( new SBSGEPHeepCoinModule( "heep", "H(e,e'p) GEP-style", "earm","sbs" ) );
+    if( dogems != 0 ) gHaPhysics->Add( new SBSGEPHeepCoinModule( "heep", "H(e,e'p) GEP-style", "earm","sbs" ) );
     
     // add decoder
     THaApparatus* decL = new THaDecData("DL", "Misc. Decoder Data");
@@ -170,28 +170,45 @@ void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const cha
     Int_t st = run->Init();
 
     if ( st != THaRunBase::READ_OK )
-    {
+      {
         cerr << "========= Eroor initializing run" << endl;
         return;
-    }
-
+      }
+    
     cout << "n segments to analyze = " << run->GetNFiles() << endl;
-
+    
     prefix = gSystem->Getenv("OUT_DIR");
-
+    
     TString outfilename;
     UInt_t lastsegment = run->GetLastSegment();
-
-    if ( nevents > 0 )
-    {
-        outfilename.Form("%s/%s_replayed_%u_stream%d_%d_seg%u_%u_firstevent%ld_nevent%ld.root", prefix.Data(), fname_prefix, runnum, 
-        firststream, maxstream, firstsegment, lastsegment, firstevent, nevents);
+    
+    if ( nevents > 0 ){
+      
+      if ( dogems != 0 )
+	{
+	  outfilename.Form("%s/%s_replayed_%u_stream%d_%d_seg%u_%u_firstevent%ld_nevent%ld.root", prefix.Data(), fname_prefix, runnum, 
+			   0, maxstream, firstsegment, lastsegment, firstevent, nevents);
+	}
+      else
+	{
+	  outfilename.Form("%s/%s_replayed_nogems_%u_stream%d_%d_seg%u_%u_firstevent%ld_nevent%ld.root", prefix.Data(), fname_prefix, runnum, 
+			   0, maxstream, firstsegment, lastsegment, firstevent, nevents);
+	}
+      
+    } else {
+      if ( dogems != 0 )
+	{
+	  outfilename.Form("%s/%s_fullreplay_%u_stream%d_%d_seg%u_%u.root", prefix.Data(), fname_prefix, runnum,
+			   0, maxstream, firstsegment, lastsegment);
+	}
+      else
+	{
+	  outfilename.Form("%s/%s_fullreplay_nogems_%u_stream%d_%d_seg%u_%u.root", prefix.Data(), fname_prefix, runnum,
+			   0, maxstream, firstsegment, lastsegment);
+	}        
     }
-    else
-    {
-        outfilename.Form("%s/%s_fullreplay_%u_stream%d_%d_seg%u_%u.root", prefix.Data(), fname_prefix, runnum,
-        firststream, maxstream, firstsegment, lastsegment);
-    }
+    
+    
 
     analyzer->EnableHelicity();
 

@@ -1,5 +1,15 @@
 # HCAL output definition file Current 10.21.22
 
+variable sbs.hcal.a_p
+variable sbs.hcal.a_c
+variable sbs.hcal.a_amp_p
+variable sbs.hcal.adcelemID
+variable sbs.hcal.adcrow
+variable sbs.hcal.adccol
+variable sbs.hcal.adcxpos
+variable sbs.hcal.adcypos
+variable sbs.hcal.a_time
+
 variable sbs.hcal.e
 variable sbs.hcal.eblk
 variable sbs.hcal.againblk
@@ -55,7 +65,7 @@ th2d hADCamp_vs_elem_hcal 'HCAL ADC amp. vs module: ZOOM >> Consult expert if no
 # th2d hADCamp_vs_elem_hcal_cut 'HCAL ADC amplitude vs module (missing TDC info); channel; Amplitude [mV]' sbs.hcal.adcelemID[I] sbs.hcal.a_amp_p[I] 289 0. 289. 500 0 500 sbs.hcal.tdc[I]==1e38&&sbs.hcal.a_time[I]>0 
 
 th1d hATIME_HCAL 'HCAL AdcTime over all channels; ns' sbs.hcal.a_time 250 1 251
-th2d hATIME_HCAL_VS_ID 'HCAL adcTime vs module >> Consult expert if no data in few channels; channel; atime [ns]' sbs.hcal.adcelemID[I] sbs.hcal.a_time[I] 289 0. 289. 200 0. 200. sbs.hcal.a_time[I]>0
+th2d hATIME_HCAL_VS_ID 'HCAL adcTime vs module >> Consult expert if no data in few channels; channel; atime [ns]' sbs.hcal.adcelemID[I] sbs.hcal.a_time[I] 289 0. 289. 250 0. 250. sbs.hcal.a_time[I]>0
 th1d hATIME_HCAL_Clus 'AdcTime HCAL Clus; ns' sbs.hcal.clus_blk.atime 250 1 251 
 
 # Page 3: TDC vs Module

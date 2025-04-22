@@ -45,7 +45,7 @@ block earm.tr.*
 # Variables provided by M.Jones 4/4/2025
 variable earm.ecal.a_p
 variable earm.ecal.a_c
-variable earm.ecal.amp_p
+variable earm.ecal.a_amp_p
 variable earm.ecal.adcelemID
 variable earm.ecal.adcrow
 variable earm.ecal.adccol
@@ -101,8 +101,9 @@ th2d h2clus_pos 'Position of Best Cluster' earm.ecal.colblk+1 earm.ecal.rowblk+1
 # Timing Stuff
 th1d hclus_atECAL 'ECAL ADC time (ns)' earm.ecal.atimeblk 200 150 250 sbs.hcal.nclus>0&&earm.ecal.nclus>0
 th1d hclus_atECAL_cut 'ECAL ADC time w/ Strict Cut (ns)' earm.ecal.atimeblk 50 150 250 sbs.hcal.e>0.05&&earm.ecal.e>2.
-th1d hclus_atHCAL 'HCAL ADC time (ns)' sbs.hcal.atimeblk 200 150 250 sbs.hcal.nclus>0&&earm.ecal.nclus>0
-th1d hclus_atHCAL_cut 'HCAL ADC time w/ Strict Cut (ns)' sbs.hcal.atimeblk 200 150 250 sbs.hcal.e>0.05&&earm.ecal.e>2.
+th1d hclus_atHCAL 'HCAL ADC time (ns)' sbs.hcal.atimeblk 400 0 400 sbs.hcal.nclus>0&&earm.ecal.nclus>0
+th1d hclus_atHCAL_cut 'HCAL ADC time w/ Strict Cut (ns)' sbs.hcal.atimeblk 400 0 400 sbs.hcal.e>0.05&&earm.ecal.e>2.
+th1d hclus_atimediff 'ECAL ADC time - HCAL ADC time (ns)' earm.ecal.atimeblk-sbs.hcal.atimeblk 300 -300 300 sbs.hcal.nclus>0&&earm.ecal.nclus>0
 
 # All ECal channels
 th1d helemID_ecal 'ECal blocks (Total 1656)' earm.ecal.adcelemID[I] 1655 0 1655 earm.ecal.a_time[I]>0

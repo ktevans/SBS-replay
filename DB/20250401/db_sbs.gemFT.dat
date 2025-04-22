@@ -961,15 +961,16 @@ sbs.gemFT.m13.chanmap =
 ############ parameters searched by SBSGEMModule::ReadDatabase() #################
 ############ offline thresholds: ############
 sbs.gemFT.threshold_sample = 50.0
-sbs.gemFT.threshold_stripsum = 75.0
-sbs.gemFT.threshold_clustersum = 100.0
+sbs.gemFT.threshold_stripsum = 200.0
+sbs.gemFT.threshold_clustersum = 300.0
 
 
 sbs.gemFT.ADCasym_cut = 0.8 
 sbs.gemFT.deltat_cut = 25.0
 sbs.gemFT.corrcoeff_cut = 0.5
-sbs.gemFT.filterflag1D = 1 # -1 = no filtering: don't require 1D hits to pass any cuts other than basic zero suppression
-sbs.gemFT.filterflag2D = -1  # 1 = "hard" filtering: require 2D hits to pass all cuts
+# change to "soft hit filtering:
+sbs.gemFT.filterflag1D = 0 # -1 = no filtering: don't require 1D hits to pass any cuts other than basic zero suppression
+sbs.gemFT.filterflag2D = 0  # 1 = "hard" filtering: require 2D hits to pass all cuts
 
 sbs.gemFT.peakprominence_minsigma = 3.0 
 sbs.gemFT.peakprominence_minfraction = 0.15
@@ -1088,10 +1089,41 @@ sbs.gemFT.maxstrip_t0 = 75.0
 sbs.gemFT.maxstrip_tsigma = 8.0
 sbs.gemFT.HitTimeMean = 75.0
 sbs.gemFT.HitTimeSigma = 8.0
-sbs.gemFT.maxstrip_tcut = 3.5
+sbs.gemFT.maxstrip_tcut = 3.0
 sbs.gemFT.addstrip_tcut = 35.0
 sbs.gemFT.addstrip_ccor_cut = 0.4
 sbs.gemFT.suppressfirstlast = 0
+
+# these may need further adjustment
+sbs.gemFT.m0.maxstrip_t0 = 83.7782 83.7662
+sbs.gemFT.m1.maxstrip_t0 = 80.6337 81.8633
+sbs.gemFT.m2.maxstrip_t0 = 83.7419 80.688
+sbs.gemFT.m3.maxstrip_t0 = 98.7344 99.0261
+sbs.gemFT.m4.maxstrip_t0 = 93.4017 93.0929
+sbs.gemFT.m5.maxstrip_t0 = 92.4741 92.4173
+sbs.gemFT.m6.maxstrip_t0 = 82.7149 84.3668
+sbs.gemFT.m7.maxstrip_t0 = 85.1353 86.2296
+sbs.gemFT.m8.maxstrip_t0 = 86.4541 86.7113
+sbs.gemFT.m9.maxstrip_t0 = 84.6175 85.2227
+sbs.gemFT.m10.maxstrip_t0 = 83.0052 85.9831
+sbs.gemFT.m11.maxstrip_t0 = 86.8208 87.2786
+sbs.gemFT.m12.maxstrip_t0 = 86.6978 86.4472
+sbs.gemFT.m13.maxstrip_t0 = 86.5327 86.1458
+
+sbs.gemFT.m0.maxstrip_tsigma = 10.9615 10.6395
+sbs.gemFT.m1.maxstrip_tsigma = 9.74764 9.70207
+sbs.gemFT.m2.maxstrip_tsigma = 10.4214 10.311
+sbs.gemFT.m3.maxstrip_tsigma = 11.3473 10.6098
+sbs.gemFT.m4.maxstrip_tsigma = 13.2849 12.9765
+sbs.gemFT.m5.maxstrip_tsigma = 13.0221 13.0013
+sbs.gemFT.m6.maxstrip_tsigma = 11.0911 8.76953
+sbs.gemFT.m7.maxstrip_tsigma = 11.1259 10.1934
+sbs.gemFT.m8.maxstrip_tsigma = 11.0281 11.7115
+sbs.gemFT.m9.maxstrip_tsigma = 12.8526 11.0249
+sbs.gemFT.m10.maxstrip_tsigma = 11.7913 9.29483
+sbs.gemFT.m11.maxstrip_tsigma = 11.3901 11.3289
+sbs.gemFT.m12.maxstrip_tsigma = 11.1624 10.909
+sbs.gemFT.m13.maxstrip_tsigma = 14.4234 10.3702
 
 sbs.gemFT.modulegain = 1
 
@@ -1106,6 +1138,15 @@ sbs.gemFT.useconstraint = 0
 sbs.gemFT.dump_geometry_info = 1
 
 ----------[ 2025-04-01 00:00:00 ] # beam is here;
+
+sbs.gemFT.corrcoeff_cut 0.5
+sbs.gemFT.ADCasym_cut 0.8
+sbs.gemFT.deltat_cut = 30.0
+sbs.gemFT.addstrip_ccor_cut 0.4
+sbs.gemFT.addstrip_tcut = 35.0
+
+sbs.gemFT.filterflag1D = 0
+sbs.gemFT.filterflag2D = 0
 
 # the following alignment is with straight-through data. May need to redo internal alignment with field on:
 sbs.gemFT.m0.position =    -0.001932362   -0.0003591936    -0.002307403
@@ -1137,16 +1178,17 @@ sbs.gemFT.m12.angle =       0.5068662       0.3355708     -0.03995951
 sbs.gemFT.m13.position =       0.7710533    0.0009659418        0.844378
 sbs.gemFT.m13.angle =       -1.553839      -0.3341202      0.06093349
 
+sbs.gemFT.usestriptimingcut = 1
 
 sbs.gemFT.useopticsconstraint = 1
-sbs.gemFT.xptar_min = -0.4
-sbs.gemFT.xptar_max = 0.4
-sbs.gemFT.yptar_min = -0.12
-sbs.gemFT.yptar_max = 0.12
+sbs.gemFT.xptar_min = -0.2
+sbs.gemFT.xptar_max = 0.2
+sbs.gemFT.yptar_min = -0.08
+sbs.gemFT.yptar_max = 0.08
 sbs.gemFT.ytar_min = -0.14
 sbs.gemFT.ytar_max = 0.08
-sbs.gemFT.pmin = 0.8
-sbs.gemFT.pmax = 7.0
+sbs.gemFT.pmin = 2.5
+sbs.gemFT.pmax = 5.0
 
 sbs.gemFT.useconstraint = 1
 sbs.gemFT.suppressfirstlast = -1
@@ -1157,6 +1199,7 @@ sbs.gemFT.multitracksearch = 1
 
 sbs.gemFT.useopticsconstraint = 0
 sbs.gemFT.multitracksearch = 0
+sbs.gemFT.usestriptimingcut = 0
 
 --------[ 2025-04-14 17:19:00 ] # done with zero-field, back to field-on running
 

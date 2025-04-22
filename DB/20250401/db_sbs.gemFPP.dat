@@ -1635,15 +1635,17 @@ sbs.gemFPP.m31.chanmap =
 ############ parameters searched by SBSGEMModule::ReadDatabase() #################
 ############ offline thresholds: ############
 sbs.gemFPP.threshold_sample = 50.0
-sbs.gemFPP.threshold_stripsum = 75.0
-sbs.gemFPP.threshold_clustersum = 100.0
+sbs.gemFPP.threshold_stripsum = 150.0
+sbs.gemFPP.threshold_clustersum = 200.0
 
 
 sbs.gemFPP.ADCasym_cut = 0.8 
-sbs.gemFPP.deltat_cut = 25.0
+sbs.gemFPP.deltat_cut = 30.0
 sbs.gemFPP.corrcoeff_cut = 0.5
-sbs.gemFPP.filterflag1D = -1 # -1 = no filtering: don't require 1D hits to pass any cuts other than basic zero suppression
-sbs.gemFPP.filterflag2D = -1  # 1 = "hard" filtering: require 2D hits to pass all cuts
+
+# turn on "soft" hit filtering:
+sbs.gemFPP.filterflag1D = 0 # -1 = no filtering: don't require 1D hits to pass any cuts other than basic zero suppression
+sbs.gemFPP.filterflag2D = 0  # 1 = "hard" filtering: require 2D hits to pass all cuts
 
 sbs.gemFPP.peakprominence_minsigma = 3.0 
 sbs.gemFPP.peakprominence_minfraction = 0.15
@@ -1762,7 +1764,7 @@ sbs.gemFPP.maxstrip_t0 = 75.0
 sbs.gemFPP.maxstrip_tsigma = 8.0
 sbs.gemFPP.HitTimeMean = 75.0
 sbs.gemFPP.HitTimeSigma = 8.0
-sbs.gemFPP.maxstrip_tcut = 3.5
+sbs.gemFPP.maxstrip_tcut = 3.0
 sbs.gemFPP.addstrip_tcut = 35.0
 sbs.gemFPP.addstrip_ccor_cut = 0.4
 sbs.gemFPP.suppressfirstlast = 0
@@ -1781,16 +1783,86 @@ sbs.gemFPP.dump_geometry_info = 1
 
 ---------[ 2025-04-01 00:00:00 ] # ready-ish for beam:
 
+sbs.gemFPP.m0.maxstrip_t0 = 84.7893 84.2235
+sbs.gemFPP.m1.maxstrip_t0 = 81.9507 80.5512
+sbs.gemFPP.m2.maxstrip_t0 = 86.6517 85.6779
+sbs.gemFPP.m3.maxstrip_t0 = 85.6375 85.5154
+sbs.gemFPP.m4.maxstrip_t0 = 80.0698 82.5747
+sbs.gemFPP.m5.maxstrip_t0 = 83.3211 84.6093
+sbs.gemFPP.m6.maxstrip_t0 = 84.1095 82.9852
+sbs.gemFPP.m7.maxstrip_t0 = 82.9149 81.9312
+sbs.gemFPP.m8.maxstrip_t0 = 87.5775 88.0552
+sbs.gemFPP.m9.maxstrip_t0 = 84.4407 84.1326
+sbs.gemFPP.m10.maxstrip_t0 = 88.5556 86.8111
+sbs.gemFPP.m11.maxstrip_t0 = 86.7378 86.5644
+sbs.gemFPP.m12.maxstrip_t0 = 90.8407 88.0402
+sbs.gemFPP.m13.maxstrip_t0 = 88.4352 86.5966
+sbs.gemFPP.m14.maxstrip_t0 = 87.5507 88.1673
+sbs.gemFPP.m15.maxstrip_t0 = 85.3127 85.5749
+sbs.gemFPP.m16.maxstrip_t0 = 86.6044 88.5323
+sbs.gemFPP.m17.maxstrip_t0 = 85.1006 86.032
+sbs.gemFPP.m18.maxstrip_t0 = 85.3768 86.194
+sbs.gemFPP.m19.maxstrip_t0 = 85.6218 87.3188
+sbs.gemFPP.m20.maxstrip_t0 = 92.1152 86.6405
+sbs.gemFPP.m21.maxstrip_t0 = 86. 86.
+sbs.gemFPP.m22.maxstrip_t0 = 87.606 88.5627
+sbs.gemFPP.m23.maxstrip_t0 = 89.9204 89.4301
+sbs.gemFPP.m24.maxstrip_t0 = 86.2244 88.6855
+sbs.gemFPP.m25.maxstrip_t0 = 87.6756 87.8553
+sbs.gemFPP.m26.maxstrip_t0 = 92.079 89.3413
+sbs.gemFPP.m27.maxstrip_t0 = 85.538 84.2822
+sbs.gemFPP.m28.maxstrip_t0 = 86.8366 83.0632
+sbs.gemFPP.m29.maxstrip_t0 = 82.1988 82.5072
+sbs.gemFPP.m30.maxstrip_t0 = 86.6033 86.3528
+sbs.gemFPP.m31.maxstrip_t0 = 85.0071 88.7375
+
+sbs.gemFPP.m0.maxstrip_tsigma = 9.86815 9.99361
+sbs.gemFPP.m1.maxstrip_tsigma = 8.35254 8.49674
+sbs.gemFPP.m2.maxstrip_tsigma = 8.4233 7.59161
+sbs.gemFPP.m3.maxstrip_tsigma = 8.95625 9.35144
+sbs.gemFPP.m4.maxstrip_tsigma = 10.5733 9.04583
+sbs.gemFPP.m5.maxstrip_tsigma = 9.47002 8.09053
+sbs.gemFPP.m6.maxstrip_tsigma = 8.89327 8.25129
+sbs.gemFPP.m7.maxstrip_tsigma = 8.41875 8.93657
+sbs.gemFPP.m8.maxstrip_tsigma = 10.1939 8.76436
+sbs.gemFPP.m9.maxstrip_tsigma = 10.1456 9.63282
+sbs.gemFPP.m10.maxstrip_tsigma = 8.34779 8.25311
+sbs.gemFPP.m11.maxstrip_tsigma = 10.3985 9.89638
+sbs.gemFPP.m12.maxstrip_tsigma = 10.4512 11.0841
+sbs.gemFPP.m13.maxstrip_tsigma = 11.9867 11.0911
+sbs.gemFPP.m14.maxstrip_tsigma = 9.15079 9.62413
+sbs.gemFPP.m15.maxstrip_tsigma = 8.31229 8.65367
+sbs.gemFPP.m16.maxstrip_tsigma = 10.056 10.8369
+sbs.gemFPP.m17.maxstrip_tsigma = 8.87319 7.37174
+sbs.gemFPP.m18.maxstrip_tsigma = 7.43575 7.38724
+sbs.gemFPP.m19.maxstrip_tsigma = 9.63944 9.62023
+sbs.gemFPP.m20.maxstrip_tsigma = 11.0 11.0
+sbs.gemFPP.m21.maxstrip_tsigma = 11.0 11.0 
+sbs.gemFPP.m22.maxstrip_tsigma = 7.99504 8.7795
+sbs.gemFPP.m23.maxstrip_tsigma = 10.7 7.63741
+sbs.gemFPP.m24.maxstrip_tsigma = 9.33484 9.91144
+sbs.gemFPP.m25.maxstrip_tsigma = 9.74033 8.65167
+sbs.gemFPP.m26.maxstrip_tsigma = 8.48606 8.84921
+sbs.gemFPP.m27.maxstrip_tsigma = 8.05288 8.65012
+sbs.gemFPP.m28.maxstrip_tsigma = 12.113 15.2053
+sbs.gemFPP.m29.maxstrip_tsigma = 9.39069 9.10707
+sbs.gemFPP.m30.maxstrip_tsigma = 10.8881 10.6694
+sbs.gemFPP.m31.maxstrip_tsigma = 9.92236 9.98904
+
+sbs.gemFPP.usestriptimingcut = 1
+
 sbs.gemFPP.useconstraint = 1
 sbs.gemFPP.suppressfirstlast = -1
 sbs.gemFPP.multitracksearch = 1
 
 ---------[ 2025-04-13 18:06:00 ] # getting ready for zero-field running
 
+sbs.gemFPP.usestriptimingcut = 0
 sbs.gemFPP.multitracksearch = 0
 
 --------[ 2025-04-14 17:19:00 ] # done with zero-field, back to field-on running
 
+sbs.gemFPP.usestriptimingcut = 1
 sbs.gemFPP.multitracksearch = 1
 
 # ###################### END TIME-DEPENDENT CLUSTERING PARAMETERS #############

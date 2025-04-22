@@ -1096,7 +1096,7 @@ sbs.optics_origin = 0.0 0.0 3.685
 
 sbs.polarimetermode = 1
 
-sbs.z0analyzer = 1.53
+sbs.z0analyzer = 1.473
 sbs.analyzerthick = 0.5588
 sbs.nbinsz_fcp = 11
 
@@ -1170,15 +1170,28 @@ sbs.forwardoptics_parameters =
 
 # for real data, set wider limits (or perhaps no limits) until we understand what's going on with the GEM alignments:
 # we'll keep these here for now until done with global straight-through alignment:
-sbs.frontconstraint_x0 = 0.0 0.0
-sbs.frontconstraint_y0 = 0.0 0.0
-sbs.frontconstraintwidth_x = 0.06 0.07
-sbs.frontconstraintwidth_y = 0.06 0.07
+#sbs.frontconstraint_x0 = -0.006 0.0
+#sbs.frontconstraint_y0 = 0.0 0.0
+#sbs.frontconstraintwidth_x = 0.035 0.025
+#sbs.frontconstraintwidth_y = 0.06 0.025
 
-sbs.backconstraint_x0 = 0.0 0.0
-sbs.backconstraint_y0 = 0.0 0.0
-sbs.backconstraintwidth_x = 0.06 0.3
-sbs.backconstraintwidth_y = 0.06 0.3
+#sbs.backconstraint_x0 = 0.0 0.0
+#sbs.backconstraint_y0 = 0.0 0.0
+#sbs.backconstraintwidth_x = 0.06 0.3
+#sbs.backconstraintwidth_y = 0.06 0.3
+
+# constraints after alignment, AJRP 4/21/2025:
+sbs.frontconstraint_x0 = -0.006 0.0
+sbs.frontconstraint_y0 = -0.003 0.0
+sbs.frontconstraintwidth_x = 0.035 0.025
+sbs.frontconstraintwidth_y = 0.03 0.025
+
+sbs.backconstraint_x0 = -0.008 0.07
+sbs.backconstraint_y0 = -0.003 0.017
+sbs.backconstraintwidth_x = 0.04 0.25
+sbs.backconstraintwidth_y = 0.035 0.25
+
+
 
 
 ---------[ 2025-04-13 18:06:00 ] # getting ready for zero-field running
@@ -1205,15 +1218,15 @@ sbs.backconstraintwidth_x = 0.03 0.2
 sbs.backconstraintwidth_y = 0.02 0.2
 
 # attempting to update these after alignment: needed offsets "should" be ~zero now
-sbs.frontconstraint_x0 = 0.0 0.01
-sbs.frontconstraint_y0 = 0.0 -0.007
-sbs.frontconstraintwidth_x = 0.05 0.12
-sbs.frontconstraintwidth_y = 0.05 0.1
+sbs.frontconstraint_x0 = -0.0059 0.01
+sbs.frontconstraint_y0 = -0.0038 -0.007
+sbs.frontconstraintwidth_x = 0.025 0.12
+sbs.frontconstraintwidth_y = 0.029 0.1
 
-sbs.backconstraint_x0 = 0.0 0.041
-sbs.backconstraint_y0 = 0.0 0.0167
-sbs.backconstraintwidth_x = 0.05 0.15
-sbs.backconstraintwidth_y = 0.05 0.15
+sbs.backconstraint_x0 = -0.0084 0.041
+sbs.backconstraint_y0 = 0.0005 0.0167
+sbs.backconstraintwidth_x = 0.038 0.15
+sbs.backconstraintwidth_y = 0.036 0.15
 
 --------[ 2025-04-14 17:19:00 ] # done with zero-field, back to field-on running
 
@@ -1224,26 +1237,37 @@ sbs.usedynamicconstraint = 0
 # set initial constraint offsets and widths for testing:
 
 # for real data, set wider limits (or perhaps no limits) until we understand what's going on with the GEM alignments:
-sbs.frontconstraint_x0 = -0.01 0.0
-sbs.frontconstraint_y0 = -0.01 0.0
-sbs.frontconstraintwidth_x = 0.03 0.07
-sbs.frontconstraintwidth_y = 0.03 0.07
+#sbs.frontconstraint_x0 = -0.01 0.0
+#sbs.frontconstraint_y0 = -0.01 0.0
+#sbs.frontconstraintwidth_x = 0.03 0.07
+#sbs.frontconstraintwidth_y = 0.03 0.07
 
 
-sbs.backconstraint_x0 = -0.02 0.037
-sbs.backconstraint_y0 = -0.0125 0.0
-sbs.backconstraintwidth_x = 0.03 0.3
-sbs.backconstraintwidth_y = 0.03 0.25
+#sbs.backconstraint_x0 = -0.02 0.037
+#sbs.backconstraint_y0 = -0.0125 0.0
+#sbs.backconstraintwidth_x = 0.03 0.3
+#sbs.backconstraintwidth_y = 0.03 0.25
 
 
 # for real data, set wider limits (or perhaps no limits) until we understand what's going on with the GEM alignments:
 # temporarily relax front tracker region-of-interest constraints after realignment:
-sbs.frontconstraint_x0 = 0.0 0.0
-sbs.frontconstraint_y0 = 0.0 0.0
-sbs.frontconstraintwidth_x = 0.06 0.07
-sbs.frontconstraintwidth_y = 0.06 0.07
+#sbs.frontconstraint_x0 = 0.0 0.0
+#sbs.frontconstraint_y0 = 0.0 0.0
+#sbs.frontconstraintwidth_x = 0.06 0.07
+#sbs.frontconstraintwidth_y = 0.06 0.07
 
-sbs.backconstraint_x0 = 0.0 0.0
-sbs.backconstraint_y0 = 0.0 0.0
-sbs.backconstraintwidth_x = 0.06 0.3
-sbs.backconstraintwidth_y = 0.06 0.3
+#sbs.backconstraint_x0 = 0.0 0.0
+#sbs.backconstraint_y0 = 0.0 0.0
+#sbs.backconstraintwidth_x = 0.06 0.3
+#sbs.backconstraintwidth_y = 0.06 0.3
+
+# constraints after alignment, AJRP 4/21/2025:
+sbs.frontconstraint_x0 = -0.006 0.0
+sbs.frontconstraint_y0 = -0.003 0.0
+sbs.frontconstraintwidth_x = 0.035 0.025
+sbs.frontconstraintwidth_y = 0.03 0.025
+
+sbs.backconstraint_x0 = -0.008 0.07
+sbs.backconstraint_y0 = -0.003 0.017
+sbs.backconstraintwidth_x = 0.04 0.25
+sbs.backconstraintwidth_y = 0.035 0.25

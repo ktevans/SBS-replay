@@ -1,6 +1,3 @@
-# Copy of Get TrackingCutsFast.C script, modified for GEp
-# J.McMurtry 04-21-2025
-
 #include "TChain.h"
 #include "TTree.h"
 #include "TFile.h"
@@ -66,46 +63,11 @@ void FitGaus_FWHM( TH1D *htest, double thresh=0.5 ){
   htest->Fit("gaus","q0S","",xlow, xhigh);
 }
 
-void GetTrackingCutsFast( const char *configfilename, const char *outfilename="GEpTrackingCuts.root", int nmodules=8, double thresh=0.003, double nsig_tstrip=4.5, double nsig_dt=5.0 ){
+void GetTrackingCutsFast( const char *configfilename, const char *outfilename="GENtrackingcuts_GEp.root", int nmodules=8, double thresh=0.003, double nsig_tstrip=4.5, double nsig_dt=5.0 ){
 
   ifstream infile(configfilename);
   
   TChain *C = new TChain("T");
-
-  // if( configfile ){
-  //   TString currentline;
-    
-  //   while( currentline.ReadLine(configfile) && !currentline.BeginsWith("endlist") ){
-  //     if( !currentline.BeginsWith("#") ){
-  // 	C->Add(currentline.Data());
-  //     }
-  //   }
-
-  //   while( currentline.ReadLine(configfile) && !currentline.BeginsWith("endconfig")){
-  //     if( !currentline.BeginsWith("#") ){
-  // 	TObjArray *tokens = currentline.Tokenize(" ");
-
-  // 	int ntokens = tokens->GetEntries();
-
-  // 	if( ntokens >= 2 ){
-  // 	  TString skey = ( (TObjString*) (*tokens)[0] )->GetString();
-  // 	  TString sval = ( (TObjString*) (*tokens)[1] )->GetString();
-	  
-  // 	  if( skey == "prefix" ){
-  // 	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
-  // 	    prefix = stemp;
-  // 	  }	  
-  // 	}
-  //     }
-  //   }
-  //   while( currentline.ReadLine(configfile) && !currentline.BeginsWith("endcut") ){
-  //     if( !currentline.BeginsWith("#") ){
-  // 	globalcut += currentline;
-  //     }
-  //   }
-  // } else {
-  //   return;
-  // }
 
   TString currentline;
   while( infile >> currentline && !currentline.BeginsWith("endlist") ){
@@ -135,13 +97,13 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   C->SetBranchStatus("*",0);
   
   double EPS, ESH;
-  C->SetBranchStatus("bb.etot_over_p",1);
-  C->SetBranchStatus("bb.ps.e",1);
-  C->SetBranchStatus("bb.sh.e",1);
-  C->SetBranchAddress("bb.ps.e",&EPS);
-  C->SetBranchAddress("bb.sh.e",&ESH);
+//  C->SetBranchStatus("bb.etot_over_p",1);
+//  C->SetBranchStatus("bb.ps.e",1);
+//  C->SetBranchStatus("bb.sh.e",1);
+//  C->SetBranchAddress("bb.ps.e",&EPS);
+//  C->SetBranchAddress("bb.sh.e",&ESH);
 
-  C->SetBranchStatus("bb.grinch_tdc.clus.*",1);
+//  C->SetBranchStatus("bb.grinch_tdc.clus.*",1);
 
   double ntracks;
   double tracknhits[MAXNTRACKS];
@@ -161,13 +123,13 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   double trig_tdc[MAXNTRIG];
 
   //Set up trigger branches:
-  C->SetBranchStatus("Ndata.bb.tdctrig.tdc",1);
-  C->SetBranchStatus("bb.tdctrig.tdc",1);
-  C->SetBranchStatus("bb.tdctrig.tdcelemID",1);
+//  C->SetBranchStatus("Ndata.bb.tdctrig.tdc",1);
+//  C->SetBranchStatus("bb.tdctrig.tdc",1);
+//  C->SetBranchStatus("bb.tdctrig.tdcelemID",1);
 
-  C->SetBranchAddress("Ndata.bb.tdctrig.tdc",&Ntrig);
-  C->SetBranchAddress("bb.tdctrig.tdcelemID",trig_elemID);
-  C->SetBranchAddress("bb.tdctrig.tdc",trig_tdc);
+//  C->SetBranchAddress("Ndata.bb.tdctrig.tdc",&Ntrig);
+//  C->SetBranchAddress("bb.tdctrig.tdcelemID",trig_elemID);
+//  C->SetBranchAddress("bb.tdctrig.tdc",trig_tdc);
  
 
   C->SetBranchStatus("bb.gem.track.nhits",1);
@@ -175,34 +137,34 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   C->SetBranchStatus("bb.gem.track.chi2ndf",1);
   C->SetBranchStatus("bb.gem.track.chi2ndf_hitquality",1);
   C->SetBranchStatus("bb.gem.track.t0",1);
-  C->SetBranchStatus("bb.tr.x",1);
-  C->SetBranchStatus("bb.tr.y",1);
-  C->SetBranchStatus("bb.tr.th",1);
-  C->SetBranchStatus("bb.tr.ph",1);
-  C->SetBranchStatus("bb.tr.tg_x",1);
-  C->SetBranchStatus("bb.tr.tg_y",1);
-  C->SetBranchStatus("bb.tr.tg_th",1);
-  C->SetBranchStatus("bb.tr.tg_ph",1);
-  C->SetBranchStatus("bb.tr.r_x",1);
-  C->SetBranchStatus("bb.tr.r_y",1);
-  C->SetBranchStatus("bb.tr.r_th",1);
-  C->SetBranchStatus("bb.tr.r_ph",1);
-  C->SetBranchStatus("bb.tr.d_x",1);
-  C->SetBranchStatus("bb.tr.d_y",1);
-  C->SetBranchStatus("bb.tr.d_th",1);
-  C->SetBranchStatus("bb.tr.d_ph",1);
-  C->SetBranchStatus("bb.tr.n",1);
-  C->SetBranchStatus("bb.tr.p",1);
-  C->SetBranchStatus("bb.tr.px",1);
-  C->SetBranchStatus("bb.tr.py",1);
-  C->SetBranchStatus("bb.tr.pz",1);
-  C->SetBranchStatus("bb.tr.vz",1);
-  C->SetBranchStatus("bb.x_fcp",1);
-  C->SetBranchStatus("bb.y_fcp",1);
-  C->SetBranchStatus("bb.z_fcp",1);
-  C->SetBranchStatus("bb.x_bcp",1);
-  C->SetBranchStatus("bb.y_bcp",1);
-  C->SetBranchStatus("bb.z_bcp",1);
+  C->SetBranchStatus("sbs.tr.x",1);
+  C->SetBranchStatus("sbs.tr.y",1);
+  C->SetBranchStatus("sbs.tr.th",1);
+  C->SetBranchStatus("sbs.tr.ph",1);
+  C->SetBranchStatus("sbs.tr.tg_x",1);
+  C->SetBranchStatus("sbs.tr.tg_y",1);
+  C->SetBranchStatus("sbs.tr.tg_th",1);
+  C->SetBranchStatus("sbs.tr.tg_ph",1);
+  C->SetBranchStatus("sbs.tr.r_x",1);
+  C->SetBranchStatus("sbs.tr.r_y",1);
+  C->SetBranchStatus("sbs.tr.r_th",1);
+  C->SetBranchStatus("sbs.tr.r_ph",1);
+  C->SetBranchStatus("sbs.tr.d_x",1);
+  C->SetBranchStatus("sbs.tr.d_y",1);
+  C->SetBranchStatus("sbs.tr.d_th",1);
+  C->SetBranchStatus("sbs.tr.d_ph",1);
+  C->SetBranchStatus("sbs.tr.n",1);
+  C->SetBranchStatus("sbs.tr.p",1);
+  C->SetBranchStatus("sbs.tr.px",1);
+  C->SetBranchStatus("sbs.tr.py",1);
+  C->SetBranchStatus("sbs.tr.pz",1);
+  C->SetBranchStatus("sbs.tr.vz",1);
+  C->SetBranchStatus("sbs.x_fcp",1);
+  C->SetBranchStatus("sbs.y_fcp",1);
+  C->SetBranchStatus("sbs.z_fcp",1);
+  C->SetBranchStatus("sbs.x_bcp",1);
+  C->SetBranchStatus("sbs.y_bcp",1);
+  C->SetBranchStatus("sbs.z_bcp",1);
   
   C->SetBranchAddress("bb.gem.track.nhits",tracknhits);
   C->SetBranchAddress("bb.gem.track.ngoodhits",trackngoodhits);

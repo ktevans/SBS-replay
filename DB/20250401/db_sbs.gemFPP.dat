@@ -1694,7 +1694,7 @@ sbs.gemFPP.gridedgetolerancey = 0.0025
 # chi2 cut by num hits =  4  5  6  7  8
 #sbs.gemFPP.trackchi2cut = 15 20 25 30 30 
 
-sbs.gemFPP.trackchi2cut = 100.0
+sbs.gemFPP.trackchi2cut = 500.0
 
 # Adjust the grid bins and chi2 here during the alignment. Comment them out aftert the alignment is complete.
 #For alignment with cosmics, we want to start with wider grid bins and a loose chi2 cut for tracking:
@@ -2029,6 +2029,6 @@ sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run2818.dat
 #sbs.gemFPP.m31.position =       0.6070634    -0.002047149         2.84644
 #sbs.gemFPP.m31.angle =       0.7635911       0.2065655      -0.2427319
 
-
+sbs.gemFPP.trackchi2cut = 1000
 
 # # #################### END TIME-DEPENDENT PEDESTAL FILES #########################

@@ -1207,7 +1207,7 @@ sbs.gemFT.usestriptimingcut = 0
 
 sbs.gemFT.useopticsconstraint = 1
 sbs.gemFT.multitracksearch = 1
-
+sbs.gemFT.usestriptimingcut = 1
 
 # ###################### END TIME-DEPENDENT CLUSTERING PARAMETERS #############
 
@@ -1291,5 +1291,23 @@ sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run2735.dat
 ---------[ 2025-04-16 16:16:00 ] 
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run2818.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run2818.dat
+
+--------[ 2025-04-21 14:00:00 ] # GEM FT latency layers 3,4,5 updated:
+
+# these are rough guesses at what things should look like after latency adjustment:
+sbs.gemFT.m3.maxstrip_t0 = 85.0 85.0 
+sbs.gemFT.m4.maxstrip_t0 = 85.0 85.0
+sbs.gemFT.m5.maxstrip_t0 = 85.0 85.0 
+
+sbs.gemFT.m3.maxstrip_tsigma = 12.0 12.0 
+sbs.gemFT.m4.maxstrip_tsigma = 12.0 12.0
+sbs.gemFT.m5.maxstrip_tsigma = 12.0 12.0
+
+# make timing cuts wider at first:
+sbs.gemFT.m3.maxstrip_tcut = 4.0 
+sbs.gemFT.m4.maxstrip_tcut = 4.0 
+sbs.gemFT.m5.maxstrip_tcut = 4.0 
+ 
+
 
 # ###################### END TIME-DEPENDENT PARAMETERS #############

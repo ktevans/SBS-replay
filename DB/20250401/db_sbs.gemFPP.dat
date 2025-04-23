@@ -2032,3 +2032,18 @@ sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run2818.dat
 sbs.gemFPP.trackchi2cut = 1000
 
 # # #################### END TIME-DEPENDENT PEDESTAL FILES #########################
+
+
+#I'm going to put some timestamped entries here to handle runs taken without zero suppression: 
+
+---------[ 2025-04-22 14:19:00 ] # runs without pedestal subtraction, starting run 3175:
+sbs.gemFPP.pedsub_online = 0
+
+---------[ 2025-04-22 19:55:00 ] # online pedestal subtraction again starting run 3183
+sbs.gemFPP.pedsub_online = 1
+
+---------[ 2025-04-22 22:30:00 ] # run 3188:
+sbs.gemFPP.pedsub_online = 0
+
+---------[ 2025-04-23 01:04:00 ] # back to online zero suppression starting with run 3192
+sbs.gemFPP.pedsub_online = 1

@@ -1311,3 +1311,17 @@ sbs.gemFT.m5.maxstrip_tcut = 4.0
 
 
 # ###################### END TIME-DEPENDENT PARAMETERS #############
+
+#I'm going to put some timestamped entries here to handle runs taken without zero suppression: 
+
+---------[ 2025-04-22 14:19:00 ] # runs without pedestal subtraction, starting run 3175:
+sbs.gemFT.pedsub_online = 0
+
+---------[ 2025-04-22 19:55:00 ] # online pedestal subtraction again starting run 3183
+sbs.gemFT.pedsub_online = 1
+
+---------[ 2025-04-22 22:30:00 ] # run 3188:
+sbs.gemFT.pedsub_online = 0
+
+---------[ 2025-04-23 01:04:00 ] # back to online zero suppression starting with run 3192
+sbs.gemFT.pedsub_online = 1 

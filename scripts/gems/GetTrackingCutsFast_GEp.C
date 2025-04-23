@@ -94,17 +94,8 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   const int MAXNCLUST = 1;
   const int MAXNTRIG = 10;
 
-  C->SetBranchStatus("*",0);
   
-  double EPS, ESH;
-//  C->SetBranchStatus("bb.etot_over_p",1);
-//  C->SetBranchStatus("bb.ps.e",1);
-//  C->SetBranchStatus("bb.sh.e",1);
-//  C->SetBranchAddress("bb.ps.e",&EPS);
-//  C->SetBranchAddress("bb.sh.e",&ESH);
-
-//  C->SetBranchStatus("bb.grinch_tdc.clus.*",1);
-
+// List of variables to cut on
   double ntracks;
   double tracknhits[MAXNTRACKS];
   double trackngoodhits[MAXNTRACKS];
@@ -122,6 +113,92 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   double trig_elemID[MAXNTRIG];
   double trig_tdc[MAXNTRIG];
 
+  // Get all these variables in a vector to easily enable their branches
+  map<TString,TString> branchnames;
+  vector<TString> varnames;
+  varnames.push_back("track.ntrack");
+  varnames.push_back("track.nhits");
+  varnames.push_back("track.besttrack");
+  varnames.push_back("track.chi2ndf");
+  varnames.push_back("hit.ngoodhits");
+  varnames.push_back("hit.trackindex");
+  varnames.push_back("hit.module");
+  varnames.push_back("hit.layer");
+  varnames.push_back("hit.nstripu");
+  varnames.push_back("hit.nstripv");
+  varnames.push_back("hit.ustripmax");
+  varnames.push_back("hit.ustriplo");
+  varnames.push_back("hit.ustriphi");
+  varnames.push_back("hit.vstripmax");
+  varnames.push_back("hit.vstriplo");
+  varnames.push_back("hit.vstriphi");
+  varnames.push_back("hit.ADCU");
+  varnames.push_back("hit.ADCV");
+  varnames.push_back("hit.Ugain");
+  varnames.push_back("hit.Vgain");
+  varnames.push_back("hit.ADCavg");
+  varnames.push_back("hit.ADCasym");
+
+
+  varnames.push_back("hit.ADCmaxsampU");
+  varnames.push_back("hit.ADCmaxsampV");
+  varnames.push_back("hit.ADCmaxstripU");
+  varnames.push_back("hit.ADCmaxstripV");
+
+  varnames.push_back("hit.ccor_clust");
+  varnames.push_back("hit.ccor_strip");
+  varnames.push_back("hit.deltat");
+
+
+  varnames.push_back("hit.Tavg_corr");
+  varnames.push_back("hit.UtimeMaxStrip");
+
+  varnames.push_back("hit.UtimeMaxStrip");
+  varnames.push_back("hit.VtimeMaxStrip");
+  varnames.push_back("hit.UtimeMaxStripDeconv");
+  varnames.push_back("hit.VtimeMaxStripDeconv");
+  varnames.push_back("hit.UtimeMaxStripFit");
+  varnames.push_back("hit.VtimeMaxStripFit");
+
+  varnames.push_back("hit.Utime");
+  varnames.push_back("hit.Vtime");
+  varnames.push_back("hit.UtimeDeconv");
+  varnames.push_back("hit.VtimeDeconv");
+  varnames.push_back("hit.UtimeFit");
+  varnames.push_back("hit.VtimeFit");
+
+
+  varnames.push_back("hit.deltat_deconv");
+  varnames.push_back("hit.deltat_fit");
+  varnames.push_back("hit.ADCU_deconv");
+  varnames.push_back("hit.ADCV_deconv");
+  varnames.push_back("hit.ADCasym_deconv");
+//  varnames.push_back("");
+//  varnames.push_back("");
+//  varnames.push_back("");
+//  varnames.push_back("");
+  
+
+
+  //Why are the branches disabled here? To make it run FASTER by only activating the ones you need!
+  cout << "disabling all branches...";
+  //the * applies it to all branches, the 0 disables those branches. to enable would need to make 1
+  C->SetBranchStatus("*",0);
+
+  cout << "done." << endl;
+
+  for( int i=0; i<varnames.size(); i++ ){
+    //What is actually going on in this for loop. It looks like branch and variable names are getting printed. But also setting branches up in the TChain
+    branchnames[varnames[i]] = branchname.Format("%s.%s",detname.Data(),varnames[i].Data());
+    // cout << "Branch " << i << " name = " << branchnames[varnames[i]] << endl;
+    C->SetBranchStatus( branchnames[varnames[i]].Data(), 1 );
+  }
+  //Populating data in the TChain branchwa
+  cout << "Setting branch addresses: "
+
+
+
+
   //Set up trigger branches:
 //  C->SetBranchStatus("Ndata.bb.tdctrig.tdc",1);
 //  C->SetBranchStatus("bb.tdctrig.tdc",1);
@@ -133,8 +210,8 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
  
 
   C->SetBranchStatus("bb.gem.track.nhits",1);
-  C->SetBranchStatus("bb.gem.track.ngoodhits",1);
-  C->SetBranchStatus("bb.gem.track.chi2ndf",1);
+//  C->SetBranchStatus("bb.gem.track.ngoodhits",1);
+//  C->SetBranchStatus("bb.gem.track.chi2ndf",1);
   C->SetBranchStatus("bb.gem.track.chi2ndf_hitquality",1);
   C->SetBranchStatus("bb.gem.track.t0",1);
   C->SetBranchStatus("sbs.tr.x",1);
@@ -206,11 +283,11 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   double nstripu[MAXNHITS], nstripv[MAXNHITS];
   double trackindex[MAXNHITS];
 
-  C->SetBranchStatus("bb.gem.hit.trackindex",1);
-  C->SetBranchStatus("bb.gem.hit.ngoodhits",1);
-  C->SetBranchStatus("bb.gem.hit.module",1);
-  C->SetBranchStatus("bb.gem.hit.nstripu",1);
-  C->SetBranchStatus("bb.gem.hit.nstripv",1);
+//  C->SetBranchStatus("bb.gem.hit.trackindex",1);
+//  C->SetBranchStatus("bb.gem.hit.ngoodhits",1);
+//  C->SetBranchStatus("bb.gem.hit.module",1);
+//  C->SetBranchStatus("bb.gem.hit.nstripu",1);
+//  C->SetBranchStatus("bb.gem.hit.nstripv",1);
 
   C->SetBranchAddress("bb.gem.hit.ngoodhits",&ngoodhits);
   C->SetBranchAddress("bb.gem.hit.trackindex",trackindex);
@@ -220,29 +297,29 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   
   double ADCmaxsampU[MAXNHITS], ADCmaxsampV[MAXNHITS], ADCmaxstripU[MAXNHITS], ADCmaxstripV[MAXNHITS], ADCU[MAXNHITS], ADCV[MAXNHITS], ADCavg[MAXNHITS], ADCasym[MAXNHITS], ADCasymDeconv[MAXNHITS],DeconvADCU[MAXNHITS], DeconvADCV[MAXNHITS];
 
-  C->SetBranchStatus("bb.gem.hit.ADCmaxsampU",1);
-  C->SetBranchStatus("bb.gem.hit.ADCmaxsampV",1);
-  C->SetBranchStatus("bb.gem.hit.ADCmaxstripU",1);
-  C->SetBranchStatus("bb.gem.hit.ADCmaxstripV",1);
-  C->SetBranchStatus("bb.gem.hit.ADCU",1);
-  C->SetBranchStatus("bb.gem.hit.ADCV",1);
-  C->SetBranchStatus("bb.gem.hit.ADCavg",1);
-  C->SetBranchStatus("bb.gem.hit.ADCasym",1);
-  C->SetBranchStatus("bb.gem.hit.ADCU_deconv",1);
-  C->SetBranchStatus("bb.gem.hit.ADCV_deconv",1);
-  C->SetBranchStatus("bb.gem.hit.ADCasym_deconv",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCmaxsampU",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCmaxsampV",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCmaxstripU",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCmaxstripV",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCU",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCV",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCavg",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCasym",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCU_deconv",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCV_deconv",1);
+//  C->SetBranchStatus("bb.gem.hit.ADCasym_deconv",1);
 
-  C->SetBranchAddress("bb.gem.hit.ADCmaxsampU",ADCmaxsampU);
-  C->SetBranchAddress("bb.gem.hit.ADCmaxsampV",ADCmaxsampV);
-  C->SetBranchAddress("bb.gem.hit.ADCmaxstripU",ADCmaxstripU);
-  C->SetBranchAddress("bb.gem.hit.ADCmaxstripV",ADCmaxstripV);
-  C->SetBranchAddress("bb.gem.hit.ADCU",ADCU);
-  C->SetBranchAddress("bb.gem.hit.ADCV",ADCV);
-  C->SetBranchAddress("bb.gem.hit.ADCavg",ADCavg);
-  C->SetBranchAddress("bb.gem.hit.ADCasym",ADCasym);
-  C->SetBranchAddress("bb.gem.hit.ADCU_deconv",DeconvADCU);
-  C->SetBranchAddress("bb.gem.hit.ADCV_deconv",DeconvADCV);
-  C->SetBranchAddress("bb.gem.hit.ADCasym_deconv",ADCasymDeconv);
+  C->SetBranchAddress( branchnames["hit.ADCmaxsampU"].Data(), ADCmaxsampU );
+  C->SetBranchAddress( branchnames["hit.ADCmaxsampV"].Data(), ADCmaxsampV);
+  C->SetBranchAddress( branchnames["hit.ADCmaxstripU"].Data(), ADCmaxstripU);
+  C->SetBranchAddress( branchnames["hit.ADCmaxstripV"].Data(), ADCmaxstripV);
+  C->SetBranchAddress( branchnames["hit.ADCU"].Data(), ADCU);
+  C->SetBranchAddress( branchnames["hit.ADCV"].Data(), ADCV);
+  C->SetBranchAddress( branchnames["hit.ADCavg"].Data(), ADCavg);
+  C->SetBranchAddress( branchnames["hit.ADCasym"].Data(), ADCasym);
+  C->SetBranchAddress( branchnames["hit.ADCU_deconv"].Data(), DeconvADCU);
+  C->SetBranchAddress( branchnames["hit.ADCV_deconv"].Data(), DeconvADCV);
+  C->SetBranchAddress( branchnames["hit.ADCasym_deconv"].Data(), ADCasymDeconv);
 
   double UtimeMaxStrip[MAXNHITS],VtimeMaxStrip[MAXNHITS];
   double UtimeMaxStripDeconv[MAXNHITS],VtimeMaxStripDeconv[MAXNHITS];
@@ -254,15 +331,15 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 
   double HitTavg_corr[MAXNHITS];
 
-  C->SetBranchStatus("bb.gem.hit.Tavg_corr",1);
+//  C->SetBranchStatus("bb.gem.hit.Tavg_corr",1);
   C->SetBranchAddress("bb.gem.hit.Tavg_corr",HitTavg_corr);
   
-  C->SetBranchStatus("bb.gem.hit.UtimeMaxStrip",1);
-  C->SetBranchStatus("bb.gem.hit.VtimeMaxStrip",1);
-  C->SetBranchStatus("bb.gem.hit.UtimeMaxStripDeconv",1);
-  C->SetBranchStatus("bb.gem.hit.VtimeMaxStripDeconv",1);
-  C->SetBranchStatus("bb.gem.hit.UtimeMaxStripFit",1);
-  C->SetBranchStatus("bb.gem.hit.VtimeMaxStripFit",1);
+//  C->SetBranchStatus("bb.gem.hit.UtimeMaxStrip",1);
+//  C->SetBranchStatus("bb.gem.hit.VtimeMaxStrip",1);
+//  C->SetBranchStatus("bb.gem.hit.UtimeMaxStripDeconv",1);
+//  C->SetBranchStatus("bb.gem.hit.VtimeMaxStripDeconv",1);
+//  C->SetBranchStatus("bb.gem.hit.UtimeMaxStripFit",1);
+//  C->SetBranchStatus("bb.gem.hit.VtimeMaxStripFit",1);
 
   C->SetBranchAddress("bb.gem.hit.UtimeMaxStrip",UtimeMaxStrip);
   C->SetBranchAddress("bb.gem.hit.VtimeMaxStrip",VtimeMaxStrip);
@@ -271,12 +348,12 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   C->SetBranchAddress("bb.gem.hit.UtimeMaxStripFit",UtimeMaxStripFit);
   C->SetBranchAddress("bb.gem.hit.VtimeMaxStripFit",VtimeMaxStripFit);
 
-  C->SetBranchStatus("bb.gem.hit.Utime",1);
-  C->SetBranchStatus("bb.gem.hit.Vtime",1);
-  C->SetBranchStatus("bb.gem.hit.UtimeDeconv",1);
-  C->SetBranchStatus("bb.gem.hit.VtimeDeconv",1);
-  C->SetBranchStatus("bb.gem.hit.UtimeFit",1);
-  C->SetBranchStatus("bb.gem.hit.VtimeFit",1);
+//  C->SetBranchStatus("bb.gem.hit.Utime",1);
+//  C->SetBranchStatus("bb.gem.hit.Vtime",1);
+//  C->SetBranchStatus("bb.gem.hit.UtimeDeconv",1);
+//  C->SetBranchStatus("bb.gem.hit.VtimeDeconv",1);
+//  C->SetBranchStatus("bb.gem.hit.UtimeFit",1);
+//  C->SetBranchStatus("bb.gem.hit.VtimeFit",1);
 
   C->SetBranchAddress("bb.gem.hit.Utime",Utime);
   C->SetBranchAddress("bb.gem.hit.Vtime",Vtime);
@@ -287,9 +364,9 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   
   double deltat[MAXNHITS], deltatFit[MAXNHITS], deltatDeconv[MAXNHITS];
 
-  C->SetBranchStatus("bb.gem.hit.deltat",1);
-  C->SetBranchStatus("bb.gem.hit.deltat_deconv",1);
-  C->SetBranchStatus("bb.gem.hit.deltat_fit",1);
+//  C->SetBranchStatus("bb.gem.hit.deltat",1);
+//  C->SetBranchStatus("bb.gem.hit.deltat_deconv",1);
+//  C->SetBranchStatus("bb.gem.hit.deltat_fit",1);
 
   C->SetBranchAddress("bb.gem.hit.deltat",deltat);
   C->SetBranchAddress("bb.gem.hit.deltat_deconv",deltatDeconv);

@@ -1019,7 +1019,7 @@ sbs.gemFT.gridedgetolerancey = 0.0025
 # chi2 cut by num hits =  4  5  6  7  8
 #sbs.gemFT.trackchi2cut = 15 20 25 30 30 
 # temporarily relax chi2 cut until we can validate alignment with cH2 analyzer installed and field on:
-sbs.gemFT.trackchi2cut = 50.0
+sbs.gemFT.trackchi2cut = 100.0
 
 # Adjust the grid bins and chi2 here during alignment. Comment them out after the alignment is complete:
 #For alignment with cosmics, we want to start with wider grid bins and a loose chi2 cut for tracking:

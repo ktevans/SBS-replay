@@ -29,7 +29,7 @@ bb.tdctrig.reftdc.calib = 0.09376
 bb.tdctrig.reftdc.offset = 0
                 
 bb.tdctrig.crate_rftime = 5
-bb.tdctrig.slot_rftime = 2
+bb.tdctrig.slot_rftime = 3
 bb.tdctrig.chan_rftime = 126
 
 bb.tdctrig.crate_trigtime = 5

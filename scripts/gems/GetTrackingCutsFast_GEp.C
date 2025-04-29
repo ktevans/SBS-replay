@@ -70,26 +70,21 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   TChain *C = new TChain("T");
   cout << "Ok, let's get started!" << endl;
   TString currentline;
-  while( infile >> currentline && !currentline.BeginsWith("endlist") ){
+
+
+  while( currentline.ReadLine(infile) && !currentline.BeginsWith("endlist") ){
     if( !currentline.BeginsWith("#") ){
-      C->Add(currentline.Data());
+      C->Add(currentline);
     }
   }
 
   TCut globalcut = "";
   
-//  while( infile >> currentline && !currentline.BeginsWith("endcut") ){
-//    if( !currentline.BeginsWith("#") ){
-//      globalcut += currentline.Data();
-//    }
-//  }
-
   while( currentline.ReadLine(infile) && !currentline.BeginsWith("endcut") ){
     if( !currentline.BeginsWith("#") ){
       globalcut += currentline.Data();
     }
   }
-
 
   //Set parameters for detector type
 //  int nmodules=14;
@@ -204,7 +199,6 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   varnames.push_back("track.nhits");
   varnames.push_back("track.besttrack");
   varnames.push_back("track.chi2ndf");
-//  varnames.push_back("");
   
 
   //Why are the branches disabled here? To make it run FASTER by only activating the ones you need!
@@ -222,7 +216,6 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
     if (varnames[i].IsNull() || varnames[i].Length() ==0) {
       cout << "error in varnames i = " << i << endl;
     }
-   // cout << "error in varnames i = " << i << endl;
   }
   //Populating data in the TChain branches
   cout << "Setting branch addresses: " << endl;
@@ -231,20 +224,10 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 
 
   //Set up trigger branches:
- // C->SetBranchStatus("Ndata.bb.tdctrig.tdc",1);
- // C->SetBranchStatus("sbs.tdctrig.tdc",1);
- // C->SetBranchStatus("sbs.tdctrig.tdcelemID",1);
- //
  // C->SetBranchAddress("Ndata.bb.tdctrig.tdc",&Ntrig);
  // C->SetBranchAddress("sbs.tdctrig.tdcelemID",trig_elemID);
  // C->SetBranchAddress("sbs.tdctrig.tdc",trig_tdc);
- 
 
-//  C->SetBranchStatus(branchnames["track.nhits",1);
-//  C->SetBranchStatus("bb.gem.track.ngoodhits",1);
-//  C->SetBranchStatus("bb.gem.track.chi2ndf",1);
-//  C->SetBranchStatus("bb.gem.track.chi2ndf_hitquality",1);
-//  C->SetBranchStatus("bb.gem.track.t0",1);
   C->SetBranchStatus("sbs.tr.x",1);
   C->SetBranchStatus("sbs.tr.y",1);
   C->SetBranchStatus("sbs.tr.th",1);
@@ -274,40 +257,39 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   C->SetBranchStatus("sbs.y_bcp",1);
   C->SetBranchStatus("sbs.z_bcp",1);
   
-  C->SetBranchAddress( branchnames["track.nhits"].Data(),&tracknhits[0]);
-  C->SetBranchAddress( branchnames["track.ngoodhits"].Data(),&trackngoodhits[0]);
-  C->SetBranchAddress( branchnames["track.chi2ndf"].Data(),&trackchi2ndf[0]);
-  C->SetBranchAddress( branchnames["track.chi2ndf_hitquality"].Data(),&trackchi2ndf_hitquality[0]);
- // C->SetBranchAddress( branchnames["track.t0"].Data(), trackt0);
-  C->SetBranchAddress( branchnames["track.t0"].Data(), &trackt0[0]);
-  C->SetBranchAddress("sbs.tr.x",&xfp[0]);
-  C->SetBranchAddress("sbs.tr.y",&yfp[0]);
-  C->SetBranchAddress("sbs.tr.th",&thfp[0]);
-  C->SetBranchAddress("sbs.tr.ph",&phfp[0]);
+  C->SetBranchAddress( branchnames["track.nhits"].Data(),tracknhits);
+  C->SetBranchAddress( branchnames["track.ngoodhits"].Data(),trackngoodhits);
+  C->SetBranchAddress( branchnames["track.chi2ndf"].Data(),trackchi2ndf);
+  C->SetBranchAddress( branchnames["track.chi2ndf_hitquality"].Data(),trackchi2ndf_hitquality);
+  C->SetBranchAddress( branchnames["track.t0"].Data(), trackt0);
+  C->SetBranchAddress("sbs.tr.x",xfp);
+  C->SetBranchAddress("sbs.tr.y",yfp);
+  C->SetBranchAddress("sbs.tr.th",thfp);
+  C->SetBranchAddress("sbs.tr.ph",phfp);
 //  C->SetBranchAddress("sbs.tr.tg_x",xtar);
-  C->SetBranchAddress("sbs.tr.tg_y",&ytar[0]);
-  C->SetBranchAddress("sbs.tr.tg_th",&thtar[0]);
-  C->SetBranchAddress("sbs.tr.tg_ph",&phtar[0]);
-  C->SetBranchAddress("sbs.tr.r_x",&rxfp[0]);
-  C->SetBranchAddress("sbs.tr.r_y",&ryfp[0]);
-  C->SetBranchAddress("sbs.tr.r_th",&rthfp[0]);
-  C->SetBranchAddress("sbs.tr.r_ph",&rphfp[0]);
-  C->SetBranchAddress("sbs.tr.d_x",&dxfp[0]);
-  C->SetBranchAddress("sbs.tr.d_y",&dyfp[0]);
-  C->SetBranchAddress("sbs.tr.d_th",&dthfp[0]);
-  C->SetBranchAddress("sbs.tr.d_ph",&dphfp[0]);
+  C->SetBranchAddress("sbs.tr.tg_y",ytar);
+  C->SetBranchAddress("sbs.tr.tg_th",thtar);
+  C->SetBranchAddress("sbs.tr.tg_ph",phtar);
+  C->SetBranchAddress("sbs.tr.r_x",rxfp);
+  C->SetBranchAddress("sbs.tr.r_y",ryfp);
+  C->SetBranchAddress("sbs.tr.r_th",rthfp);
+  C->SetBranchAddress("sbs.tr.r_ph",rphfp);
+  C->SetBranchAddress("sbs.tr.d_x",dxfp);
+  C->SetBranchAddress("sbs.tr.d_y",dyfp);
+  C->SetBranchAddress("sbs.tr.d_th",dthfp);
+  C->SetBranchAddress("sbs.tr.d_ph",dphfp);
   C->SetBranchAddress("sbs.tr.n",&ntracks); // **
-  C->SetBranchAddress("sbs.tr.p",&p[0]);
-  C->SetBranchAddress("sbs.tr.px",&px[0]);
-  C->SetBranchAddress("sbs.tr.py",&py[0]);
-  C->SetBranchAddress("sbs.tr.pz",&pz[0]);
-  C->SetBranchAddress("sbs.tr.vz",&vz[0]);
-  C->SetBranchAddress("sbs.x_fcp",&xfcp[0]);
-  C->SetBranchAddress("sbs.y_fcp",&yfcp[0]);
-  C->SetBranchAddress("sbs.z_fcp",&zfcp[0]);
-  C->SetBranchAddress("sbs.x_bcp",&xbcp[0]);
-  C->SetBranchAddress("sbs.y_bcp",&ybcp[0]);
-  C->SetBranchAddress("sbs.z_bcp",&zbcp[0]);
+  C->SetBranchAddress("sbs.tr.p",p);
+  C->SetBranchAddress("sbs.tr.px",px);
+  C->SetBranchAddress("sbs.tr.py",py);
+  C->SetBranchAddress("sbs.tr.pz",pz);
+  C->SetBranchAddress("sbs.tr.vz",vz);
+  C->SetBranchAddress("sbs.x_fcp",xfcp);
+  C->SetBranchAddress("sbs.y_fcp",yfcp);
+  C->SetBranchAddress("sbs.z_fcp",zfcp);
+  C->SetBranchAddress("sbs.x_bcp",xbcp);
+  C->SetBranchAddress("sbs.y_bcp",ybcp);
+  C->SetBranchAddress("sbs.z_bcp",zbcp);
 
   double ngoodhits;
   //Track hit variables:
@@ -315,43 +297,25 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   double nstripu[MAXNHITS], nstripv[MAXNHITS];
   double trackindex[MAXNHITS];
 
-//  C->SetBranchStatus("bb.gem.hit.trackindex",1);
-//  C->SetBranchStatus("bb.gem.hit.ngoodhits",1);
-//  C->SetBranchStatus("bb.gem.hit.module",1);
-//  C->SetBranchStatus("bb.gem.hit.nstripu",1);
-//  C->SetBranchStatus("bb.gem.hit.nstripv",1);
-
   C->SetBranchAddress( branchnames["hit.ngoodhits"].Data(), &ngoodhits); //**
-  C->SetBranchAddress( branchnames["hit.trackindex"].Data(), &trackindex[0]);
-  C->SetBranchAddress( branchnames["hit.module"].Data(), &module[0]);
-  C->SetBranchAddress( branchnames["hit.nstripu"].Data(), &nstripu[0]);
-  C->SetBranchAddress( branchnames["hit.nstripv"].Data(), &nstripv[0]);
+  C->SetBranchAddress( branchnames["hit.trackindex"].Data(), trackindex);
+  C->SetBranchAddress( branchnames["hit.module"].Data(), module);
+  C->SetBranchAddress( branchnames["hit.nstripu"].Data(), nstripu);
+  C->SetBranchAddress( branchnames["hit.nstripv"].Data(), nstripv);
   
   double ADCmaxsampU[MAXNHITS], ADCmaxsampV[MAXNHITS], ADCmaxstripU[MAXNHITS], ADCmaxstripV[MAXNHITS], ADCU[MAXNHITS], ADCV[MAXNHITS], ADCavg[MAXNHITS], ADCasym[MAXNHITS], ADCasymDeconv[MAXNHITS],DeconvADCU[MAXNHITS], DeconvADCV[MAXNHITS];
 
-//  C->SetBranchStatus("bb.gem.hit.ADCmaxsampU",1);
-//  C->SetBranchStatus("bb.gem.hit.ADCmaxsampV",1);
-//  C->SetBranchStatus("bb.gem.hit.ADCmaxstripU",1);
-//  C->SetBranchStatus("bb.gem.hit.ADCmaxstripV",1);
-//  C->SetBranchStatus("bb.gem.hit.ADCU",1);
-//  C->SetBranchStatus("bb.gem.hit.ADCV",1);
-//  C->SetBranchStatus("bb.gem.hit.ADCavg",1);
-//  C->SetBranchStatus("bb.gem.hit.ADCasym",1);
-//  C->SetBranchStatus("bb.gem.hit.ADCU_deconv",1);
-//  C->SetBranchStatus("bb.gem.hit.ADCV_deconv",1);
-//  C->SetBranchStatus("bb.gem.hit.ADCasym_deconv",1);
-
-  C->SetBranchAddress( branchnames["hit.ADCmaxsampU"].Data(), &ADCmaxsampU[0]);
-  C->SetBranchAddress( branchnames["hit.ADCmaxsampV"].Data(), &ADCmaxsampV[0]);
-  C->SetBranchAddress( branchnames["hit.ADCmaxstripU"].Data(), &ADCmaxstripU[0]);
-  C->SetBranchAddress( branchnames["hit.ADCmaxstripV"].Data(), &ADCmaxstripV[0]);
-  C->SetBranchAddress( branchnames["hit.ADCU"].Data(), &ADCU[0]);
-  C->SetBranchAddress( branchnames["hit.ADCV"].Data(), &ADCV[0]);
-  C->SetBranchAddress( branchnames["hit.ADCavg"].Data(), &ADCavg[0]);
-  C->SetBranchAddress( branchnames["hit.ADCasym"].Data(), &ADCasym[0]);
-  C->SetBranchAddress( branchnames["hit.ADCU_deconv"].Data(), &DeconvADCU[0]);
-  C->SetBranchAddress( branchnames["hit.ADCV_deconv"].Data(), &DeconvADCV[0]);
-  C->SetBranchAddress( branchnames["hit.ADCasym_deconv"].Data(), &ADCasymDeconv[0]);
+  C->SetBranchAddress( branchnames["hit.ADCmaxsampU"].Data(), ADCmaxsampU);
+  C->SetBranchAddress( branchnames["hit.ADCmaxsampV"].Data(), ADCmaxsampV);
+  C->SetBranchAddress( branchnames["hit.ADCmaxstripU"].Data(), ADCmaxstripU);
+  C->SetBranchAddress( branchnames["hit.ADCmaxstripV"].Data(), ADCmaxstripV);
+  C->SetBranchAddress( branchnames["hit.ADCU"].Data(), ADCU);
+  C->SetBranchAddress( branchnames["hit.ADCV"].Data(), ADCV);
+  C->SetBranchAddress( branchnames["hit.ADCavg"].Data(), ADCavg);
+  C->SetBranchAddress( branchnames["hit.ADCasym"].Data(), ADCasym);
+  C->SetBranchAddress( branchnames["hit.ADCU_deconv"].Data(), DeconvADCU);
+  C->SetBranchAddress( branchnames["hit.ADCV_deconv"].Data(), DeconvADCV);
+  C->SetBranchAddress( branchnames["hit.ADCasym_deconv"].Data(), ADCasymDeconv);
 
   double UtimeMaxStrip[MAXNHITS],VtimeMaxStrip[MAXNHITS];
   double UtimeMaxStripDeconv[MAXNHITS],VtimeMaxStripDeconv[MAXNHITS];
@@ -363,46 +327,26 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 
   double HitTavg_corr[MAXNHITS];
 
-//  C->SetBranchStatus("bb.gem.hit.Tavg_corr",1);
   C->SetBranchAddress( branchnames["hit.Tavg_corr"].Data(), &HitTavg_corr[0]);
-  
-//  C->SetBranchStatus("bb.gem.hit.UtimeMaxStrip",1);
-//  C->SetBranchStatus("bb.gem.hit.VtimeMaxStrip",1);
-//  C->SetBranchStatus("bb.gem.hit.UtimeMaxStripDeconv",1);
-//  C->SetBranchStatus("bb.gem.hit.VtimeMaxStripDeconv",1);
-//  C->SetBranchStatus("bb.gem.hit.UtimeMaxStripFit",1);
-//  C->SetBranchStatus("bb.gem.hit.VtimeMaxStripFit",1);
+  C->SetBranchAddress( branchnames["hit.UtimeMaxStrip"].Data(), UtimeMaxStrip);
+  C->SetBranchAddress( branchnames["hit.VtimeMaxStrip"].Data(), VtimeMaxStrip);
+  C->SetBranchAddress( branchnames["hit.UtimeMaxStripDeconv"].Data(), UtimeMaxStripDeconv);
+  C->SetBranchAddress( branchnames["hit.VtimeMaxStripDeconv"].Data(), VtimeMaxStripDeconv);
+  C->SetBranchAddress( branchnames["hit.UtimeMaxStripFit"].Data(), UtimeMaxStripFit);
+  C->SetBranchAddress( branchnames["hit.VtimeMaxStripFit"].Data(), VtimeMaxStripFit);
 
-  C->SetBranchAddress( branchnames["hit.UtimeMaxStrip"].Data(), &UtimeMaxStrip[0]);
-  C->SetBranchAddress( branchnames["hit.VtimeMaxStrip"].Data(), &VtimeMaxStrip[0]);
-  C->SetBranchAddress( branchnames["hit.UtimeMaxStripDeconv"].Data(), &UtimeMaxStripDeconv[0]);
-  C->SetBranchAddress( branchnames["hit.VtimeMaxStripDeconv"].Data(), &VtimeMaxStripDeconv[0]);
-  C->SetBranchAddress( branchnames["hit.UtimeMaxStripFit"].Data(), &UtimeMaxStripFit[0]);
-  C->SetBranchAddress( branchnames["hit.VtimeMaxStripFit"].Data(), &VtimeMaxStripFit[0]);
-
-//  C->SetBranchStatus("bb.gem.hit.Utime",1);
-//  C->SetBranchStatus("bb.gem.hit.Vtime",1);
-//  C->SetBranchStatus("bb.gem.hit.UtimeDeconv",1);
-//  C->SetBranchStatus("bb.gem.hit.VtimeDeconv",1);
-//  C->SetBranchStatus("bb.gem.hit.UtimeFit",1);
-//  C->SetBranchStatus("bb.gem.hit.VtimeFit",1);
-
-  C->SetBranchAddress( branchnames["hit.Utime"].Data(), &Utime[0]);
-  C->SetBranchAddress( branchnames["hit.Vtime"].Data(), &Vtime[0]);
-  C->SetBranchAddress( branchnames["hit.UtimeDeconv"].Data(), &UtimeDeconv[0]);
-  C->SetBranchAddress( branchnames["hit.VtimeDeconv"].Data(), &VtimeDeconv[0]);
-  C->SetBranchAddress( branchnames["hit.UtimeFit"].Data(), &UtimeFit[0]);
-  C->SetBranchAddress( branchnames["hit.VtimeFit"].Data(), &VtimeFit[0]);
+  C->SetBranchAddress( branchnames["hit.Utime"].Data(), Utime);
+  C->SetBranchAddress( branchnames["hit.Vtime"].Data(), Vtime);
+  C->SetBranchAddress( branchnames["hit.UtimeDeconv"].Data(), UtimeDeconv);
+  C->SetBranchAddress( branchnames["hit.VtimeDeconv"].Data(), VtimeDeconv);
+  C->SetBranchAddress( branchnames["hit.UtimeFit"].Data(), UtimeFit);
+  C->SetBranchAddress( branchnames["hit.VtimeFit"].Data(), VtimeFit);
   
   double deltat[MAXNHITS], deltatFit[MAXNHITS], deltatDeconv[MAXNHITS];
 
-//  C->SetBranchStatus("bb.gem.hit.deltat",1);
-//  C->SetBranchStatus("bb.gem.hit.deltat_deconv",1);
-//  C->SetBranchStatus("bb.gem.hit.deltat_fit",1);
-
-  C->SetBranchAddress( branchnames["hit.deltat"].Data(), &deltat[0]);
-  C->SetBranchAddress( branchnames["hit.deltat_deconv"].Data(), &deltatDeconv[0]);
-  C->SetBranchAddress( branchnames["hit.deltat_fit"].Data(), &deltatFit[0]);
+  C->SetBranchAddress( branchnames["hit.deltat"].Data(), deltat);
+  C->SetBranchAddress( branchnames["hit.deltat_deconv"].Data(), deltatDeconv);
+  C->SetBranchAddress( branchnames["hit.deltat_fit"].Data(), deltatFit);
 
   TFile *fout = new TFile(outfilename,"RECREATE");
   
@@ -480,56 +424,28 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 
   long nevent=0;
 
-  if (!C)  {
-    cout << "Error in TChain!" << endl;
-  } else {
- //   C->Print();
-  }
-
-//  C->GetListOfBranches()->Print();
   globalcut = "1";
-  TTreeFormula *GlobalCut = new TTreeFormula( "GlobalCut", globalcut, C );
-  //TTreeFormula *GlobalCut = new TTreeFormula( "GlobalCut", globalcut.GetTitle(), C );
+  TTreeFormula *GlobalCut = new TTreeFormula( "GlobalCut", globalcut.GetTitle(), C );
 
   int treenum=0, currenttreenum=0;
 
   cout << "Cut = " << globalcut << endl;
   cout << "Cut Dim = " << GlobalCut->GetNdim() << endl;
-//  if (!GlobalCut || !GlobalCut->GetNdim()) {
-  if (!GlobalCut) {
-    cerr << "OOPSIE" << endl;
-    //C->GetListOfBranches()->Print();
-  }
+  cout << "Cut ??? = " << GlobalCut << endl;
 
-  if (!C) {
-    cerr << "Bad news jack" << endl;
-  }
-
-//  TObjArray *branches = C->GetListOfBranches();
-//  for (int i = 0; i < branches->GetEntries(); ++i) {
-//    TBranch *b = (TBranch*)branches->At(i);
-//    if (b->GetStatus() > 0) {
-//      cout << "Enabled: " << b->GetName() << endl;
- //       continue;
-//    }
-//  }
-
-//    TString bname = b->GetName();
-//    if (bname.IsNull() || bname.Length() == 0) {
-//        std::cerr << "WARNING: Found a branch with empty name!" << std::endl;
-//    } else {
-//        std::cout << "Enabled branch: " << bname.Data() << std::endl;
-//    }
-//  }
-
-
+  // Here we start doing our main loops
   while( C->GetEntry( nevent++ ) && nevent){
     currenttreenum = C->GetTreeNumber();
     if( nevent == 1 || currenttreenum != treenum ){
       treenum = currenttreenum;
       cout <<"Test do I make it here?" << endl;
       //GlobalCut->UpdateFormulaLeaves();
-      if (GlobalCut) delete GlobalCut;
+//      if (GlobalCut) delete GlobalCut;
+      if (GlobalCut) {
+        delete GlobalCut;
+        GlobalCut = nullptr;
+      }
+
 
       GlobalCut = new TTreeFormula( "GlobalCut", globalcut.GetTitle(), C );
       cout << globalcut.GetTitle() << endl;
@@ -537,9 +453,15 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 
 
     }
+   
+    if (1 > 0) {
+      cout << "Yaassss queeeeen" << endl;
+      cout << "cut = " << GlobalCut->GetNdim() << endl;
+    }
+
 
     if( nevent % 100000 == 0 ) cout << nevent << endl;
-    
+    cout << "Test before bool passedcut" << endl; 
     bool passedcut = GlobalCut->EvalInstance(0) != 0;
 
      cout << "passed cut, ntracks, ngoodhits = " << passedcut << ", "
@@ -557,41 +479,36 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 	}
       }
       cout << "Let's try filling our first batch of histograms" << endl;
-//      double thcp = (xbcp[0]-xfcp[0])/(zbcp[0]-zfcp[0]);
-//      double phcp = (ybcp[0]-yfcp[0])/(zbcp[0]-zfcp[0]);
-//      if( EPS >= 0.2 ){ //tracking constraint histos always require preshower regardless what the user defined?
- 
-      cout << "xfp - xfcp = " << xfp[0] - xfcp[0] << endl;  	
-      cout << "yfp - yfcp = " << yfp[0] - yfcp[0] << endl;  	
 
+      double denz = (zbcp[0] - zfcp[0]);
+      double thcp = 0.0;
+      double phcp = 0.0;
+//      if (abs(denz) > 1e-6) {
+//        thcp = (xbcp[0]-xfcp[0])/(zbcp[0]-zfcp[0]);
+//        phcp = (ybcp[0]-yfcp[0])/(zbcp[0]-zfcp[0]);
+//      } else {
+//        cout << "divide by 0 error in thcp and phcp" << endl;
+//      }
+
+//      if( EPS >= 0.2 ){ //tracking constraint histos always require preshower regardless what the user defined?
       hdxfcp->Fill( xfp[0] - xfcp[0] );
       hdyfcp->Fill( yfp[0] - yfcp[0] );
       hdxbcp->Fill( xfp[0]+thfp[0]*(zbcp[0]-zfcp[0]) - xbcp[0] );
-//      hdybcp->Fill( yfp[0]+phfp[0]*(zbcp[0]-zfcp[0]) - ybcp[0] );
+      hdybcp->Fill( yfp[0]+phfp[0]*(zbcp[0]-zfcp[0]) - ybcp[0] );
   
       cout << "Now try 2d Histo" << endl;
 //      hdxdyfcp->Fill( yfp[0]-yfcp[0], xfp[0]-xfcp[0] );
 //      hdxdybcp->Fill( yfp[0]+phfp[0]*(zbcp[0]-zfcp[0]) - ybcp[0],
 //      		xfp[0]+thfp[0]*(zbcp[0]-zfcp[0]) - xbcp[0] );
-// 
+ 
 //      cout << "thcp + " << thcp << endl;  	
 //      cout << "phcp + " << phcp << endl;  	
-//    hdthcp->Fill( thfp[0]-thcp );
-//    hdphcp->Fill( phfp[0]-phcp );
-//
-//    if (!htrackt0)  {
-//      cout << "ERROR in htrackt0" << endl;
-//    } else {
-//      cout << "htrackt0 is valid" << endl;
-//    }
+      hdthcp->Fill( thfp[0]-thcp );
+      hdphcp->Fill( phfp[0]-phcp );
 
-      cout << "before htrack fill" << endl;
- 
       htrackt0->Fill( trackt0[0] );
-
-      cout << "htrack0 added" << endl;  	
 //      }
-/*      
+      /*
       for( int ihit=0; ihit<int(ngoodhits); ihit++ ){
 	if( int(trackindex[ihit]) == 0 && nstripu[ihit]>1&&nstripv[ihit]>1 ){
 	  htavg_corr_vs_ttrig_allhits->Fill( ttrig, HitTavg_corr[ihit] );
@@ -688,7 +605,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   double tsigma[nmodules][6];
  
   //double maxstrip_tcut_fit[nmodules][2];
-  
+  cout << "Let's look at timing cuts now" << endl; 
   //Let's start with timing cuts:
   for( int imod=0; imod<nmodules; imod++ ){
 

@@ -131,7 +131,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   double rxfp[MAXNTRACKS], ryfp[MAXNTRACKS], rthfp[MAXNTRACKS], rphfp[MAXNTRACKS];
   double dxfp[MAXNTRACKS], dyfp[MAXNTRACKS], dthfp[MAXNTRACKS], dphfp[MAXNTRACKS];
   double p[MAXNTRACKS],px[MAXNTRACKS],py[MAXNTRACKS],pz[MAXNTRACKS],vz[MAXNTRACKS]; 
-  double xfcp[MAXNCLUST],yfcp[MAXNCLUST],zfcp[MAXNCLUST],xbcp[MAXNCLUST],ybcp[MAXNCLUST],zbcp[MAXNCLUST];
+  double xfcp[MAXNTRACKS],yfcp[MAXNTRACKS],zfcp[MAXNTRACKS],xbcp[MAXNTRACKS],ybcp[MAXNTRACKS],zbcp[MAXNTRACKS];
 
   int Ntrig;
   double trig_elemID[MAXNTRIG];
@@ -159,33 +159,33 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   varnames.push_back("hit.Vgain");
   varnames.push_back("hit.ADCavg");
   varnames.push_back("hit.ADCasym");
-
+ 
   varnames.push_back("hit.ADCmaxsampU");
   varnames.push_back("hit.ADCmaxsampV");
   varnames.push_back("hit.ADCmaxstripU");
   varnames.push_back("hit.ADCmaxstripV");
-
+ 
   varnames.push_back("hit.ccor_clust");
   varnames.push_back("hit.ccor_strip");
   varnames.push_back("hit.deltat");
-
+ 
   varnames.push_back("hit.Tavg_corr");
   varnames.push_back("hit.UtimeMaxStrip");
-
+ 
   varnames.push_back("hit.UtimeMaxStrip");
   varnames.push_back("hit.VtimeMaxStrip");
   varnames.push_back("hit.UtimeMaxStripDeconv");
   varnames.push_back("hit.VtimeMaxStripDeconv");
   varnames.push_back("hit.UtimeMaxStripFit");
   varnames.push_back("hit.VtimeMaxStripFit");
-
+ 
   varnames.push_back("hit.Utime");
   varnames.push_back("hit.Vtime");
   varnames.push_back("hit.UtimeDeconv");
   varnames.push_back("hit.VtimeDeconv");
   varnames.push_back("hit.UtimeFit");
   varnames.push_back("hit.VtimeFit");
-
+ 
   varnames.push_back("hit.deltat_deconv");
   varnames.push_back("hit.deltat_fit");
   varnames.push_back("hit.ADCU_deconv");
@@ -220,9 +220,6 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   //Populating data in the TChain branches
   cout << "Setting branch addresses: " << endl;
 
-
-
-
   //Set up trigger branches:
  // C->SetBranchAddress("Ndata.bb.tdctrig.tdc",&Ntrig);
  // C->SetBranchAddress("sbs.tdctrig.tdcelemID",trig_elemID);
@@ -232,7 +229,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   C->SetBranchStatus("sbs.tr.y",1);
   C->SetBranchStatus("sbs.tr.th",1);
   C->SetBranchStatus("sbs.tr.ph",1);
-//  C->SetBranchStatus("sbs.tr.tg_x",1);
+///  C->SetBranchStatus("sbs.tr.tg_x",1);
   C->SetBranchStatus("sbs.tr.tg_y",1);
   C->SetBranchStatus("sbs.tr.tg_th",1);
   C->SetBranchStatus("sbs.tr.tg_ph",1);
@@ -266,7 +263,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   C->SetBranchAddress("sbs.tr.y",yfp);
   C->SetBranchAddress("sbs.tr.th",thfp);
   C->SetBranchAddress("sbs.tr.ph",phfp);
-//  C->SetBranchAddress("sbs.tr.tg_x",xtar);
+///  C->SetBranchAddress("sbs.tr.tg_x",xtar);
   C->SetBranchAddress("sbs.tr.tg_y",ytar);
   C->SetBranchAddress("sbs.tr.tg_th",thtar);
   C->SetBranchAddress("sbs.tr.tg_ph",phtar);
@@ -304,7 +301,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   C->SetBranchAddress( branchnames["hit.nstripv"].Data(), nstripv);
   
   double ADCmaxsampU[MAXNHITS], ADCmaxsampV[MAXNHITS], ADCmaxstripU[MAXNHITS], ADCmaxstripV[MAXNHITS], ADCU[MAXNHITS], ADCV[MAXNHITS], ADCavg[MAXNHITS], ADCasym[MAXNHITS], ADCasymDeconv[MAXNHITS],DeconvADCU[MAXNHITS], DeconvADCV[MAXNHITS];
-
+ 
   C->SetBranchAddress( branchnames["hit.ADCmaxsampU"].Data(), ADCmaxsampU);
   C->SetBranchAddress( branchnames["hit.ADCmaxsampV"].Data(), ADCmaxsampV);
   C->SetBranchAddress( branchnames["hit.ADCmaxstripU"].Data(), ADCmaxstripU);
@@ -316,17 +313,17 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   C->SetBranchAddress( branchnames["hit.ADCU_deconv"].Data(), DeconvADCU);
   C->SetBranchAddress( branchnames["hit.ADCV_deconv"].Data(), DeconvADCV);
   C->SetBranchAddress( branchnames["hit.ADCasym_deconv"].Data(), ADCasymDeconv);
-
+ 
   double UtimeMaxStrip[MAXNHITS],VtimeMaxStrip[MAXNHITS];
   double UtimeMaxStripDeconv[MAXNHITS],VtimeMaxStripDeconv[MAXNHITS];
   double UtimeMaxStripFit[MAXNHITS],VtimeMaxStripFit[MAXNHITS];
-
+ 
   double Utime[MAXNHITS],Vtime[MAXNHITS];
   double UtimeDeconv[MAXNHITS],VtimeDeconv[MAXNHITS];
   double UtimeFit[MAXNHITS],VtimeFit[MAXNHITS];
-
+ 
   double HitTavg_corr[MAXNHITS];
-
+ 
   C->SetBranchAddress( branchnames["hit.Tavg_corr"].Data(), &HitTavg_corr[0]);
   C->SetBranchAddress( branchnames["hit.UtimeMaxStrip"].Data(), UtimeMaxStrip);
   C->SetBranchAddress( branchnames["hit.VtimeMaxStrip"].Data(), VtimeMaxStrip);
@@ -334,7 +331,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   C->SetBranchAddress( branchnames["hit.VtimeMaxStripDeconv"].Data(), VtimeMaxStripDeconv);
   C->SetBranchAddress( branchnames["hit.UtimeMaxStripFit"].Data(), UtimeMaxStripFit);
   C->SetBranchAddress( branchnames["hit.VtimeMaxStripFit"].Data(), VtimeMaxStripFit);
-
+ 
   C->SetBranchAddress( branchnames["hit.Utime"].Data(), Utime);
   C->SetBranchAddress( branchnames["hit.Vtime"].Data(), Vtime);
   C->SetBranchAddress( branchnames["hit.UtimeDeconv"].Data(), UtimeDeconv);
@@ -343,7 +340,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   C->SetBranchAddress( branchnames["hit.VtimeFit"].Data(), VtimeFit);
   
   double deltat[MAXNHITS], deltatFit[MAXNHITS], deltatDeconv[MAXNHITS];
-
+ 
   C->SetBranchAddress( branchnames["hit.deltat"].Data(), deltat);
   C->SetBranchAddress( branchnames["hit.deltat_deconv"].Data(), deltatDeconv);
   C->SetBranchAddress( branchnames["hit.deltat_fit"].Data(), deltatFit);
@@ -424,7 +421,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 
   long nevent=0;
 
-  globalcut = "1";
+//  globalcut = "1";
   TTreeFormula *GlobalCut = new TTreeFormula( "GlobalCut", globalcut.GetTitle(), C );
 
   int treenum=0, currenttreenum=0;
@@ -438,34 +435,20 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
     currenttreenum = C->GetTreeNumber();
     if( nevent == 1 || currenttreenum != treenum ){
       treenum = currenttreenum;
-      cout <<"Test do I make it here?" << endl;
-      //GlobalCut->UpdateFormulaLeaves();
-//      if (GlobalCut) delete GlobalCut;
+
       if (GlobalCut) {
         delete GlobalCut;
         GlobalCut = nullptr;
       }
-
-
       GlobalCut = new TTreeFormula( "GlobalCut", globalcut.GetTitle(), C );
-      cout << globalcut.GetTitle() << endl;
       GlobalCut->UpdateFormulaLeaves();
-
-
     }
    
-    if (1 > 0) {
-      cout << "Yaassss queeeeen" << endl;
-      cout << "cut = " << GlobalCut->GetNdim() << endl;
-    }
-
-
     if( nevent % 100000 == 0 ) cout << nevent << endl;
-    cout << "Test before bool passedcut" << endl; 
     bool passedcut = GlobalCut->EvalInstance(0) != 0;
 
-     cout << "passed cut, ntracks, ngoodhits = " << passedcut << ", "
-     	 << ntracks << ", " << ngoodhits << endl;
+//     cout << "passed cut, ntracks, ngoodhits = " << passedcut << ", "
+//     	 << ntracks << ", " << ngoodhits << endl;
 
 
     
@@ -478,37 +461,26 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 	  ttrig = trig_tdc[itrig];
 	}
       }
-      cout << "Let's try filling our first batch of histograms" << endl;
+//      cout << "Let's try filling our first batch of histograms" << endl;
 
-      double denz = (zbcp[0] - zfcp[0]);
-      double thcp = 0.0;
-      double phcp = 0.0;
-//      if (abs(denz) > 1e-6) {
-//        thcp = (xbcp[0]-xfcp[0])/(zbcp[0]-zfcp[0]);
-//        phcp = (ybcp[0]-yfcp[0])/(zbcp[0]-zfcp[0]);
-//      } else {
-//        cout << "divide by 0 error in thcp and phcp" << endl;
-//      }
-
+      double thcp = (xbcp[0]-xfcp[0])/(zbcp[0]-zfcp[0]);
+      double phcp = (ybcp[0]-yfcp[0])/(zbcp[0]-zfcp[0]);
 //      if( EPS >= 0.2 ){ //tracking constraint histos always require preshower regardless what the user defined?
       hdxfcp->Fill( xfp[0] - xfcp[0] );
       hdyfcp->Fill( yfp[0] - yfcp[0] );
       hdxbcp->Fill( xfp[0]+thfp[0]*(zbcp[0]-zfcp[0]) - xbcp[0] );
       hdybcp->Fill( yfp[0]+phfp[0]*(zbcp[0]-zfcp[0]) - ybcp[0] );
   
-      cout << "Now try 2d Histo" << endl;
-//      hdxdyfcp->Fill( yfp[0]-yfcp[0], xfp[0]-xfcp[0] );
-//      hdxdybcp->Fill( yfp[0]+phfp[0]*(zbcp[0]-zfcp[0]) - ybcp[0],
-//      		xfp[0]+thfp[0]*(zbcp[0]-zfcp[0]) - xbcp[0] );
+      hdxdyfcp->Fill( yfp[0]-yfcp[0], xfp[0]-xfcp[0] );
+      hdxdybcp->Fill( yfp[0]+phfp[0]*(zbcp[0]-zfcp[0]) - ybcp[0],
+      		xfp[0]+thfp[0]*(zbcp[0]-zfcp[0]) - xbcp[0] );
  
-//      cout << "thcp + " << thcp << endl;  	
-//      cout << "phcp + " << phcp << endl;  	
       hdthcp->Fill( thfp[0]-thcp );
       hdphcp->Fill( phfp[0]-phcp );
 
       htrackt0->Fill( trackt0[0] );
 //      }
-      /*
+      
       for( int ihit=0; ihit<int(ngoodhits); ihit++ ){
 	if( int(trackindex[ihit]) == 0 && nstripu[ihit]>1&&nstripv[ihit]>1 ){
 	  htavg_corr_vs_ttrig_allhits->Fill( ttrig, HitTavg_corr[ihit] );
@@ -520,7 +492,6 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 
 	  hADCclust_vs_module->Fill( module[ihit], ADCavg[ihit] );
 
-          cout << "Anything good here?" << endl;
 	  //For timing cuts we require hits to pass higher ADC thresholds:
 	  if( ADCavg[ihit] >= 1500.0 ){
 	    hADCasym_mod->Fill( module[ihit], ADCasym[ihit] );
@@ -558,7 +529,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 	    hdt_corr_mod->Fill( module[ihit], HitTavg_corr[ihit]-trackt0[0] );
 	  }
 	}
-      }*/
+      }
     }
   }
   cout << "done debugging the first major while loop" << endl;
@@ -624,7 +595,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
       threshsamp.push_back(hADCtemp->GetBinLowEdge(binlow));
       
       TString dbline;
-      dbfile << dbline.Format("bb.gem.m%d.threshold_sample = %12.5g", imod, threshsamp[0] ) << endl;
+      dbfile << dbline.Format("%s.m%d.threshold_sample = %12.5g", detname.Data(), imod, threshsamp[0] ) << endl;
 
       ///// Add this histogram to the pdf output
       TH1D *htemp = hADCtemp;

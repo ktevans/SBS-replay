@@ -63,12 +63,12 @@ void FitGaus_FWHM( TH1D *htest, double thresh=0.5 ){
   htest->Fit("gaus","q0S","",xlow, xhigh);
 }
 
-void GetTrackingCutsFast( const char *configfilename, const char *outfilename="GENtrackingcuts_GEp.root", int nmodules=8, double thresh=0.003, double nsig_tstrip=4.5, double nsig_dt=5.0 ){
+void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilename="TrackingCuts_GEp.root", int nmodules=14, double thresh=0.003, double nsig_tstrip=4.5, double nsig_dt=5.0 ){
 
   ifstream infile(configfilename);
   
   TChain *C = new TChain("T");
-
+  cout << "Ok, let's get started!" << endl;
   TString currentline;
   while( infile >> currentline && !currentline.BeginsWith("endlist") ){
     if( !currentline.BeginsWith("#") ){
@@ -78,12 +78,42 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 
   TCut globalcut = "";
   
-  while( infile >> currentline && !currentline.BeginsWith("endcut") ){
+//  while( infile >> currentline && !currentline.BeginsWith("endcut") ){
+//    if( !currentline.BeginsWith("#") ){
+//      globalcut += currentline.Data();
+//    }
+//  }
+
+  while( currentline.ReadLine(infile) && !currentline.BeginsWith("endcut") ){
     if( !currentline.BeginsWith("#") ){
       globalcut += currentline.Data();
     }
   }
 
+
+  //Set parameters for detector type
+//  int nmodules=14;
+  TString detname = "sbs.gemFT";
+
+  //Parses onfigfile and update detector type
+  while( currentline.ReadLine(infile) && !currentline.BeginsWith("endconfig") ){
+    if( currentline.BeginsWith("detname") ){
+      TObjArray *tokens = currentline.Tokenize(" ");
+      if( tokens->GetEntries() >= 2 ){
+        detname = ( (TObjString*) (*tokens)[1] )->GetString();
+      }
+    }
+    if( currentline.BeginsWith("nmodules") ){
+      TObjArray *tokens = currentline.Tokenize(" ");
+      if( tokens->GetEntries() >= 2 ){
+        nmodules = ( (TObjString*) (*tokens)[1] )->GetString().Atoi();
+       // nstripx_mod.resize(nmodules);
+       // nstripy_mod.resize(nmodules);
+      }
+    }
+  }
+
+  cout << "number of modules = " << nmodules << endl;
   //Initialize branches:
   
   //what branches do we need? Tracking stuff:
@@ -93,7 +123,6 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   const int MAXNHITS = 1000;
   const int MAXNCLUST = 1;
   const int MAXNTRIG = 10;
-
   
 // List of variables to cut on
   double ntracks;
@@ -114,12 +143,9 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   double trig_tdc[MAXNTRIG];
 
   // Get all these variables in a vector to easily enable their branches
+  TString branchname;
   map<TString,TString> branchnames;
   vector<TString> varnames;
-  varnames.push_back("track.ntrack");
-  varnames.push_back("track.nhits");
-  varnames.push_back("track.besttrack");
-  varnames.push_back("track.chi2ndf");
   varnames.push_back("hit.ngoodhits");
   varnames.push_back("hit.trackindex");
   varnames.push_back("hit.module");
@@ -139,7 +165,6 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   varnames.push_back("hit.ADCavg");
   varnames.push_back("hit.ADCasym");
 
-
   varnames.push_back("hit.ADCmaxsampU");
   varnames.push_back("hit.ADCmaxsampV");
   varnames.push_back("hit.ADCmaxstripU");
@@ -148,7 +173,6 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   varnames.push_back("hit.ccor_clust");
   varnames.push_back("hit.ccor_strip");
   varnames.push_back("hit.deltat");
-
 
   varnames.push_back("hit.Tavg_corr");
   varnames.push_back("hit.UtimeMaxStrip");
@@ -167,18 +191,21 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   varnames.push_back("hit.UtimeFit");
   varnames.push_back("hit.VtimeFit");
 
-
   varnames.push_back("hit.deltat_deconv");
   varnames.push_back("hit.deltat_fit");
   varnames.push_back("hit.ADCU_deconv");
   varnames.push_back("hit.ADCV_deconv");
   varnames.push_back("hit.ADCasym_deconv");
-//  varnames.push_back("");
-//  varnames.push_back("");
-//  varnames.push_back("");
+  
+  varnames.push_back("track.chi2ndf_hitquality");
+  varnames.push_back("track.t0");
+  varnames.push_back("track.ngoodhits");
+  varnames.push_back("track.ntrack");
+  varnames.push_back("track.nhits");
+  varnames.push_back("track.besttrack");
+  varnames.push_back("track.chi2ndf");
 //  varnames.push_back("");
   
-
 
   //Why are the branches disabled here? To make it run FASTER by only activating the ones you need!
   cout << "disabling all branches...";
@@ -190,35 +217,39 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   for( int i=0; i<varnames.size(); i++ ){
     //What is actually going on in this for loop. It looks like branch and variable names are getting printed. But also setting branches up in the TChain
     branchnames[varnames[i]] = branchname.Format("%s.%s",detname.Data(),varnames[i].Data());
-    // cout << "Branch " << i << " name = " << branchnames[varnames[i]] << endl;
+//    cout << "Branch " << i << " name = " << branchnames[varnames[i]] << endl;
     C->SetBranchStatus( branchnames[varnames[i]].Data(), 1 );
+    if (varnames[i].IsNull() || varnames[i].Length() ==0) {
+      cout << "error in varnames i = " << i << endl;
+    }
+   // cout << "error in varnames i = " << i << endl;
   }
-  //Populating data in the TChain branchwa
-  cout << "Setting branch addresses: "
+  //Populating data in the TChain branches
+  cout << "Setting branch addresses: " << endl;
 
 
 
 
   //Set up trigger branches:
-//  C->SetBranchStatus("Ndata.bb.tdctrig.tdc",1);
-//  C->SetBranchStatus("bb.tdctrig.tdc",1);
-//  C->SetBranchStatus("bb.tdctrig.tdcelemID",1);
-
-//  C->SetBranchAddress("Ndata.bb.tdctrig.tdc",&Ntrig);
-//  C->SetBranchAddress("bb.tdctrig.tdcelemID",trig_elemID);
-//  C->SetBranchAddress("bb.tdctrig.tdc",trig_tdc);
+ // C->SetBranchStatus("Ndata.bb.tdctrig.tdc",1);
+ // C->SetBranchStatus("sbs.tdctrig.tdc",1);
+ // C->SetBranchStatus("sbs.tdctrig.tdcelemID",1);
+ //
+ // C->SetBranchAddress("Ndata.bb.tdctrig.tdc",&Ntrig);
+ // C->SetBranchAddress("sbs.tdctrig.tdcelemID",trig_elemID);
+ // C->SetBranchAddress("sbs.tdctrig.tdc",trig_tdc);
  
 
-  C->SetBranchStatus("bb.gem.track.nhits",1);
+//  C->SetBranchStatus(branchnames["track.nhits",1);
 //  C->SetBranchStatus("bb.gem.track.ngoodhits",1);
 //  C->SetBranchStatus("bb.gem.track.chi2ndf",1);
-  C->SetBranchStatus("bb.gem.track.chi2ndf_hitquality",1);
-  C->SetBranchStatus("bb.gem.track.t0",1);
+//  C->SetBranchStatus("bb.gem.track.chi2ndf_hitquality",1);
+//  C->SetBranchStatus("bb.gem.track.t0",1);
   C->SetBranchStatus("sbs.tr.x",1);
   C->SetBranchStatus("sbs.tr.y",1);
   C->SetBranchStatus("sbs.tr.th",1);
   C->SetBranchStatus("sbs.tr.ph",1);
-  C->SetBranchStatus("sbs.tr.tg_x",1);
+//  C->SetBranchStatus("sbs.tr.tg_x",1);
   C->SetBranchStatus("sbs.tr.tg_y",1);
   C->SetBranchStatus("sbs.tr.tg_th",1);
   C->SetBranchStatus("sbs.tr.tg_ph",1);
@@ -243,39 +274,40 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   C->SetBranchStatus("sbs.y_bcp",1);
   C->SetBranchStatus("sbs.z_bcp",1);
   
-  C->SetBranchAddress("bb.gem.track.nhits",tracknhits);
-  C->SetBranchAddress("bb.gem.track.ngoodhits",trackngoodhits);
-  C->SetBranchAddress("bb.gem.track.chi2ndf",trackchi2ndf);
-  C->SetBranchAddress("bb.gem.track.chi2ndf_hitquality",trackchi2ndf_hitquality);
-  C->SetBranchAddress("bb.gem.track.t0",trackt0);
-  C->SetBranchAddress("bb.tr.x",xfp);
-  C->SetBranchAddress("bb.tr.y",yfp);
-  C->SetBranchAddress("bb.tr.th",thfp);
-  C->SetBranchAddress("bb.tr.ph",phfp);
-  C->SetBranchAddress("bb.tr.tg_x",xtar);
-  C->SetBranchAddress("bb.tr.tg_y",ytar);
-  C->SetBranchAddress("bb.tr.tg_th",thtar);
-  C->SetBranchAddress("bb.tr.tg_ph",phtar);
-  C->SetBranchAddress("bb.tr.r_x",rxfp);
-  C->SetBranchAddress("bb.tr.r_y",ryfp);
-  C->SetBranchAddress("bb.tr.r_th",rthfp);
-  C->SetBranchAddress("bb.tr.r_ph",rphfp);
-  C->SetBranchAddress("bb.tr.d_x",dxfp);
-  C->SetBranchAddress("bb.tr.d_y",dyfp);
-  C->SetBranchAddress("bb.tr.d_th",dthfp);
-  C->SetBranchAddress("bb.tr.d_ph",dphfp);
-  C->SetBranchAddress("bb.tr.n",&ntracks);
-  C->SetBranchAddress("bb.tr.p",p);
-  C->SetBranchAddress("bb.tr.px",px);
-  C->SetBranchAddress("bb.tr.py",py);
-  C->SetBranchAddress("bb.tr.pz",pz);
-  C->SetBranchAddress("bb.tr.vz",vz);
-  C->SetBranchAddress("bb.x_fcp",xfcp);
-  C->SetBranchAddress("bb.y_fcp",yfcp);
-  C->SetBranchAddress("bb.z_fcp",zfcp);
-  C->SetBranchAddress("bb.x_bcp",xbcp);
-  C->SetBranchAddress("bb.y_bcp",ybcp);
-  C->SetBranchAddress("bb.z_bcp",zbcp);
+  C->SetBranchAddress( branchnames["track.nhits"].Data(),&tracknhits[0]);
+  C->SetBranchAddress( branchnames["track.ngoodhits"].Data(),&trackngoodhits[0]);
+  C->SetBranchAddress( branchnames["track.chi2ndf"].Data(),&trackchi2ndf[0]);
+  C->SetBranchAddress( branchnames["track.chi2ndf_hitquality"].Data(),&trackchi2ndf_hitquality[0]);
+ // C->SetBranchAddress( branchnames["track.t0"].Data(), trackt0);
+  C->SetBranchAddress( branchnames["track.t0"].Data(), &trackt0[0]);
+  C->SetBranchAddress("sbs.tr.x",&xfp[0]);
+  C->SetBranchAddress("sbs.tr.y",&yfp[0]);
+  C->SetBranchAddress("sbs.tr.th",&thfp[0]);
+  C->SetBranchAddress("sbs.tr.ph",&phfp[0]);
+//  C->SetBranchAddress("sbs.tr.tg_x",xtar);
+  C->SetBranchAddress("sbs.tr.tg_y",&ytar[0]);
+  C->SetBranchAddress("sbs.tr.tg_th",&thtar[0]);
+  C->SetBranchAddress("sbs.tr.tg_ph",&phtar[0]);
+  C->SetBranchAddress("sbs.tr.r_x",&rxfp[0]);
+  C->SetBranchAddress("sbs.tr.r_y",&ryfp[0]);
+  C->SetBranchAddress("sbs.tr.r_th",&rthfp[0]);
+  C->SetBranchAddress("sbs.tr.r_ph",&rphfp[0]);
+  C->SetBranchAddress("sbs.tr.d_x",&dxfp[0]);
+  C->SetBranchAddress("sbs.tr.d_y",&dyfp[0]);
+  C->SetBranchAddress("sbs.tr.d_th",&dthfp[0]);
+  C->SetBranchAddress("sbs.tr.d_ph",&dphfp[0]);
+  C->SetBranchAddress("sbs.tr.n",&ntracks); // **
+  C->SetBranchAddress("sbs.tr.p",&p[0]);
+  C->SetBranchAddress("sbs.tr.px",&px[0]);
+  C->SetBranchAddress("sbs.tr.py",&py[0]);
+  C->SetBranchAddress("sbs.tr.pz",&pz[0]);
+  C->SetBranchAddress("sbs.tr.vz",&vz[0]);
+  C->SetBranchAddress("sbs.x_fcp",&xfcp[0]);
+  C->SetBranchAddress("sbs.y_fcp",&yfcp[0]);
+  C->SetBranchAddress("sbs.z_fcp",&zfcp[0]);
+  C->SetBranchAddress("sbs.x_bcp",&xbcp[0]);
+  C->SetBranchAddress("sbs.y_bcp",&ybcp[0]);
+  C->SetBranchAddress("sbs.z_bcp",&zbcp[0]);
 
   double ngoodhits;
   //Track hit variables:
@@ -289,11 +321,11 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 //  C->SetBranchStatus("bb.gem.hit.nstripu",1);
 //  C->SetBranchStatus("bb.gem.hit.nstripv",1);
 
-  C->SetBranchAddress("bb.gem.hit.ngoodhits",&ngoodhits);
-  C->SetBranchAddress("bb.gem.hit.trackindex",trackindex);
-  C->SetBranchAddress("bb.gem.hit.module",module);
-  C->SetBranchAddress("bb.gem.hit.nstripu",nstripu);
-  C->SetBranchAddress("bb.gem.hit.nstripv",nstripv);
+  C->SetBranchAddress( branchnames["hit.ngoodhits"].Data(), &ngoodhits); //**
+  C->SetBranchAddress( branchnames["hit.trackindex"].Data(), &trackindex[0]);
+  C->SetBranchAddress( branchnames["hit.module"].Data(), &module[0]);
+  C->SetBranchAddress( branchnames["hit.nstripu"].Data(), &nstripu[0]);
+  C->SetBranchAddress( branchnames["hit.nstripv"].Data(), &nstripv[0]);
   
   double ADCmaxsampU[MAXNHITS], ADCmaxsampV[MAXNHITS], ADCmaxstripU[MAXNHITS], ADCmaxstripV[MAXNHITS], ADCU[MAXNHITS], ADCV[MAXNHITS], ADCavg[MAXNHITS], ADCasym[MAXNHITS], ADCasymDeconv[MAXNHITS],DeconvADCU[MAXNHITS], DeconvADCV[MAXNHITS];
 
@@ -309,17 +341,17 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 //  C->SetBranchStatus("bb.gem.hit.ADCV_deconv",1);
 //  C->SetBranchStatus("bb.gem.hit.ADCasym_deconv",1);
 
-  C->SetBranchAddress( branchnames["hit.ADCmaxsampU"].Data(), ADCmaxsampU );
-  C->SetBranchAddress( branchnames["hit.ADCmaxsampV"].Data(), ADCmaxsampV);
-  C->SetBranchAddress( branchnames["hit.ADCmaxstripU"].Data(), ADCmaxstripU);
-  C->SetBranchAddress( branchnames["hit.ADCmaxstripV"].Data(), ADCmaxstripV);
-  C->SetBranchAddress( branchnames["hit.ADCU"].Data(), ADCU);
-  C->SetBranchAddress( branchnames["hit.ADCV"].Data(), ADCV);
-  C->SetBranchAddress( branchnames["hit.ADCavg"].Data(), ADCavg);
-  C->SetBranchAddress( branchnames["hit.ADCasym"].Data(), ADCasym);
-  C->SetBranchAddress( branchnames["hit.ADCU_deconv"].Data(), DeconvADCU);
-  C->SetBranchAddress( branchnames["hit.ADCV_deconv"].Data(), DeconvADCV);
-  C->SetBranchAddress( branchnames["hit.ADCasym_deconv"].Data(), ADCasymDeconv);
+  C->SetBranchAddress( branchnames["hit.ADCmaxsampU"].Data(), &ADCmaxsampU[0]);
+  C->SetBranchAddress( branchnames["hit.ADCmaxsampV"].Data(), &ADCmaxsampV[0]);
+  C->SetBranchAddress( branchnames["hit.ADCmaxstripU"].Data(), &ADCmaxstripU[0]);
+  C->SetBranchAddress( branchnames["hit.ADCmaxstripV"].Data(), &ADCmaxstripV[0]);
+  C->SetBranchAddress( branchnames["hit.ADCU"].Data(), &ADCU[0]);
+  C->SetBranchAddress( branchnames["hit.ADCV"].Data(), &ADCV[0]);
+  C->SetBranchAddress( branchnames["hit.ADCavg"].Data(), &ADCavg[0]);
+  C->SetBranchAddress( branchnames["hit.ADCasym"].Data(), &ADCasym[0]);
+  C->SetBranchAddress( branchnames["hit.ADCU_deconv"].Data(), &DeconvADCU[0]);
+  C->SetBranchAddress( branchnames["hit.ADCV_deconv"].Data(), &DeconvADCV[0]);
+  C->SetBranchAddress( branchnames["hit.ADCasym_deconv"].Data(), &ADCasymDeconv[0]);
 
   double UtimeMaxStrip[MAXNHITS],VtimeMaxStrip[MAXNHITS];
   double UtimeMaxStripDeconv[MAXNHITS],VtimeMaxStripDeconv[MAXNHITS];
@@ -332,7 +364,7 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   double HitTavg_corr[MAXNHITS];
 
 //  C->SetBranchStatus("bb.gem.hit.Tavg_corr",1);
-  C->SetBranchAddress("bb.gem.hit.Tavg_corr",HitTavg_corr);
+  C->SetBranchAddress( branchnames["hit.Tavg_corr"].Data(), &HitTavg_corr[0]);
   
 //  C->SetBranchStatus("bb.gem.hit.UtimeMaxStrip",1);
 //  C->SetBranchStatus("bb.gem.hit.VtimeMaxStrip",1);
@@ -341,12 +373,12 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 //  C->SetBranchStatus("bb.gem.hit.UtimeMaxStripFit",1);
 //  C->SetBranchStatus("bb.gem.hit.VtimeMaxStripFit",1);
 
-  C->SetBranchAddress("bb.gem.hit.UtimeMaxStrip",UtimeMaxStrip);
-  C->SetBranchAddress("bb.gem.hit.VtimeMaxStrip",VtimeMaxStrip);
-  C->SetBranchAddress("bb.gem.hit.UtimeMaxStripDeconv",UtimeMaxStripDeconv);
-  C->SetBranchAddress("bb.gem.hit.VtimeMaxStripDeconv",VtimeMaxStripDeconv);
-  C->SetBranchAddress("bb.gem.hit.UtimeMaxStripFit",UtimeMaxStripFit);
-  C->SetBranchAddress("bb.gem.hit.VtimeMaxStripFit",VtimeMaxStripFit);
+  C->SetBranchAddress( branchnames["hit.UtimeMaxStrip"].Data(), &UtimeMaxStrip[0]);
+  C->SetBranchAddress( branchnames["hit.VtimeMaxStrip"].Data(), &VtimeMaxStrip[0]);
+  C->SetBranchAddress( branchnames["hit.UtimeMaxStripDeconv"].Data(), &UtimeMaxStripDeconv[0]);
+  C->SetBranchAddress( branchnames["hit.VtimeMaxStripDeconv"].Data(), &VtimeMaxStripDeconv[0]);
+  C->SetBranchAddress( branchnames["hit.UtimeMaxStripFit"].Data(), &UtimeMaxStripFit[0]);
+  C->SetBranchAddress( branchnames["hit.VtimeMaxStripFit"].Data(), &VtimeMaxStripFit[0]);
 
 //  C->SetBranchStatus("bb.gem.hit.Utime",1);
 //  C->SetBranchStatus("bb.gem.hit.Vtime",1);
@@ -355,12 +387,12 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 //  C->SetBranchStatus("bb.gem.hit.UtimeFit",1);
 //  C->SetBranchStatus("bb.gem.hit.VtimeFit",1);
 
-  C->SetBranchAddress("bb.gem.hit.Utime",Utime);
-  C->SetBranchAddress("bb.gem.hit.Vtime",Vtime);
-  C->SetBranchAddress("bb.gem.hit.UtimeDeconv",UtimeDeconv);
-  C->SetBranchAddress("bb.gem.hit.VtimeDeconv",VtimeDeconv);
-  C->SetBranchAddress("bb.gem.hit.UtimeFit",UtimeFit);
-  C->SetBranchAddress("bb.gem.hit.VtimeFit",VtimeFit);
+  C->SetBranchAddress( branchnames["hit.Utime"].Data(), &Utime[0]);
+  C->SetBranchAddress( branchnames["hit.Vtime"].Data(), &Vtime[0]);
+  C->SetBranchAddress( branchnames["hit.UtimeDeconv"].Data(), &UtimeDeconv[0]);
+  C->SetBranchAddress( branchnames["hit.VtimeDeconv"].Data(), &VtimeDeconv[0]);
+  C->SetBranchAddress( branchnames["hit.UtimeFit"].Data(), &UtimeFit[0]);
+  C->SetBranchAddress( branchnames["hit.VtimeFit"].Data(), &VtimeFit[0]);
   
   double deltat[MAXNHITS], deltatFit[MAXNHITS], deltatDeconv[MAXNHITS];
 
@@ -368,9 +400,9 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 //  C->SetBranchStatus("bb.gem.hit.deltat_deconv",1);
 //  C->SetBranchStatus("bb.gem.hit.deltat_fit",1);
 
-  C->SetBranchAddress("bb.gem.hit.deltat",deltat);
-  C->SetBranchAddress("bb.gem.hit.deltat_deconv",deltatDeconv);
-  C->SetBranchAddress("bb.gem.hit.deltat_fit",deltatFit);
+  C->SetBranchAddress( branchnames["hit.deltat"].Data(), &deltat[0]);
+  C->SetBranchAddress( branchnames["hit.deltat_deconv"].Data(), &deltatDeconv[0]);
+  C->SetBranchAddress( branchnames["hit.deltat_fit"].Data(), &deltatFit[0]);
 
   TFile *fout = new TFile(outfilename,"RECREATE");
   
@@ -448,23 +480,70 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 
   long nevent=0;
 
+  if (!C)  {
+    cout << "Error in TChain!" << endl;
+  } else {
+ //   C->Print();
+  }
+
+//  C->GetListOfBranches()->Print();
+  globalcut = "1";
   TTreeFormula *GlobalCut = new TTreeFormula( "GlobalCut", globalcut, C );
+  //TTreeFormula *GlobalCut = new TTreeFormula( "GlobalCut", globalcut.GetTitle(), C );
 
   int treenum=0, currenttreenum=0;
+
+  cout << "Cut = " << globalcut << endl;
+  cout << "Cut Dim = " << GlobalCut->GetNdim() << endl;
+//  if (!GlobalCut || !GlobalCut->GetNdim()) {
+  if (!GlobalCut) {
+    cerr << "OOPSIE" << endl;
+    //C->GetListOfBranches()->Print();
+  }
+
+  if (!C) {
+    cerr << "Bad news jack" << endl;
+  }
+
+//  TObjArray *branches = C->GetListOfBranches();
+//  for (int i = 0; i < branches->GetEntries(); ++i) {
+//    TBranch *b = (TBranch*)branches->At(i);
+//    if (b->GetStatus() > 0) {
+//      cout << "Enabled: " << b->GetName() << endl;
+ //       continue;
+//    }
+//  }
+
+//    TString bname = b->GetName();
+//    if (bname.IsNull() || bname.Length() == 0) {
+//        std::cerr << "WARNING: Found a branch with empty name!" << std::endl;
+//    } else {
+//        std::cout << "Enabled branch: " << bname.Data() << std::endl;
+//    }
+//  }
+
 
   while( C->GetEntry( nevent++ ) && nevent){
     currenttreenum = C->GetTreeNumber();
     if( nevent == 1 || currenttreenum != treenum ){
       treenum = currenttreenum;
+      cout <<"Test do I make it here?" << endl;
+      //GlobalCut->UpdateFormulaLeaves();
+      if (GlobalCut) delete GlobalCut;
+
+      GlobalCut = new TTreeFormula( "GlobalCut", globalcut.GetTitle(), C );
+      cout << globalcut.GetTitle() << endl;
       GlobalCut->UpdateFormulaLeaves();
+
+
     }
 
     if( nevent % 100000 == 0 ) cout << nevent << endl;
     
     bool passedcut = GlobalCut->EvalInstance(0) != 0;
 
-    // cout << "passed cut, ntracks, ngoodhits = " << passedcut << ", "
-    // 	 << ntracks << ", " << ngoodhits << endl;
+     cout << "passed cut, ntracks, ngoodhits = " << passedcut << ", "
+     	 << ntracks << ", " << ngoodhits << endl;
 
 
     
@@ -477,25 +556,42 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 	  ttrig = trig_tdc[itrig];
 	}
       }
+      cout << "Let's try filling our first batch of histograms" << endl;
+//      double thcp = (xbcp[0]-xfcp[0])/(zbcp[0]-zfcp[0]);
+//      double phcp = (ybcp[0]-yfcp[0])/(zbcp[0]-zfcp[0]);
+//      if( EPS >= 0.2 ){ //tracking constraint histos always require preshower regardless what the user defined?
+ 
+      cout << "xfp - xfcp = " << xfp[0] - xfcp[0] << endl;  	
+      cout << "yfp - yfcp = " << yfp[0] - yfcp[0] << endl;  	
 
-      double thcp = (xbcp[0]-xfcp[0])/(zbcp[0]-zfcp[0]);
-      double phcp = (ybcp[0]-yfcp[0])/(zbcp[0]-zfcp[0]);
-      if( EPS >= 0.2 ){ //tracking constraint histos always require preshower regardless what the user defined?
-	hdxfcp->Fill( xfp[0] - xfcp[0] );
-	hdyfcp->Fill( yfp[0] - yfcp[0] );
-	hdxbcp->Fill( xfp[0]+thfp[0]*(zbcp[0]-zfcp[0]) - xbcp[0] );
-	hdybcp->Fill( yfp[0]+phfp[0]*(zbcp[0]-zfcp[0]) - ybcp[0] );
+      hdxfcp->Fill( xfp[0] - xfcp[0] );
+      hdyfcp->Fill( yfp[0] - yfcp[0] );
+      hdxbcp->Fill( xfp[0]+thfp[0]*(zbcp[0]-zfcp[0]) - xbcp[0] );
+//      hdybcp->Fill( yfp[0]+phfp[0]*(zbcp[0]-zfcp[0]) - ybcp[0] );
+  
+      cout << "Now try 2d Histo" << endl;
+//      hdxdyfcp->Fill( yfp[0]-yfcp[0], xfp[0]-xfcp[0] );
+//      hdxdybcp->Fill( yfp[0]+phfp[0]*(zbcp[0]-zfcp[0]) - ybcp[0],
+//      		xfp[0]+thfp[0]*(zbcp[0]-zfcp[0]) - xbcp[0] );
+// 
+//      cout << "thcp + " << thcp << endl;  	
+//      cout << "phcp + " << phcp << endl;  	
+//    hdthcp->Fill( thfp[0]-thcp );
+//    hdphcp->Fill( phfp[0]-phcp );
+//
+//    if (!htrackt0)  {
+//      cout << "ERROR in htrackt0" << endl;
+//    } else {
+//      cout << "htrackt0 is valid" << endl;
+//    }
 
-	hdxdyfcp->Fill( yfp[0]-yfcp[0], xfp[0]-xfcp[0] );
-	hdxdybcp->Fill( yfp[0]+phfp[0]*(zbcp[0]-zfcp[0]) - ybcp[0],
-			xfp[0]+thfp[0]*(zbcp[0]-zfcp[0]) - xbcp[0] );
-       	
-	hdthcp->Fill( thfp[0]-thcp );
-	hdphcp->Fill( phfp[0]-phcp );
+      cout << "before htrack fill" << endl;
+ 
+      htrackt0->Fill( trackt0[0] );
 
-	htrackt0->Fill( trackt0[0] );
-      }
-      
+      cout << "htrack0 added" << endl;  	
+//      }
+/*      
       for( int ihit=0; ihit<int(ngoodhits); ihit++ ){
 	if( int(trackindex[ihit]) == 0 && nstripu[ihit]>1&&nstripv[ihit]>1 ){
 	  htavg_corr_vs_ttrig_allhits->Fill( ttrig, HitTavg_corr[ihit] );
@@ -507,6 +603,7 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 
 	  hADCclust_vs_module->Fill( module[ihit], ADCavg[ihit] );
 
+          cout << "Anything good here?" << endl;
 	  //For timing cuts we require hits to pass higher ADC thresholds:
 	  if( ADCavg[ihit] >= 1500.0 ){
 	    hADCasym_mod->Fill( module[ihit], ADCasym[ihit] );
@@ -544,10 +641,10 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 	    hdt_corr_mod->Fill( module[ihit], HitTavg_corr[ihit]-trackt0[0] );
 	  }
 	}
-      }
+      }*/
     }
   }
-
+  cout << "done debugging the first major while loop" << endl;
   //// Here we create a pdf which will be filled in the following loop ////
 
   TString outfilepdf = outfilename;
@@ -631,7 +728,7 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       threshstrip.push_back(hADCtemp->GetBinLowEdge(binlow));
       
       TString dbline;
-      dbfile << dbline.Format("bb.gem.m%d.threshold_stripsum = %12.5g", imod, threshstrip[0] ) << endl;
+      dbfile << dbline.Format("%s.m%d.threshold_stripsum = %12.5g", detname.Data(), imod, threshstrip[0] ) << endl;
 
       ///// Add this histogram to the pdf output
       TH1D *htemp = hADCtemp;
@@ -652,7 +749,7 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       thresh.push_back(hADCtemp->GetBinLowEdge(binlow));
       
       TString dbline;
-      dbfile << dbline.Format("bb.gem.m%d.threshold_clustersum = %12.5g", imod, thresh[0] ) << endl << endl;
+      dbfile << dbline.Format("%s.m%d.threshold_clustersum = %12.5g", detname.Data(), imod, thresh[0] ) << endl << endl;
 
       ///// Add this histogram to the pdf output
       TH1D *htemp = hADCtemp;
@@ -686,9 +783,9 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       maxstrip_tsigma[imod][1] = fitfuncV->GetParameter("Sigma");
 
       TString dbline;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.maxstrip_t0 = %10.4g %10.4g",imod,maxstrip_t0[imod][0], maxstrip_t0[imod][1] ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.maxstrip_tsigma = %10.4g %10.4g",imod,maxstrip_tsigma[imod][0], maxstrip_tsigma[imod][1] ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.maxstrip_tcut = %10.4g %10.4g", imod, nsigma, nsigma ) << endl << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.maxstrip_t0 = %10.4g %10.4g", detname.Data(), imod,maxstrip_t0[imod][0], maxstrip_t0[imod][1] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.maxstrip_tsigma = %10.4g %10.4g", detname.Data(), imod,maxstrip_tsigma[imod][0], maxstrip_tsigma[imod][1] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.maxstrip_tcut = %10.4g %10.4g", detname.Data(), imod, nsigma, nsigma ) << endl << endl;
       
       ///// Now we create the histograms for the pdf results//////
       vector<double> resultsU, resultsV;
@@ -729,9 +826,9 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       maxstrip_tsigma_deconv[imod][1] = fitfuncV->GetParameter("Sigma");
 
       TString dbline;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.maxstrip_t0_deconv = %10.4g %10.4g",imod,maxstrip_t0_deconv[imod][0], maxstrip_t0_deconv[imod][1] ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.maxstrip_tsigma_deconv = %10.4g %10.4g",imod,maxstrip_tsigma_deconv[imod][0], maxstrip_tsigma_deconv[imod][1] ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.maxstrip_tcut_deconv = %10.4g %10.4g", imod, nsigma, nsigma ) << endl << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.maxstrip_t0_deconv = %10.4g %10.4g", detname.Data(), imod,maxstrip_t0_deconv[imod][0], maxstrip_t0_deconv[imod][1] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.maxstrip_tsigma_deconv = %10.4g %10.4g", detname.Data(), imod,maxstrip_tsigma_deconv[imod][0], maxstrip_tsigma_deconv[imod][1] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.maxstrip_tcut_deconv = %10.4g %10.4g", detname.Data(), imod, nsigma, nsigma ) << endl << endl;
 
       ///// Now we create the histograms for the pdf results//////
       vector<double> resultsU, resultsV;
@@ -772,9 +869,9 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       maxstrip_tsigma_fit[imod][1] = fitfuncV->GetParameter("Sigma");
 
       TString dbline;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.maxstrip_t0_fit = %10.4g %10.4g",imod,maxstrip_t0_fit[imod][0], maxstrip_t0_fit[imod][1] ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.maxstrip_tsigma_fit = %10.4g %10.4g",imod,maxstrip_tsigma_fit[imod][0], maxstrip_tsigma_fit[imod][1] ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.maxstrip_tcut_fit = %10.4g %10.4g", imod, nsigma, nsigma ) << endl << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.maxstrip_t0_fit = %10.4g %10.4g", detname.Data(), imod,maxstrip_t0_fit[imod][0], maxstrip_t0_fit[imod][1] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.maxstrip_tsigma_fit = %10.4g %10.4g", detname.Data(), imod,maxstrip_tsigma_fit[imod][0], maxstrip_tsigma_fit[imod][1] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.maxstrip_tcut_fit = %10.4g %10.4g", detname.Data(), imod, nsigma, nsigma ) << endl << endl;
 
 
       ///// Now we create the histograms for the pdf results//////
@@ -816,8 +913,8 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       double sigma = fitfunc->GetParameter("Sigma");
 
       TString dbline;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.deltat_sigma = %12.5g", imod, sigma ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.deltat_cut = %12.5g", imod, nsig_dt*sigma ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.deltat_sigma = %12.5g", detname.Data(), imod, sigma ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.deltat_cut = %12.5g", detname.Data(), imod, nsig_dt*sigma ) << endl;
 
       vector<double> results = {nsig_dt*sigma};
 
@@ -840,8 +937,8 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       double sigma = fitfunc->GetParameter("Sigma");
 
       TString dbline;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.deltat_sigma_deconv = %12.5g", imod, sigma ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.deltat_cut_deconv = %12.5g", imod, nsig_dt*sigma ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.deltat_sigma_deconv = %12.5g", detname.Data(), imod, sigma ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.deltat_cut_deconv = %12.5g", detname.Data(), imod, nsig_dt*sigma ) << endl;
 
       vector<double> results = {nsig_dt*sigma};
 
@@ -864,8 +961,8 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       double sigma = fitfunc->GetParameter("Sigma");
 
       TString dbline;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.deltat_sigma_fit = %12.5g", imod, sigma ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.deltat_cut_fit = %12.5g", imod, nsig_dt*sigma ) << endl << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.deltat_sigma_fit = %12.5g", detname.Data(), imod, sigma ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.deltat_cut_fit = %12.5g", detname.Data(), imod, nsig_dt*sigma ) << endl << endl;
 
       vector<double> results = {nsig_dt*sigma};
 
@@ -897,8 +994,8 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 
       TString dbline;
 
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.HitTimeMean = %12.5g %12.5g", imod, tmean[imod][0], tmean[imod][1] ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.HitTimeSigma = %12.5g %12.5g", imod, tsigma[imod][0], tsigma[imod][1] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.HitTimeMean = %12.5g %12.5g", detname.Data(), imod, tmean[imod][0], tmean[imod][1] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.HitTimeSigma = %12.5g %12.5g", detname.Data(), imod, tsigma[imod][0], tsigma[imod][1] ) << endl;
 
       ///// Now we create the histograms for the pdf results//////
       vector<double> resultsU, resultsV;
@@ -939,8 +1036,8 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 
       TString dbline;
 
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.HitTimeMeanDeconv = %12.5g %12.5g", imod, tmean[imod][2], tmean[imod][3] ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.HitTimeSigmaDeconv = %12.5g %12.5g", imod, tsigma[imod][2], tsigma[imod][3] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.HitTimeMeanDeconv = %12.5g %12.5g", detname.Data(), imod, tmean[imod][2], tmean[imod][3] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.HitTimeSigmaDeconv = %12.5g %12.5g", detname.Data(), imod, tsigma[imod][2], tsigma[imod][3] ) << endl;
 
       ///// Now we create the histograms for the pdf results//////
       vector<double> resultsU, resultsV;
@@ -981,8 +1078,8 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 
       TString dbline;
 
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.HitTimeMeanFit = %12.5g %12.5g", imod, tmean[imod][4], tmean[imod][5] ) << endl;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.HitTimeSigmaFit = %12.5g %12.5g", imod, tsigma[imod][4], tsigma[imod][5] ) << endl << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.HitTimeMeanFit = %12.5g %12.5g", detname.Data(), imod, tmean[imod][4], tmean[imod][5] ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.HitTimeSigmaFit = %12.5g %12.5g", detname.Data(), imod, tsigma[imod][4], tsigma[imod][5] ) << endl << endl;
 
       ///// Now we create the histograms for the pdf results//////
       vector<double> resultsU, resultsV;
@@ -1019,7 +1116,7 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       double sigma = fitfunc->GetParameter("Sigma");
 
       TString dbline;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.ADCasym_sigma = %12.5g", imod, sigma ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.ADCasym_sigma = %12.5g", detname.Data(), imod, sigma ) << endl;
       
       ///// Now we create the histograms for the pdf results//////
       vector<double> results = {mean,sigma};
@@ -1043,7 +1140,7 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       double sigma = fitfunc->GetParameter("Sigma");
 
       TString dbline;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.ADCratio_sigma = %12.5g", imod, sigma ) << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.ADCratio_sigma = %12.5g", detname.Data(), imod, sigma ) << endl;
       
       ///// Now we create the histograms for the pdf results//////
       vector<double> results = {mean,sigma};
@@ -1060,13 +1157,13 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
 
     if( htemp->GetEntries() >= 300 ){
       FitGaus_FWHM( htemp, 0.4 );
-
+      cout << "did I make it to the htemp loop?" << endl;
       TF1 *fitfunc = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
       double mean = fitfunc->GetParameter("Mean");
       double sigma = fitfunc->GetParameter("Sigma");
       
       TString dbline;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.ADCratio_sigma_deconv = %12.5g", imod, sigma ) << endl << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.ADCratio_sigma_deconv = %12.5g", detname.Data(), imod, sigma ) << endl << endl;
 
       ///// Now we create the histograms for the pdf results//////
       vector<double> results = {mean,sigma};
@@ -1090,7 +1187,7 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
       double sigma = fitfunc->GetParameter("Sigma");
 
       TString dbline;
-      dbfile_tcuts << dbline.Format("bb.gem.m%d.sigma_tcorr = %12.5g", imod, sigma ) << endl << endl;
+      dbfile_tcuts << dbline.Format("%s.m%d.sigma_tcorr = %12.5g", detname.Data(), imod, sigma ) << endl << endl;
       
       ///// Now we create the histograms for the pdf results//////
       vector<double> results = {mean,sigma};
@@ -1136,22 +1233,22 @@ void GetTrackingCutsFast( const char *configfilename, const char *outfilename="G
   double sigma = fitfunc->GetParameter("Sigma");
 
   TString dbline;
-  dbfile_tcuts << endl << dbline.Format("bb.gem.sigmatrackt0 = %12.5g", sigma ) << endl << endl;
+  dbfile_tcuts << endl << dbline.Format("%s.sigmatrackt0 = %12.5g", detname.Data(), sigma ) << endl << endl;
   
   
   //Tracking constraints:
-  dbfile << "bb.frontconstraint_x0 = " << hdxfcp->GetMean() << endl;
-  dbfile << "bb.frontconstraint_y0 = " << hdyfcp->GetMean() << endl;
-  dbfile << "bb.backconstraint_x0 = " << hdxbcp->GetMean() << endl;
-  dbfile << "bb.backconstraint_y0 = " << hdybcp->GetMean() << endl << endl;
+  dbfile << "sbs.frontconstraint_x0 = " << hdxfcp->GetMean() << endl;
+  dbfile << "sbs.frontconstraint_y0 = " << hdyfcp->GetMean() << endl;
+  dbfile << "sbs.backconstraint_x0 = " << hdxbcp->GetMean() << endl;
+  dbfile << "sbs.backconstraint_y0 = " << hdybcp->GetMean() << endl << endl;
 
-  dbfile << "bb.frontconstraintwidth_x = " << hdxfcp->GetRMS() * 4.5 << endl;
-  dbfile << "bb.frontconstraintwidth_y = " << hdyfcp->GetRMS() * 4.5 << endl;
-  dbfile << "bb.backconstraintwidth_x = " << hdxbcp->GetRMS() * 4.5 << endl;
-  dbfile << "bb.backconstraintwidth_y = " << hdybcp->GetRMS() * 4.5 << endl << endl;
+  dbfile << "sbs.frontconstraintwidth_x = " << hdxfcp->GetRMS() * 4.5 << endl;
+  dbfile << "sbs.frontconstraintwidth_y = " << hdyfcp->GetRMS() * 4.5 << endl;
+  dbfile << "sbs.backconstraintwidth_x = " << hdxbcp->GetRMS() * 4.5 << endl;
+  dbfile << "sbs.backconstraintwidth_y = " << hdybcp->GetRMS() * 4.5 << endl << endl;
 
-  dbfile << "bb.gem.constraintwidth_theta = " << hdthcp->GetRMS() * 4.5 << endl;
-  dbfile << "bb.gem.constraintwidth_phi = " << hdphcp->GetRMS() * 4.5 << endl;
+  dbfile << "sbs.gem.constraintwidth_theta = " << hdthcp->GetRMS() * 4.5 << endl;
+  dbfile << "sbs.gem.constraintwidth_phi = " << hdphcp->GetRMS() * 4.5 << endl;
   
   //hdeltat_mod->Draw("colz");
 

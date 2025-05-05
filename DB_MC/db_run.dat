@@ -238,4 +238,20 @@ earm.pcentral = 3.42
 earm.ecaldist = 8.14
 #earm.ecaldist = 8.0
 
+--------[ 2025-05-04 11:59:00 ] # GEP3
+
+# do we actually need this "experiment = " parameter?
+experiment = gep 
+ebeam = 10.688
+sbs.theta = -18.6
+sbs.pcentral = 6.8
+sbs.magdist = 1.6
+sbs.hcaldist = 10.0
+
+earm.theta = 27.0
+earm.pcentral = 4.77
+# nominal ECAL distance (will adjust for appropriate "effective distance") 
+#earm.ecaldist = 6.0
+# "effective z" about 13 cm deep:
+earm.ecaldist = 6.133
 

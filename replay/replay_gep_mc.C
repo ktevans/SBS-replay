@@ -37,8 +37,8 @@ TDatime get_datime(uint gepconfig)
 /* Returns TDatime for a given GEn configuration */
 {
   std::unordered_map<uint,TDatime> m = {{1, "2024-10-01 00:00:00"},
+					{3, "2025-05-04 12:00:00"},
 					{2, "2024-10-01 00:00:00"},
-					{3, "2024-10-01 00:00:00"},
 					{4, "2024-10-01 00:00:00"}};
   if (m.find(gepconfig)==m.end()) 
     throw std::invalid_argument("Invalid SBS config!! Valid options are: 1,2,3");

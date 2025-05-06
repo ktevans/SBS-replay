@@ -960,16 +960,23 @@ sbs.gemFT.m13.chanmap =
 
 ############ parameters searched by SBSGEMModule::ReadDatabase() #################
 ############ offline thresholds: ############
-sbs.gemFT.threshold_sample = 50.0
-sbs.gemFT.threshold_stripsum = 200.0
-sbs.gemFT.threshold_clustersum = 300.0
+
+# ped rms is typically ~6 channels, this is the RMS of the AVERAGE. The RMS of individual samples is ped rms * sqrt(6) ~= 14.7
+# 3X this number would be 45. So it is unclear how we can suppress the strips at much lower than 50 ADC and stay above the noise:
+# the average ratio of the six-sample sum over max sample is 4.2. The "effective" threshold with standard zero suppression is that the
+# average should be at least 3 sigma above threshold. Sigma of the AVERAGE is 6, so threshold on the AVERAGE would be 18.
+# Threshold on the SUM would be 18*6 = 108, let's round down to 100. Therefore the implied threshold on the max SAMPLE would be 100/4.2 ~= 25
+# average ratio of cluster sum / max sample is roughly 9. 9*25 = is 231, let's round down to 200
+sbs.gemFT.threshold_sample = 25.0
+sbs.gemFT.threshold_stripsum = 100.0
+sbs.gemFT.threshold_clustersum = 200.0
 
 
 sbs.gemFT.ADCasym_cut = 0.8 
-sbs.gemFT.deltat_cut = 25.0
+sbs.gemFT.deltat_cut = 30.0
 sbs.gemFT.corrcoeff_cut = 0.5
 # change to "soft hit filtering:
-sbs.gemFT.filterflag1D = 0 # -1 = no filtering: don't require 1D hits to pass any cuts other than basic zero suppression
+sbs.gemFT.filterflag1D = -1 # -1 = no filtering: don't require 1D hits to pass any cuts other than basic zero suppression
 sbs.gemFT.filterflag2D = 0  # 1 = "hard" filtering: require 2D hits to pass all cuts
 
 sbs.gemFT.peakprominence_minsigma = 3.0 
@@ -1147,7 +1154,7 @@ sbs.gemFT.deltat_cut = 30.0
 sbs.gemFT.addstrip_ccor_cut 0.4
 sbs.gemFT.addstrip_tcut = 35.0
 
-sbs.gemFT.filterflag1D = 0
+sbs.gemFT.filterflag1D = -1
 sbs.gemFT.filterflag2D = 0
 
 # the following alignment is with straight-through data. May need to redo internal alignment with field on:

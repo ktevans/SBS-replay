@@ -158,6 +158,7 @@ void ECAL_shower_profiles( const char *configfilename, const char *outfilename="
   C->SetBranchStatus("*",0);
   C->SetBranchStatus("heep.*",1);
   C->SetBranchStatus("earm.ecal.*",1);
+  //  C->SetBranchStatus("
   
   int treenum=0, oldtreenum=-1;
   
@@ -232,7 +233,7 @@ void ECAL_shower_profiles( const char *configfilename, const char *outfilename="
       ymom /= Ly;
 
       //Make sure cluster is at least two blocks along both x and y:
-      if( xblkhigh - xblklow > 0.5*Lx && yblkhigh-yblklow > 0.5*Ly && rowmax > 0 && rowmax < 68 ){
+      if( xblkhigh - xblklow > 0.5*Lx && yblkhigh-yblklow > 0.5*Ly && rowmax > 0 && rowmax < 68 && binx >= 0 && binx < nbinsx && biny >= 0 && biny < nbinsy ){
       
 	( (TH1D*) (*Xmom_histos)[biny+binx*nbinsy] )->Fill( xmom );
 	( (TH1D*) (*Ymom_histos)[biny+binx*nbinsy] )->Fill( ymom );

@@ -98,10 +98,10 @@ th2d hsbs_gemFT_eresidv_vs_module ';module; Track v/y excl. residuals (m)' sbs.g
 
 # Module-specific histograms: 
 # Module 0 strip histograms, all strips: 
-th1d hsbs_gemFT_m0_nstripstot_good 'FT L0 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m0.strip.nstripsfired 2817 -0.5 2816.5 sbs.gemFT.m0.ontrack
+th1d hsbs_gemFT_m0_nstripstot_good 'FT L0 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m0.strip.nstripsfired 7424 -0.5 7423.5 sbs.gemFT.m0.ontrack
 th1d hsbs_gemFT_m0_nclustU_good 'FT L0 G0; num. U clusters;' sbs.gemFT.m0.clust.nclustu 101 -0.5 100.5 sbs.gemFT.m0.ontrack
 th1d hsbs_gemFT_m0_nclustV_good 'FT L0 G0; num. V clusters; ' sbs.gemFT.m0.clust.nclustv 101 -0.5 100.5 sbs.gemFT.m0.ontrack
-th1d hsbs_gemFT_m0_nstripstot_all 'FT L0 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m0.strip.nstripsfired 2817 -0.5 2816.5
+th1d hsbs_gemFT_m0_nstripstot_all 'FT L0 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m0.strip.nstripsfired 7424 -0.5 7423.5
 th1d hsbs_gemFT_m0_nclustU_all 'FT L0 G0; num. U clusters;' sbs.gemFT.m0.clust.nclustu 101 -0.5 100.5
 th1d hsbs_gemFT_m0_nclustV_all 'FT L0 G0; num. V clusters;' sbs.gemFT.m0.clust.nclustv 101 -0.5 100.5
 th1d hsbs_gemFT_m0_stripU_all 'FT L0 G0; U/X strip index; ' sbs.gemFT.m0.strip.istrip[I] 3968 -0.5 3967.5 sbs.gemFT.m0.strip.IsU[I]
@@ -154,10 +154,10 @@ th2d hsbs_gemFT_m0_strip_CorrCoeff_vs_ADC 'FT L0 G0; strip ADC sum ; Corr. Coeff
 
 
 # Module 1 strip histograms, all strips: 
-th1d hsbs_gemFT_m1_nstripstot_good 'FT L1 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m1.strip.nstripsfired 2817 -0.5 2816.5 sbs.gemFT.m1.ontrack
+th1d hsbs_gemFT_m1_nstripstot_good 'FT L1 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m1.strip.nstripsfired 7424 -0.5 7423.5 sbs.gemFT.m1.ontrack
 th1d hsbs_gemFT_m1_nclustU_good 'FT L1 G0; num. U clusters;' sbs.gemFT.m1.clust.nclustu 101 -0.5 100.5 sbs.gemFT.m1.ontrack
 th1d hsbs_gemFT_m1_nclustV_good 'FT L1 G0; num. V clusters; ' sbs.gemFT.m1.clust.nclustv 101 -0.5 100.5 sbs.gemFT.m1.ontrack
-th1d hsbs_gemFT_m1_nstripstot_all 'FT L1 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m1.strip.nstripsfired 2817 -0.5 2816.5
+th1d hsbs_gemFT_m1_nstripstot_all 'FT L1 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m1.strip.nstripsfired 7424 -0.5 7423.5
 th1d hsbs_gemFT_m1_nclustU_all 'FT L1 G0; num. U clusters;' sbs.gemFT.m1.clust.nclustu 101 -0.5 100.5
 th1d hsbs_gemFT_m1_nclustV_all 'FT L1 G0; num. V clusters;' sbs.gemFT.m1.clust.nclustv 101 -0.5 100.5
 th1d hsbs_gemFT_m1_stripU_all 'FT L1 G0; U/X strip index; ' sbs.gemFT.m1.strip.istrip[I] 3968 -0.5 3967.5 sbs.gemFT.m1.strip.IsU[I]
@@ -210,10 +210,10 @@ th2d hsbs_gemFT_m1_strip_CorrCoeff_vs_ADC 'FT L1 G0; strip ADC sum ; Corr. Coeff
 
 
 # Module 2 strip histograms, all strips: 
-th1d hsbs_gemFT_m2_nstripstot_good 'FT L2 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m2.strip.nstripsfired 2817 -0.5 2816.5 sbs.gemFT.m2.ontrack
+th1d hsbs_gemFT_m2_nstripstot_good 'FT L2 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m2.strip.nstripsfired 7680 -0.5 7679.5 sbs.gemFT.m2.ontrack
 th1d hsbs_gemFT_m2_nclustU_good 'FT L2 G0; num. U clusters;' sbs.gemFT.m2.clust.nclustu 101 -0.5 100.5 sbs.gemFT.m2.ontrack
 th1d hsbs_gemFT_m2_nclustV_good 'FT L2 G0; num. V clusters; ' sbs.gemFT.m2.clust.nclustv 101 -0.5 100.5 sbs.gemFT.m2.ontrack
-th1d hsbs_gemFT_m2_nstripstot_all 'FT L2 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m2.strip.nstripsfired 2817 -0.5 2816.5
+th1d hsbs_gemFT_m2_nstripstot_all 'FT L2 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m2.strip.nstripsfired 7680 -0.5 7679.5
 th1d hsbs_gemFT_m2_nclustU_all 'FT L2 G0; num. U clusters;' sbs.gemFT.m2.clust.nclustu 101 -0.5 100.5
 th1d hsbs_gemFT_m2_nclustV_all 'FT L2 G0; num. V clusters;' sbs.gemFT.m2.clust.nclustv 101 -0.5 100.5
 th1d hsbs_gemFT_m2_stripU_all 'FT L2 G0; U/X strip index; ' sbs.gemFT.m2.strip.istrip[I] 3840 -0.5 3839.5 sbs.gemFT.m2.strip.IsU[I]
@@ -266,10 +266,10 @@ th2d hsbs_gemFT_m2_strip_CorrCoeff_vs_ADC 'FT L2 G0; strip ADC sum ; Corr. Coeff
 
 
 # Module 3 strip histograms, all strips: 
-th1d hsbs_gemFT_m3_nstripstot_good 'FT L3 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m3.strip.nstripsfired 2817 -0.5 2816.5 sbs.gemFT.m3.ontrack
+th1d hsbs_gemFT_m3_nstripstot_good 'FT L3 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m3.strip.nstripsfired 7680 -0.5 7679.5 sbs.gemFT.m3.ontrack
 th1d hsbs_gemFT_m3_nclustU_good 'FT L3 G0; num. U clusters;' sbs.gemFT.m3.clust.nclustu 101 -0.5 100.5 sbs.gemFT.m3.ontrack
 th1d hsbs_gemFT_m3_nclustV_good 'FT L3 G0; num. V clusters; ' sbs.gemFT.m3.clust.nclustv 101 -0.5 100.5 sbs.gemFT.m3.ontrack
-th1d hsbs_gemFT_m3_nstripstot_all 'FT L3 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m3.strip.nstripsfired 2817 -0.5 2816.5
+th1d hsbs_gemFT_m3_nstripstot_all 'FT L3 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m3.strip.nstripsfired 7680 -0.5 7679.5
 th1d hsbs_gemFT_m3_nclustU_all 'FT L3 G0; num. U clusters;' sbs.gemFT.m3.clust.nclustu 101 -0.5 100.5
 th1d hsbs_gemFT_m3_nclustV_all 'FT L3 G0; num. V clusters;' sbs.gemFT.m3.clust.nclustv 101 -0.5 100.5
 th1d hsbs_gemFT_m3_stripU_all 'FT L3 G0; U/X strip index; ' sbs.gemFT.m3.strip.istrip[I] 3840 -0.5 3839.5 sbs.gemFT.m3.strip.IsU[I]
@@ -322,10 +322,10 @@ th2d hsbs_gemFT_m3_strip_CorrCoeff_vs_ADC 'FT L3 G0; strip ADC sum ; Corr. Coeff
 
 
 # Module 4 strip histograms, all strips: 
-th1d hsbs_gemFT_m4_nstripstot_good 'FT L4 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m4.strip.nstripsfired 2817 -0.5 2816.5 sbs.gemFT.m4.ontrack
+th1d hsbs_gemFT_m4_nstripstot_good 'FT L4 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m4.strip.nstripsfired 7680 -0.5 7679.5 sbs.gemFT.m4.ontrack
 th1d hsbs_gemFT_m4_nclustU_good 'FT L4 G0; num. U clusters;' sbs.gemFT.m4.clust.nclustu 101 -0.5 100.5 sbs.gemFT.m4.ontrack
 th1d hsbs_gemFT_m4_nclustV_good 'FT L4 G0; num. V clusters; ' sbs.gemFT.m4.clust.nclustv 101 -0.5 100.5 sbs.gemFT.m4.ontrack
-th1d hsbs_gemFT_m4_nstripstot_all 'FT L4 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m4.strip.nstripsfired 2817 -0.5 2816.5
+th1d hsbs_gemFT_m4_nstripstot_all 'FT L4 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m4.strip.nstripsfired 7680 -0.5 7679.5
 th1d hsbs_gemFT_m4_nclustU_all 'FT L4 G0; num. U clusters;' sbs.gemFT.m4.clust.nclustu 101 -0.5 100.5
 th1d hsbs_gemFT_m4_nclustV_all 'FT L4 G0; num. V clusters;' sbs.gemFT.m4.clust.nclustv 101 -0.5 100.5
 th1d hsbs_gemFT_m4_stripU_all 'FT L4 G0; U/X strip index; ' sbs.gemFT.m4.strip.istrip[I] 3840 -0.5 3839.5 sbs.gemFT.m4.strip.IsU[I]
@@ -378,10 +378,10 @@ th2d hsbs_gemFT_m4_strip_CorrCoeff_vs_ADC 'FT L4 G0; strip ADC sum ; Corr. Coeff
 
 
 # Module 5 strip histograms, all strips: 
-th1d hsbs_gemFT_m5_nstripstot_good 'FT L5 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m5.strip.nstripsfired 2817 -0.5 2816.5 sbs.gemFT.m5.ontrack
+th1d hsbs_gemFT_m5_nstripstot_good 'FT L5 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m5.strip.nstripsfired 7680 -0.5 7679.5 sbs.gemFT.m5.ontrack
 th1d hsbs_gemFT_m5_nclustU_good 'FT L5 G0; num. U clusters;' sbs.gemFT.m5.clust.nclustu 101 -0.5 100.5 sbs.gemFT.m5.ontrack
 th1d hsbs_gemFT_m5_nclustV_good 'FT L5 G0; num. V clusters; ' sbs.gemFT.m5.clust.nclustv 101 -0.5 100.5 sbs.gemFT.m5.ontrack
-th1d hsbs_gemFT_m5_nstripstot_all 'FT L5 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m5.strip.nstripsfired 2817 -0.5 2816.5
+th1d hsbs_gemFT_m5_nstripstot_all 'FT L5 G0; Num. fired strips (U/X) + (V/Y);' sbs.gemFT.m5.strip.nstripsfired 7680 -0.5 7679.5
 th1d hsbs_gemFT_m5_nclustU_all 'FT L5 G0; num. U clusters;' sbs.gemFT.m5.clust.nclustu 101 -0.5 100.5
 th1d hsbs_gemFT_m5_nclustV_all 'FT L5 G0; num. V clusters;' sbs.gemFT.m5.clust.nclustv 101 -0.5 100.5
 th1d hsbs_gemFT_m5_stripU_all 'FT L5 G0; U/X strip index; ' sbs.gemFT.m5.strip.istrip[I] 3840 -0.5 3839.5 sbs.gemFT.m5.strip.IsU[I]

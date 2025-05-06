@@ -187,24 +187,24 @@ void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const cha
       if ( dogems != 0 )
 	{
 	  outfilename.Form("%s/%s_replayed_%u_stream%d_%d_seg%u_%u_firstevent%ld_nevent%ld.root", prefix.Data(), fname_prefix, runnum, 
-			   0, maxstream, firstsegment, lastsegment, firstevent, nevents);
+			   firststream, maxstream, firstsegment, lastsegment, firstevent, nevents);
 	}
       else
 	{
 	  outfilename.Form("%s/%s_replayed_nogems_%u_stream%d_%d_seg%u_%u_firstevent%ld_nevent%ld.root", prefix.Data(), fname_prefix, runnum, 
-			   0, maxstream, firstsegment, lastsegment, firstevent, nevents);
+			   firststream, maxstream, firstsegment, lastsegment, firstevent, nevents);
 	}
       
     } else {
       if ( dogems != 0 )
 	{
 	  outfilename.Form("%s/%s_fullreplay_%u_stream%d_%d_seg%u_%u.root", prefix.Data(), fname_prefix, runnum,
-			   0, maxstream, firstsegment, lastsegment);
+			   firststream, maxstream, firstsegment, lastsegment);
 	}
       else
 	{
 	  outfilename.Form("%s/%s_fullreplay_nogems_%u_stream%d_%d_seg%u_%u.root", prefix.Data(), fname_prefix, runnum,
-			   0, maxstream, firstsegment, lastsegment);
+			   firststream, maxstream, firstsegment, lastsegment);
 	}        
     }
     

@@ -68,23 +68,11 @@ variable earm.ecal.idblk
 variable earm.ecal.index
 variable earm.ecal.x
 variable earm.ecal.y
-variable earm.ecal.clus_blk.e
-variable earm.ecal.clus_blk.x
-variable earm.ecal.clus_blk.y
-variable earm.ecal.clus_blk.row
-variable earm.ecal.clus_blk.col
-variable earm.ecal.clus_blk.atime
-variable earm.ecal.clus_blk.id
-variable earm.ecal.clus.e
-variable earm.ecal.clus.atimeblk
-variable earm.ecal.clus.row
-variable earm.ecal.clus.col
-variable earm.ecal.clus.id
-variable earm.ecal.clus.atime
-variable earm.ecal.clus.eblk
-variable earm.ecal.clus.nblk
-variable earm.ecal.clus.x
-variable earm.ecal.clus.y
+
+
+block earm.ecal.clus.*
+
+block earm.ecal.clus_blk.*
 
 block earm.ecal.vtp.*
 block sbs.hcal.vtp.*

@@ -1264,10 +1264,10 @@ sbs.usedynamicconstraint = 0
 # constraints after alignment, AJRP 4/21/2025:
 sbs.frontconstraint_x0 = -0.006 0.0
 sbs.frontconstraint_y0 = -0.003 0.0
-sbs.frontconstraintwidth_x = 0.035 0.025
-sbs.frontconstraintwidth_y = 0.03 0.025
+sbs.frontconstraintwidth_x = 0.035 0.05
+sbs.frontconstraintwidth_y = 0.03 0.05
 
 sbs.backconstraint_x0 = -0.008 0.07
 sbs.backconstraint_y0 = -0.003 0.017
-sbs.backconstraintwidth_x = 0.04 0.25
-sbs.backconstraintwidth_y = 0.035 0.25
+sbs.backconstraintwidth_x = 0.04 0.35
+sbs.backconstraintwidth_y = 0.035 0.35

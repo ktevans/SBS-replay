@@ -125,7 +125,7 @@ void CHI2_FCN( int &npar, double *gin, double &f, double *par, int flag){
 
 
 
-void GEM_align( const char *configfilename, const char *outputfilename="newGEMalignment.txt" ){
+void GEM_align_GEP( const char *configfilename, const char *outputfilename="newGEMalignment.txt" ){
   
   ifstream configfile(configfilename);
   
@@ -144,7 +144,8 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   int fixz = 0; //fix z coordinate of layer if our data don't give us enough sensitivity to determine the z coordinates:
   int fixax=0, fixay=0, fixaz=0;
 
-
+  int isbacktracker = 0;
+  int usefronttrackconstraint = 0; 
   
   //Flag to force tracks to project back to origin
   // 0 = off
@@ -182,7 +183,15 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	if( ntokens >= 2 ){
 	  TString skey = ( (TObjString*) (*tokens)[0] )->GetString();
 
+	  if( skey == "isbacktracker" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    isbacktracker = stemp.Atoi();
+	  }
 
+	  if( skey == "usefronttrackconstraint" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    usefronttrackconstraint = stemp.Atoi();
+	  }
 	  
 	  if( skey == "prefix" ){
 	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
@@ -471,25 +480,29 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   //declare variables to hold tree branch addresses:
   double ntracks;
   double besttrack;
-  double tracknhits[100000];
-  double trackX[100000],trackY[100000], trackXp[100000], trackYp[100000], trackChi2NDF[100000];
+  double tracknhits[100];
+  double trackX[100],trackY[100], trackXp[100], trackYp[100], trackChi2NDF[100];
 
+  double ntrackfront;
+  double xfront[100],yfront[100],xpfront[100],ypfront[100];
+  double chi2ndf_front[100];
+  
   //Needed "hit" variables (others can be ignored for now:
   //The data types for all the branches are "double". Hope that doesn't cause problems: 
   double ngoodhits;
-  double hit_trackindex[100000];
-  double hit_module[100000];
-  double hit_ulocal[100000];
-  double hit_vlocal[100000];
+  double hit_trackindex[10000];
+  double hit_module[10000];
+  double hit_ulocal[10000];
+  double hit_vlocal[10000];
 
   TString branchname;
 
   C->SetBranchStatus("*",0);
 
-  C->SetBranchStatus("bb.tr.*",1);
+  //  C->SetBranchStatus("bb.tr.*",1);
   C->SetBranchStatus("sbs.tr.*",1);
 
-  C->SetBranchStatus("e.kine.*",1);
+  // C->SetBranchStatus("e.kine.*",1);
   C->SetBranchStatus("sbs.x_fcp",1);
   C->SetBranchStatus("sbs.y_fcp",1);
   C->SetBranchStatus("sbs.z_fcp",1);
@@ -499,8 +512,28 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   C->SetBranchStatus("sbs.hcal.e",1);
   C->SetBranchStatus("sbs.hcal.x",1);
   C->SetBranchStatus("sbs.hcal.y",1);
+  C->SetBranchStatus("sbs.hcal.Ref.*",1);
+  C->SetBranchStatus("Ndata.sbs.hcal.Ref.*",1);
+
+  double xHCAL,yHCAL,EHCAL;
+  C->SetBranchAddress("sbs.hcal.x",&xHCAL);
+  C->SetBranchAddress("sbs.hcal.y",&yHCAL);
+  C->SetBranchAddress("sbs.hcal.e",&EHCAL);
   
+  C->SetBranchStatus("sbs.gemFPP.track.*",1);
+  C->SetBranchStatus("sbs.gemFT.track.*",1);
+  C->SetBranchStatus("sbs.gemFPP.hit.*",1);
+  C->SetBranchStatus("sbs.gemFT.hit.*",1);
   
+  int HCALrefTDCnhits;
+  double HCALrefTDC[10];
+  double HCALrefTDCelemID[10];
+
+  C->SetBranchAddress("Ndata.sbs.hcal.Ref.tdcelemID",&HCALrefTDCnhits);
+  C->SetBranchAddress("sbs.hcal.Ref.tdc",HCALrefTDC);
+  C->SetBranchAddress("sbs.hcal.Ref.tdcelemID",HCALrefTDCelemID);
+  
+  C->SetBranchStatus("heep.*",1);
   
   C->SetBranchStatus( branchname.Format( "%s.track.ntrack", prefix.Data() ), 1 );
   C->SetBranchStatus( branchname.Format( "%s.track.besttrack", prefix.Data() ), 1 );
@@ -531,8 +564,14 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   C->SetBranchAddress( branchname.Format( "%s.hit.module", prefix.Data() ), hit_module );
   C->SetBranchAddress( branchname.Format( "%s.hit.u", prefix.Data() ), hit_ulocal );
   C->SetBranchAddress( branchname.Format( "%s.hit.v", prefix.Data() ), hit_vlocal );
-  
-  
+  //C->SetBranchAddress( "sbs.hcal.Ref.tdc", 
+
+  C->SetBranchAddress( "sbs.tr.x",xfront);
+  C->SetBranchAddress( "sbs.tr.y",yfront);
+  C->SetBranchAddress( "sbs.tr.th",xpfront);
+  C->SetBranchAddress( "sbs.tr.ph",ypfront);
+  C->SetBranchAddress( "sbs.tr.n",&ntrackfront );
+  C->SetBranchAddress( "sbs.gemFT.track.chi2ndf",chi2ndf_front);
   
   //GEM_cosmic_tracks *T = new GEM_cosmic_tracks(C);
 
@@ -558,6 +597,8 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 
   TTree *Tout = new TTree("Tout", "GEM alignment results");
 
+  int coinmatch = 0;
+  
   Tout->Branch( "xtrack", &Txtrack, "xtrack/D" );
   Tout->Branch( "ytrack", &Tytrack, "ytrack/D" );
   Tout->Branch( "xptrack", &Txptrack, "xptrack/D" );
@@ -575,7 +616,24 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   Tout->Branch( "yresid", Tyresid, "yresid[nhits]/D" );
   Tout->Branch( "hitlayer", Thitlayer, "hitlayer[nhits]/I" );
   Tout->Branch( "hitmodule", Thitmodule, "hitmodule[nhits]/I" );
+  Tout->Branch( "coinmatch", &coinmatch, "coinmatch/I");
   
+  double T_xfront, T_yfront, T_xpfront, T_ypfront;
+  Tout->Branch( "xfront", &T_xfront );
+  Tout->Branch( "yfront", &T_yfront );
+  Tout->Branch( "xpfront", &T_xpfront );
+  Tout->Branch( "ypfront", &T_ypfront );
+
+  double T_xHCAL, T_yHCAL, T_EHCAL;
+  Tout->Branch( "xHCAL", &T_xHCAL );
+  Tout->Branch( "yHCAL", &T_yHCAL );
+  Tout->Branch( "EHCAL", &T_EHCAL );
+
+  double T_sclose, T_zclose, T_theta, T_phi;
+  Tout->Branch("scloseFPP", &T_sclose);
+  Tout->Branch("zcloseFPP", &T_zclose);
+  Tout->Branch("thetaFPP", &T_theta);
+  Tout->Branch("phiFPP", &T_phi);
   
   long nevent=0;
 
@@ -597,12 +655,13 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   //double resid_cut = 100.0; //mm
   //double resid2_sum = 0.0;
 
-  double maxresid = 7.5e-4; 
+  double maxresid = 0.75e-3; //mm
 
   double ndf_max = 2.0*nlayers-4;
   
-  double minchi2cut = pow( maxresid/sigma_hitpos, 2 ); //smallest cut on chi2/dof that we are allowed to use:
-
+  //double minchi2cut = pow( maxresid/sigma_hitpos, 2 ); //smallest cut on chi2/dof that we are allowed to use:
+  double minchi2cut = 10.0;
+  
   double meanchi2 = 10000.0;
   double oldmeanchi2 = meanchi2;
 
@@ -763,6 +822,12 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
       int itrack=int(besttrack);
 
       int nhits_included = 0;
+
+      T_xfront = T_yfront = T_xpfront = T_ypfront = -1000.;
+
+      T_EHCAL = EHCAL;
+      T_xHCAL = xHCAL;
+      T_yHCAL = yHCAL;
       
       if( passed_global && itrack == 0 ){
 	double trackchi2 = 0.0;
@@ -773,6 +838,21 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	
 	int NHITS = int(ngoodhits);
 	int nhitsonbesttrack=int( tracknhits[itrack] );
+
+	coinmatch = false;
+	//check coin matching:
+	for( int iref=0; iref<HCALrefTDCnhits; iref++ ){
+	  if( int(HCALrefTDCelemID[iref]) == 4 ){ //if any good hit in ref channel 4:
+	    coinmatch = true;
+	  }
+	}
+
+	if( ntrackfront > 0 ){
+	  T_xfront = xfront[0];
+	  T_yfront = yfront[0];
+	  T_xpfront = xpfront[0];
+	  T_ypfront = ypfront[0];
+	}
 	
 	// cout << "N hits total = " << NHITS << ", hits on best track = " << nhitsonbesttrack << endl;
 	// cout << "best track x, y, x', y' = " << trackX[itrack] << ", " << trackY[itrack]
@@ -791,11 +871,18 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	  xptrack = trackXp[itrack];
 	  yptrack = trackYp[itrack];
 	  trackchi2 = trackChi2NDF[itrack];
-	
-	} else { //on ALL iterations, we re-fit the track using updated alignment parameters (or the initial ones from the config file)
-	  double sumX=0.0, sumY = 0.0, sumZ = 0.0, sumXZ = 0.0, sumYZ = 0.0, sumZ2 = 0.0;
+	} else { //on ALL subsequent iterations, we re-fit the track using updated alignment parameters (or the initial ones from the config file)
+	  double sumX=0.0, sumY = 0.0, sumZ = 0.0, sumXZ = 0.0, sumYZ = 0.0, sumZ2 = 0.0, sumweights=0.0;
 
-	  
+	  TMatrixD Alin(4,4);
+	  TVectorD blin(4);
+
+	  //How do these equations get modified if we want to add a penalty term to chi^2 like:
+	  // chi^2 = sum_{j=1}^{ntrack} sum_{i=1}^{Nhit} [(xhit_ij - (xtri + xpi*z_ij))^2/sigmahit^2 + (yhit_ij - (ytri+ypi*z_ij))^2/sigmahit^2 + (xhit_ij - (xfronti+xpfronti*z_ij))^2/sigmaproj^2 + (yhit_ij - (yfronti+ypfronti*z_ij))^2/sigmaproj^2]
+	  // This implies the following extra contributions to the chi^2 sums:
+	  // parameters are xtr,ytr,xptr,yptr
+	  // We would do the same sums as the regular fit, except
+	  // replacing the x,y hit positions with the track projections:
 	  
 	  for( int ihit=0; ihit<NHITS; ihit++ ){
 	    int tridx = int( hit_trackindex[ihit] );
@@ -831,8 +918,9 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	      double sigma = 0.1e-3;
 	      double weight = pow(sigma_hitpos,-2);
 	    
-	      weight = 1.0;
-	    
+	      //	      weight = 1.0;
+
+	      sumweights += weight;
 	      sumX += hitpos_global.X()*weight;
 	      sumY += hitpos_global.Y()*weight;
 	      sumZ += hitpos_global.Z()*weight;
@@ -840,19 +928,77 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	      sumYZ += hitpos_global.Y()*hitpos_global.Z()*weight;
 	      sumZ2 += pow(hitpos_global.Z(),2)*weight;	  
 
+	      if( isbacktracker > 0 && usefronttrackconstraint > 0 ){
+		//Include front tracker projection in the fit:
+		double sigma_proj = 0.003;
+		double weight_proj = pow(sigma_proj,-2);
+		double xproj = xfront[0] + xpfront[0]*hitpos_global.Z();
+		double yproj = yfront[0] + ypfront[0]*hitpos_global.Z();
+
+		sumweights += weight_proj;
+		sumX += xproj * weight_proj;
+		sumY += yproj * weight_proj;
+		sumZ += hitpos_global.Z() * weight_proj;
+		sumXZ += xproj * hitpos_global.Z() * weight_proj;
+		sumYZ += yproj * hitpos_global.Z() * weight_proj;
+		sumZ2 += pow(hitpos_global.Z(),2) * weight_proj;
+	      }
+	      
 	      nhits_included++;
 	      
 	      // nhitsonbesttrack++;
 	    }
 	  }
+
+	  
+	  
+	  Alin(0,0) = sumweights;
+	  Alin(0,1) = Alin(1,0) = sumZ;
+	  Alin(1,1) = sumZ2;
+	  Alin(0,2) = Alin(2,0) = Alin(0,3) = Alin(3,0) = 0.0;
+	  Alin(1,2) = Alin(2,1) = Alin(1,3) = Alin(3,1) = 0.0;
+
+	  Alin(2,2) = sumweights;
+	  Alin(2,3) = Alin(3,2) = sumZ;
+	  Alin(3,3) = sumZ2;
+
+	  blin(0) = sumX;
+	  blin(1) = sumXZ;
+	  blin(2) = sumY;
+	  blin(3) = sumYZ;
+
+	  Alin.Invert();
+	  TVectorD LinFit = Alin * blin;
+
+	  //double nhits = nhits_included;
+	  double denom = (sumZ2*sumweights - pow(sumZ,2));
+	  
+	  double xptrack_hitsonly = (sumweights*sumXZ - sumX*sumZ)/denom;
+	  double yptrack_hitsonly = (sumweights*sumYZ - sumY*sumZ)/denom;
+	  double xtrack_hitsonly = (sumZ2*sumX - sumZ*sumXZ)/denom;
+	  double ytrack_hitsonly = (sumZ2*sumY - sumZ*sumYZ)/denom;
+	  
+	  xtrack = LinFit(0);
+	  xptrack = LinFit(1);
+	  ytrack = LinFit(2);
+	  yptrack = LinFit(3);
+
+	  // std::cout << "Linear fit: (x,y,xp,yp)=(" << xtrack << ", " << ytrack
+	  // 	    << ", " << xptrack << ", " << yptrack << ")" << std::endl;
+	  // std::cout << "hits only: (x,y,xp,yp)=(" << xtrack_hitsonly << ", "
+	  // 	    << ytrack_hitsonly << ", " << xptrack_hitsonly << ", "
+	  // 	    << yptrack_hitsonly << ")" << std::endl;
+	  
+	  // double nhits = nhitsonbesttrack;
+	  
+	  if ( iter == 0 && isbacktracker > 0 && usefronttrackconstraint > 1 ){ //on first iteration, let's use the front track
+	    // to define the "true" track:
+	    xtrack = xfront[0];
+	    ytrack = yfront[0];
+	    xptrack = xpfront[0];
+	    yptrack = ypfront[0];
+	  }
 	
-	  double nhits = nhitsonbesttrack;
-	
-	  double denom = (sumZ2*nhits - pow(sumZ,2));
-	  xptrack = (nhits*sumXZ - sumX*sumZ)/denom;
-	  yptrack = (nhits*sumYZ - sumY*sumZ)/denom;
-	  xtrack = (sumZ2*sumX - sumZ*sumXZ)/denom;
-	  ytrack = (sumZ2*sumY - sumZ*sumYZ)/denom;
 
 	}
 
@@ -942,6 +1088,50 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	  }
 
 	  if( iter == niter ){
+	    T_sclose = T_zclose = T_theta = T_phi = -1000.0;
+	    
+	    if( isbacktracker && usefronttrackconstraint ){
+
+	      TVector3 FrontTrackDir( xpfront[0], ypfront[0], 1.0 );
+	      FrontTrackDir = FrontTrackDir.Unit();
+	      TVector3 FrontTrackPos( xfront[0], yfront[0], 0.0 );
+	      
+	      TVector3 BackTrackDir( xptrack, yptrack, 1.0 );
+	      BackTrackDir = BackTrackDir.Unit();
+	      TVector3 BackTrackPos( xtrack, ytrack, 0.0 );
+
+	      T_theta = acos(BackTrackDir.Dot( FrontTrackDir ) );
+
+	      TVector3 xaxis(1,0,0);
+	      TVector3 yaxis = FrontTrackDir.Cross( xaxis ).Unit();
+	      TVector3 zaxis = FrontTrackDir;
+	      xaxis = yaxis.Cross( zaxis ).Unit();
+	      
+	      T_phi = atan2( BackTrackDir.Dot( yaxis ), BackTrackDir.Dot( xaxis ) );
+
+	      double a = 1.0 + pow(xpfront[0],2) + pow(ypfront[0],2);
+	      double c = 1.0 + pow(xptrack,2) + pow(yptrack,2);
+	      double b = 1.0 + xpfront[0]*xptrack + ypfront[0]*yptrack;
+
+	      double det = a*c-b*b;
+	      double d1 = -xpfront[0]*(xfront[0]-xtrack)-ypfront[0]*(yfront[0]-ytrack);
+	      double d2 = xptrack*(xfront[0]-xtrack) + yptrack*(yfront[0]-ytrack);
+
+	      double z1 = (c*d1 + b*d2)/det;
+	      double z2 = (b*d1 + a*d2)/det; 
+
+	      T_zclose = 0.5*( z1 + z2 );
+
+	      double x1close = xfront[0] + z1*xpfront[0];
+	      double x2close = xtrack + z2*xptrack;
+	      double y1close = yfront[0] + z1*ypfront[0];
+	      double y2close = ytrack + z2*yptrack;
+
+	      double s2 = pow(x1close-x2close,2) + pow(y1close-y2close,2) + pow(z1-z2,2);
+
+	      T_sclose = sqrt(s2);
+	    }
+	    
 	    Tout->Fill();
 	  }
 	

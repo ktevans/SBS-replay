@@ -38,7 +38,6 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
   
   ifstream infile(configfilename);
 
-
   if( !infile ){
     return;
   } else {
@@ -164,6 +163,12 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
     Tout->Branch("yECAL",&yECAL);
     Tout->Branch("tECAL_ADC",&tECAL_ADC);
     Tout->Branch("nblkECAL",&nblkECAL);
+
+    double helicity;
+    double IHWP;
+
+    Tout->Branch("helicity",&helicity);
+    Tout->Branch("IHWP",&IHWP);
     
     //branches: do all H(e,e'p) branches and a few others:
     
@@ -191,7 +196,8 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
     C->SetBranchStatus("sbs.y_bcp",1);
     C->SetBranchStatus("sbs.y_bcp",1);
     C->SetBranchStatus("g.*",1);
-    
+    C->SetBranchStatus("scalhel.*",1);
+    C->SetBranchStatus("IGL1I00OD16_16",1);
     //    C->SetBranchStatus("sbs.x_bcp",1);
     
     TTreeFormula *GlobalCut = new TTreeFormula("GlobalCut", globalcut, C);
@@ -204,6 +210,8 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
 
       treenum = C->GetTreeNumber();
       if( treenum != oldtreenum ){
+	std::cout << "Switching trees, run number, file num, file name, nevent = " << runnum << ", " << treenum << ", " 
+		  << C->GetFile()->GetName() << ", " << nevent << std::endl;
 	GlobalCut->UpdateFormulaLeaves();
 	oldtreenum = treenum;
       }
@@ -309,8 +317,13 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
 	tECAL_ADC = T->earm_ecal_atimeblk;
 
 	nblkECAL = int(T->earm_ecal_nblk);
-	
 
+	helicity = T->scalhel_true_hel;
+	IHWP = T->IGL1I00OD16_16; //half-wave-plate state
+	
+	//eventually we want to add the ECAL and HCAL cluster individual block stuff:
+	
+	
 	Tout->Fill();
       }
       

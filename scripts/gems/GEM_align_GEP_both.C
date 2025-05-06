@@ -12,6 +12,7 @@
 #include "TCut.h"
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "TMinuit.h"
 #include "TMath.h"
 #include "TObjArray.h"
@@ -20,8 +21,14 @@
 
 double PI = TMath::Pi();
 
-int nlayers=4;
-int nmodules=8;
+int nlayers=8; //8 FT + 8 FPP
+int nmodules=14; //6+8 FT + 32 FPP
+
+int nlayers_back=8;
+int nmodules_back=32;
+
+int nmodules_tot=46;
+int nlayers_tot=16;
 
 //Make these global for chi^2 function for numerical minimization:
 
@@ -124,8 +131,7 @@ void CHI2_FCN( int &npar, double *gin, double &f, double *par, int flag){
 }
 
 
-
-void GEM_align( const char *configfilename, const char *outputfilename="newGEMalignment.txt" ){
+void GEM_align_GEP_both( const char *configfilename, const char *outputfilename="newGEMalignmentGEP_both.txt" ){
   
   ifstream configfile(configfilename);
   
@@ -144,7 +150,17 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   int fixz = 0; //fix z coordinate of layer if our data don't give us enough sensitivity to determine the z coordinates:
   int fixax=0, fixay=0, fixaz=0;
 
+  int useCfoilHCAL_CP = 0;
 
+  double Y0targ = -0.09 * sin( 25.7*TMath::DegToRad() );
+  double Z0targ = -0.09 * cos( 25.7*TMath::DegToRad() );
+  double X0targ = 0.0;
+
+  double X0GEM = -0.1522;
+  double Y0GEM = -0.00789;
+  double Z0GEM = 3.5719;
+  
+  double HCALdist = 10.0; //meters
   
   //Flag to force tracks to project back to origin
   // 0 = off
@@ -152,14 +168,19 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   // 2 = SBS (fix target position at zero) 
   double sigma_hitpos=0.15e-3; //m
 
+  double maxresid = 10.0*sigma_hitpos; //on iterations after first one:
+  
   double minchi2change = 2.e-4;
 
   double minposchange = 5e-6; // 5 um
   double minanglechange = 5e-5; // 50 urad
 
   double trackchi2_cut = 1000.0;
+
+  double mingoodhitsmod = 100.; //minimum good hits to align:
   
-  TString prefix = "bb.uvagem";
+  TString prefix = "sbs.gemFT";
+  TString prefix_back = "sbs.gemFPP";
 
   TChain *C = new TChain("T");
   
@@ -182,11 +203,64 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	if( ntokens >= 2 ){
 	  TString skey = ( (TObjString*) (*tokens)[0] )->GetString();
 
+	  if( skey == "maxresid" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    maxresid = stemp.Atof();
+	  }
+	  
+	  if( skey == "HCALdist" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    HCALdist = stemp.Atof();
+	  }
 
+	  if( skey == "X0targ" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    X0targ = stemp.Atof();
+	  }
+	  
+	  if( skey == "Y0targ" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    Y0targ = stemp.Atof();
+	  }
+
+	  if( skey == "Z0targ" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    Z0targ = stemp.Atof();
+	  }
+
+	  if( skey == "X0GEM" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    X0GEM = stemp.Atof();
+	  }
+	  
+	  if( skey == "Y0GEM" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    Y0GEM = stemp.Atof();
+	  }
+
+	  if( skey == "Z0GEM" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    Z0GEM = stemp.Atof();
+	  }
+
+	  if( skey == "useCfoilHCAL_CP" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    useCfoilHCAL_CP = stemp.Atoi();
+	  }
+	  
+	  if( skey == "mingoodhitsmod" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    mingoodhitsmod = stemp.Atof();
+	  }
 	  
 	  if( skey == "prefix" ){
 	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
 	    prefix = stemp;
+	  }
+
+	  if( skey == "prefix_back" ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    prefix_back = stemp;
 	  }
 	  
 	  if( skey == "minposchange" ){
@@ -212,6 +286,7 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	  if( skey == "nlayers" ){
 	    TString snlayers = ( (TObjString*) (*tokens)[1] )->GetString();
 	    nlayers = snlayers.Atoi();
+	    nlayers_tot = nlayers + nlayers_back;
 	  }
 
 	  if( skey == "offsetsonly" ){
@@ -227,8 +302,21 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	  if( skey == "nmodules" ){
 	    TString snmodules = ( (TObjString*) (*tokens)[1] )->GetString();
 	    nmodules = snmodules.Atoi();
+	    nmodules_tot = nmodules + nmodules_back;
 	  }
 
+	  if( skey == "nmodules_back" ){
+	    TString sval = ( (TObjString*) (*tokens)[1] )->GetString();
+	    nmodules_back = sval.Atoi();
+	    nmodules_tot = nmodules+nmodules_back;
+	  }
+
+	  if( skey == "nlayers_back" ){
+	    TString sval = ( (TObjString*) (*tokens)[1] )->GetString();
+	    nlayers_back = sval.Atoi();
+	    nlayers_tot = nlayers+nlayers_back;
+	  }
+	  
 	  if( skey == "refmod" ){
 	    TString sflag = ( (TObjString*) (*tokens)[1] )->GetString();
 	    refmod = sflag.Atoi();
@@ -352,7 +440,96 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	    NMAX = stemp.Atoi();
 	  }
 
+	  if( skey == "fixmod_back" && ntokens >= nmodules_back + 1 ){
+	    for( int i=1; i<ntokens; i++ ){
+	      TString stemp = ( (TObjString*) (*tokens)[i] )->GetString();
+	      int flagtemp = stemp.Atoi();
+	      fixmod[i-1+nmodules] = (flagtemp != 0 );
+	    }
+	  }
 	  
+	  if( skey == "mod_x0_back" && ntokens >= nmodules_back + 1 ){
+	    for( int i=1; i<ntokens; i++ ){
+	      TString smodx = ( (TObjString*) (*tokens)[i] )->GetString();
+	      
+	      mod_x0[i-1+nmodules] = smodx.Atof();
+	    }
+	  }
+
+	  if( skey == "mod_y0_back" && ntokens >= nmodules_back + 1 ){
+	    for( int i=1; i<ntokens; i++ ){
+	      TString smody = ( (TObjString*) (*tokens)[i] )->GetString();
+	      
+	      mod_y0[i-1+nmodules] = smody.Atof();
+	    }
+	  }
+
+	  if( skey == "mod_z0_back" && ntokens >= nmodules_back + 1 ){
+	    for( int i=1; i<ntokens; i++ ){
+	      TString smodz = ( (TObjString*) (*tokens)[i] )->GetString();
+	      
+	      mod_z0[i-1+nmodules] = smodz.Atof();
+	    }
+	  }
+
+	  if( skey == "mod_ax_back" && ntokens >= nmodules_back + 1 ){
+	    for( int i=1; i<ntokens; i++ ){
+	      TString smodax = ( (TObjString*) (*tokens)[i] )->GetString();
+	      
+	      mod_ax[i-1+nmodules] = smodax.Atof();
+	    }
+	  }
+
+	  if( skey == "mod_ay_back" && ntokens >= nmodules_back + 1 ){
+	    for( int i=1; i<ntokens; i++ ){
+	      TString smoday = ( (TObjString*) (*tokens)[i] )->GetString();
+	      
+	      mod_ay[i-1+nmodules] = smoday.Atof();
+	    }
+	  }
+
+	  if( skey == "mod_az_back" && ntokens >= nmodules_back + 1 ){
+	    for( int i=1; i<ntokens; i++ ){
+	      TString smodaz = ( (TObjString*) (*tokens)[i] )->GetString();
+	      
+	      mod_az[i-1+nmodules] = smodaz.Atof();
+	    }
+	  }
+
+	  if( skey == "mod_layer_back" && ntokens >= nmodules_back + 1 ){
+	    for( int i=1; i<ntokens; i++ ){
+	      TString smodlayer = ( (TObjString*) (*tokens)[i] )->GetString();
+
+	      mod_layer[i-1+nmodules] = smodlayer.Atoi() + nlayers;
+	    }  
+	  }
+
+	  //These angles will be assumed to refer to the strip orientations! The coordinates they measure will be orthogonal to
+	  // their orientations
+	  //Angle relative to X axis of "U" strips (assumed to be given in degrees)"
+	  if( skey == "mod_uangle_back" && ntokens >= nmodules_back + 1 ){
+	    for( int i=1; i<ntokens; i++ ){
+	      TString stemp = ( (TObjString*) (*tokens)[i] )->GetString();
+	      mod_uangle[i-1+nmodules] = stemp.Atof()*PI/180.0;
+	      mod_Pxu[i-1+nmodules] = cos(mod_uangle[i-1+nmodules]);
+	      mod_Pyu[i-1+nmodules] = sin(mod_uangle[i-1+nmodules]);
+	    }
+	  }
+
+	  //Angle relative to X axis of "V" strips (assumed to be given in degrees)"
+	  if( skey == "mod_vangle_back" && ntokens >= nmodules_back + 1 ){
+	    for( int i=1; i<ntokens; i++ ){
+	      TString stemp = ( (TObjString*) (*tokens)[i] )->GetString();
+	      mod_vangle[i-1+nmodules] = stemp.Atof()*PI/180.0;
+	      mod_Pxv[i-1+nmodules] = cos(mod_vangle[i-1+nmodules]);
+	      mod_Pyv[i-1+nmodules] = sin(mod_vangle[i-1+nmodules]);
+	    }
+	  }
+
+	  if( skey == "sigma" && ntokens >= 2 ){
+	    TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	    sigma_hitpos = stemp.Atof();
+	  }
 	  
 	  // if( skey == "eventdisplay" && ntokens >= 2 ){
 	  //   TString sevdisplay = ( (TObjString*) (*tokens)[1] )->GetString();
@@ -467,29 +644,45 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   //  C->Draw(">>elist",globalcut);
 
   //  cout << "Number of events passing global cut = " << elist->GetN() << endl;
-  
+
+  int maxntracks = 100;
+  int maxnhits = 1600;
   //declare variables to hold tree branch addresses:
   double ntracks;
   double besttrack;
-  double tracknhits[100000];
-  double trackX[100000],trackY[100000], trackXp[100000], trackYp[100000], trackChi2NDF[100000];
+  double tracknhits[maxntracks];
+  double trackX[maxntracks],trackY[maxntracks], trackXp[maxntracks], trackYp[maxntracks], trackChi2NDF[maxntracks];
 
   //Needed "hit" variables (others can be ignored for now:
   //The data types for all the branches are "double". Hope that doesn't cause problems: 
-  double ngoodhits;
-  double hit_trackindex[100000];
-  double hit_module[100000];
-  double hit_ulocal[100000];
-  double hit_vlocal[100000];
+  int ngoodhits;
+  double hit_trackindex[maxnhits];
+  double hit_module[maxnhits];
+  double hit_ulocal[maxnhits];
+  double hit_vlocal[maxnhits];
+
+  double ntracks_back;
+  double besttrack_back;
+  double tracknhits_back[maxntracks];
+  double trackX_back[maxntracks],trackY_back[maxntracks], trackXp_back[maxntracks], trackYp_back[maxntracks], trackChi2NDF_back[maxntracks];
+
+  //Needed "hit" variables (others can be ignored for now:
+  //The data types for all the branches are "double". Hope that doesn't cause problems: 
+  int ngoodhits_back;
+  double hit_trackindex_back[maxnhits];
+  double hit_module_back[maxnhits];
+  double hit_ulocal_back[maxnhits];
+  double hit_vlocal_back[maxnhits];
 
   TString branchname;
 
   C->SetBranchStatus("*",0);
 
-  C->SetBranchStatus("bb.tr.*",1);
+  //  C->SetBranchStatus("bb.tr.*",1);
   C->SetBranchStatus("sbs.tr.*",1);
 
-  C->SetBranchStatus("e.kine.*",1);
+  C->SetBranchStatus( "heep.*", 1);
+  //  C->SetBranchStatus("e.kine.*",1);
   C->SetBranchStatus("sbs.x_fcp",1);
   C->SetBranchStatus("sbs.y_fcp",1);
   C->SetBranchStatus("sbs.z_fcp",1);
@@ -499,13 +692,18 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   C->SetBranchStatus("sbs.hcal.e",1);
   C->SetBranchStatus("sbs.hcal.x",1);
   C->SetBranchStatus("sbs.hcal.y",1);
+
+  double xHCAL, yHCAL;
+  C->SetBranchAddress("sbs.hcal.x",&xHCAL);
+  C->SetBranchAddress("sbs.hcal.y",&yHCAL);
   
-  
+  std::cout << "prefix = " << prefix.Data() << endl;
+
   
   C->SetBranchStatus( branchname.Format( "%s.track.ntrack", prefix.Data() ), 1 );
   C->SetBranchStatus( branchname.Format( "%s.track.besttrack", prefix.Data() ), 1 );
   C->SetBranchStatus( branchname.Format( "%s.track.nhits", prefix.Data() ), 1 );
-  C->SetBranchStatus( branchname.Format( "%s.hit.ngoodhits", prefix.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "Ndata.%s.hit.trackindex", prefix.Data() ), 1 );
   C->SetBranchStatus( branchname.Format( "%s.hit.trackindex", prefix.Data() ), 1 );
   C->SetBranchStatus( branchname.Format( "%s.track.x", prefix.Data() ), 1 );
   C->SetBranchStatus( branchname.Format( "%s.track.y", prefix.Data() ), 1 );
@@ -516,12 +714,26 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   C->SetBranchStatus( branchname.Format( "%s.hit.u", prefix.Data() ), 1 );
   C->SetBranchStatus( branchname.Format( "%s.hit.v", prefix.Data() ), 1 );
   //C->SetBranchStatus( branchname.Format( "%s.track.ntrack", prefix.Data() ), 1 );
+
+  C->SetBranchStatus( branchname.Format( "%s.track.ntrack", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.track.besttrack", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.track.nhits", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "Ndata.%s.hit.trackindex", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.hit.trackindex", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.track.x", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.track.y", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.track.xp", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.track.yp", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.track.chi2ndf", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.hit.module", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.hit.u", prefix_back.Data() ), 1 );
+  C->SetBranchStatus( branchname.Format( "%s.hit.v", prefix_back.Data() ), 1 );
   
   //This SHOULD give us everything we need from the ROOT tree:
   C->SetBranchAddress( branchname.Format( "%s.track.ntrack", prefix.Data() ), &ntracks );
   C->SetBranchAddress( branchname.Format( "%s.track.besttrack", prefix.Data() ), &besttrack );
   C->SetBranchAddress( branchname.Format( "%s.track.nhits", prefix.Data() ), tracknhits );
-  C->SetBranchAddress( branchname.Format( "%s.hit.ngoodhits", prefix.Data() ), &ngoodhits );
+  C->SetBranchAddress( branchname.Format( "Ndata.%s.hit.trackindex", prefix.Data() ), &ngoodhits );
   C->SetBranchAddress( branchname.Format( "%s.hit.trackindex", prefix.Data() ), hit_trackindex );
   C->SetBranchAddress( branchname.Format( "%s.track.x", prefix.Data() ), trackX );
   C->SetBranchAddress( branchname.Format( "%s.track.y", prefix.Data() ), trackY );
@@ -531,7 +743,21 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   C->SetBranchAddress( branchname.Format( "%s.hit.module", prefix.Data() ), hit_module );
   C->SetBranchAddress( branchname.Format( "%s.hit.u", prefix.Data() ), hit_ulocal );
   C->SetBranchAddress( branchname.Format( "%s.hit.v", prefix.Data() ), hit_vlocal );
-  
+
+  //This SHOULD give us everything we need from the ROOT tree:
+  C->SetBranchAddress( branchname.Format( "%s.track.ntrack", prefix_back.Data() ), &ntracks_back );
+  C->SetBranchAddress( branchname.Format( "%s.track.besttrack", prefix_back.Data() ), &besttrack_back );
+  C->SetBranchAddress( branchname.Format( "%s.track.nhits", prefix_back.Data() ), tracknhits_back );
+  C->SetBranchAddress( branchname.Format( "Ndata.%s.hit.trackindex", prefix_back.Data() ), &ngoodhits_back );
+  C->SetBranchAddress( branchname.Format( "%s.hit.trackindex", prefix_back.Data() ), hit_trackindex_back );
+  C->SetBranchAddress( branchname.Format( "%s.track.x", prefix_back.Data() ), trackX_back );
+  C->SetBranchAddress( branchname.Format( "%s.track.y", prefix_back.Data() ), trackY_back );
+  C->SetBranchAddress( branchname.Format( "%s.track.xp", prefix_back.Data() ), trackXp_back );
+  C->SetBranchAddress( branchname.Format( "%s.track.yp", prefix_back.Data() ), trackYp_back );
+  C->SetBranchAddress( branchname.Format( "%s.track.chi2ndf", prefix_back.Data() ), trackChi2NDF_back );
+  C->SetBranchAddress( branchname.Format( "%s.hit.module", prefix_back.Data() ), hit_module_back );
+  C->SetBranchAddress( branchname.Format( "%s.hit.u", prefix_back.Data() ), hit_ulocal_back );
+  C->SetBranchAddress( branchname.Format( "%s.hit.v", prefix_back.Data() ), hit_vlocal_back );
   
   
   //GEM_cosmic_tracks *T = new GEM_cosmic_tracks(C);
@@ -551,10 +777,10 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 
   double Txtrack, Tytrack, Txptrack, Typtrack, Tchi2ndf;
   int Tnhits;
-  double Tuhit[nlayers], Tvhit[nlayers], Txhit[nlayers], Tyhit[nlayers], Tzhit[nlayers];
-  double Turesid[nlayers], Tvresid[nlayers];
-  double Txresid[nlayers], Tyresid[nlayers];
-  int Thitlayer[nlayers], Thitmodule[nlayers];
+  double Tuhit[nlayers_tot], Tvhit[nlayers_tot], Txhit[nlayers_tot], Tyhit[nlayers_tot], Tzhit[nlayers_tot];
+  double Turesid[nlayers_tot], Tvresid[nlayers_tot];
+  double Txresid[nlayers_tot], Tyresid[nlayers_tot];
+  int Thitlayer[nlayers_tot], Thitmodule[nlayers_tot];
 
   TTree *Tout = new TTree("Tout", "GEM alignment results");
 
@@ -597,11 +823,11 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   //double resid_cut = 100.0; //mm
   //double resid2_sum = 0.0;
 
-  double maxresid = 7.5e-4; 
+  //  double maxresid = 0.5e-3; //mm
 
-  double ndf_max = 2.0*nlayers-4;
+  double ndf_max = 2.0*nlayers_tot-4;
   
-  double minchi2cut = pow( maxresid/sigma_hitpos, 2 ); //smallest cut on chi2/dof that we are allowed to use:
+  double minchi2cut = pow( 0.5e-3/sigma_hitpos, 2 ); //smallest cut on chi2/dof that we are allowed to use:
 
   double meanchi2 = 10000.0;
   double oldmeanchi2 = meanchi2;
@@ -610,6 +836,17 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   double oldmaxposchange = maxposchange;
   double oldmaxanglechange = maxanglechange;
   
+  vector<double> dxfrontback_mean(nmodules_back,0.0);
+  vector<double> dyfrontback_mean(nmodules_back,0.0);
+  vector<double> nhits_iter0(nmodules_back,0.0);
+
+  TH2D *hdxmodFPP_iter0 = new TH2D("hdxmodFPP_iter0","first iteration; FPP module; xhitFPP-xtrackFT (m)", nmodules_back, -0.5, nmodules_back-0.5, 300,-0.15,0.15);
+  TH2D *hdymodFPP_iter0 = new TH2D("hdymodFPP_iter0","first iteration; FPP module; yhitFPP-ytrackFT (m)", nmodules_back, -0.5, nmodules_back-0.5, 300,-0.15,0.15);
+
+  TVector3 GEMPOS_global(X0GEM,Y0GEM,Z0GEM);
+  TVector3 TARGPOS_global(X0targ,Y0targ,Z0targ);
+  TVector3 HCALPOS_global(0,0,HCALdist);
+  
   for( int iter=0; iter<=niter; iter++ ){
 
     cout << "starting iteration " << iter << ", maxpos change = " << maxposchange
@@ -617,11 +854,11 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	 << meanchi2/oldmeanchi2 << endl;
     //at beginning of each iteration check:
     //if this is not the first iteration, cut short if chi2 stops improving:
-    if( iter > 0 && fabs( 1. - meanchi2/oldmeanchi2 ) <= minchi2change ) niter = iter;
-    if( fabs(maxposchange) < minposchange && fabs(maxanglechange) < minanglechange ) niter = iter;
+    if( iter > 1 && fabs( 1. - meanchi2/oldmeanchi2 ) <= minchi2change ) niter = iter;
+    //if( fabs(maxposchange) < minposchange && fabs(maxanglechange) < minanglechange ) niter = iter;
     //if( fabs(maxposchange) > oldmaxposchange && fabs(maxanglechange) > oldmaxanglechange ) niter = iter;
 
-    if( meanchi2/oldmeanchi2 > 1.0 ) niter = iter;
+    if( meanchi2/oldmeanchi2 > 1.0 && iter > 1 ) niter = iter;
     
     nevent=0;
     
@@ -636,19 +873,23 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
     int nfreemodules=0;
     vector<int> freemodlist;
     map<int,int> freemodindex;
+
+    vector<double> ngoodhitsmod(nmodules_tot,0.0);
+
     
-    for( int imod=0; imod<nmodules; imod++ ){
+    
+    for( int imod=0; imod<nmodules_tot; imod++ ){
       if( !fixmod[imod] ){
 	nparam += 6;
-
+	
 	nparam_rot += 3;
 	nparam_pos += 3;
 	
 	freemodlist.push_back( imod );
 	freemodindex[imod] = nfreemodules;
 	nfreemodules++;
-	
       }
+      
     }
     
     // if( refmod >= 0 && refmod < nmodules ){
@@ -744,6 +985,8 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
     // double nhit_sum = 0.0;
 
     int treenum = -1, oldtreenum = -1;
+
+    //On first iteration, get rough offsets for back tracker modules from front tracker projection:     
     
     while( C->GetEntry(nevent++)){
 
@@ -761,26 +1004,44 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
       bool passed_global = GlobalCut->EvalInstance(0) != 0;
 
       int itrack=int(besttrack);
+      int itrack_back=int(besttrack_back);
 
-      int nhits_included = 0;
+      //      std::cout << "itrack, itrack_back = " << itrack << ", " << itrack_back << std::endl;
       
-      if( passed_global && itrack == 0 ){
+      int nhits_included = 0;
+
+      //Require front and back tracks:
+      if( passed_global && itrack == 0 && itrack_back == 0 ){
 	double trackchi2 = 0.0;
 	
-	
-	
 	//cout << itrack << endl;
-	
-	int NHITS = int(ngoodhits);
-	int nhitsonbesttrack=int( tracknhits[itrack] );
+
+	//Reinterpret NHITS to be the TOTAL hits on track:
+	int NHITS = ngoodhits + ngoodhits_back;
+	int NHITS_front = ngoodhits;
+	int nhitsonbesttrack=int( tracknhits[itrack] + tracknhits_back[itrack_back]);
+
+	//	std::cout << "ngoodhits, ngoodhits_back = " << ngoodhits << ", " << ngoodhits_back << std::endl;
+	//std::cout << "NHITS, NHITS_front, NHITS_back = " << NHITS << ", " << NHITS_front << ", " << ngoodhits_back << std::endl;
 	
 	// cout << "N hits total = " << NHITS << ", hits on best track = " << nhitsonbesttrack << endl;
 	// cout << "best track x, y, x', y' = " << trackX[itrack] << ", " << trackY[itrack]
 	// 	   << ", " << trackXp[itrack] << ", " << trackYp[itrack] << endl;
 	// cout << "track chi2/ndf = " << trackChi2NDF[itrack] << endl;
-      
+
+	double xpHCAL = (xHCAL-X0targ)/(HCALdist-Z0targ);
+	double ypHCAL = (yHCAL-Y0targ)/(HCALdist-Z0targ);
+	
+	double xfcptemp = X0targ - X0GEM;
+	double yfcptemp = Y0targ - Y0GEM;
+	double zfcptemp = Z0targ - Z0GEM;
+	
+	double xbcptemp = xHCAL - X0GEM;
+	double ybcptemp = yHCAL - Y0GEM;
+	double zbcptemp = HCALdist - Z0GEM;
+	
 	double xptrack,yptrack,xtrack,ytrack;
-	if( iter < 0 ){ //on first iteration use track from ROOT tree:
+	if( iter < 0 ){ //on first iteration use FRONT track from ROOT tree:
 	  // xptrack = T->TrackXp;
 	  // yptrack = T->TrackYp;
 	  // xtrack = T->TrackX;
@@ -791,68 +1052,135 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	  xptrack = trackXp[itrack];
 	  yptrack = trackYp[itrack];
 	  trackchi2 = trackChi2NDF[itrack];
-	
-	} else { //on ALL iterations, we re-fit the track using updated alignment parameters (or the initial ones from the config file)
-	  double sumX=0.0, sumY = 0.0, sumZ = 0.0, sumXZ = 0.0, sumYZ = 0.0, sumZ2 = 0.0;
-
 	  
+	} else { //on subsequent iterations, we re-fit the track to ALL hits using updated alignment parameters (or the initial ones from the config file)
+	  double sumX=0.0, sumY = 0.0, sumZ = 0.0, sumXZ = 0.0, sumYZ = 0.0, sumZ2 = 0.0, sumweights = 0.0;
+
+
 	  
 	  for( int ihit=0; ihit<NHITS; ihit++ ){
-	    int tridx = int( hit_trackindex[ihit] );
-	    if( tridx == itrack ){
+	    int tridx, hitidx; 
+	    bool ongoodtrack=false;
+	    bool onbacktrack = false;
+	    if( ihit<NHITS_front ){
+	      hitidx = ihit;
+	      tridx = int( hit_trackindex[hitidx] );
+	      ongoodtrack = (tridx == itrack);
+	    } else {
+	      hitidx = ihit-NHITS_front;
+	      tridx = int( hit_trackindex_back[hitidx] );
+	      ongoodtrack = (tridx == itrack_back);
+	      onbacktrack = true;
+	    }
 	    
-	      int module = int( hit_module[ihit] );
+	    if( ongoodtrack ){
 	    
-	      double ulocal = hit_ulocal[ihit]; //"U" local: generalized "X"
-	      double vlocal = hit_vlocal[ihit]; //"V" local: generalized "Y"
+	      int module = onbacktrack ? int( hit_module_back[hitidx] ) + nmodules : int( hit_module[hitidx] );
 
-	    
-	    
+	      //	      if( !fixmod[module] ){
+	      
+	      double ulocal = onbacktrack ? hit_ulocal_back[hitidx] : hit_ulocal[hitidx]; //"U" local: generalized "X"
+	      double vlocal = onbacktrack ? hit_vlocal_back[hitidx] : hit_vlocal[hitidx]; //"V" local: generalized "Y"
+		
+		
+		
 	      double det = mod_Pxu[module]*mod_Pyv[module] - mod_Pyu[module]*mod_Pxv[module]; //cos( alphau) * sin(alphav) - sin(alphau)*cos(alphav) = 1 for alphau = 0, alphav = 90
-	    
+		
 	      double xlocal = (mod_Pyv[module]*ulocal - mod_Pyu[module]*vlocal)/det; //(sin(alphav)*U - sin(alphau)*V)/det = U = X for alphau = 0, alphav = 90
 	      double ylocal = (mod_Pxu[module]*vlocal - mod_Pxv[module]*ulocal)/det; //(cos(alphau)*V - cos(alphav)*U)/det = V = Y for alphau = 0, alphav = 90
-
+		
 	      // cout << "module, (uhit,vhit) = " << module << ", (" << ulocal << ", " << vlocal << "), (xhit, yhit) = ("
 	      // 	 << xlocal << ", " << ylocal << ")" << endl;
-	    
+		
 	      TVector3 hitpos_local(xlocal,ylocal,0);
 	      TRotation R;
 	      R.RotateX( mod_ax[module] );
 	      R.RotateY( mod_ay[module] );
 	      R.RotateZ( mod_az[module] );
-	    
+		
 	      TVector3 modcenter_global( mod_x0[module],mod_y0[module],mod_z0[module] );
 	      TVector3 hitpos_global = modcenter_global + R*hitpos_local;
-
+		
 	      // cout << "Global hit position = ";
 	      // hitpos_global.Print();
-	    
+		
 	      double sigma = 0.1e-3;
 	      double weight = pow(sigma_hitpos,-2);
-	    
-	      weight = 1.0;
-	    
+		
+	      //      weight = 1.0;
+
+	      sumweights += weight;
 	      sumX += hitpos_global.X()*weight;
 	      sumY += hitpos_global.Y()*weight;
 	      sumZ += hitpos_global.Z()*weight;
 	      sumXZ += hitpos_global.X()*hitpos_global.Z()*weight;
 	      sumYZ += hitpos_global.Y()*hitpos_global.Z()*weight;
 	      sumZ2 += pow(hitpos_global.Z(),2)*weight;	  
-
+		
 	      nhits_included++;
-	      
-	      // nhitsonbesttrack++;
 	    }
+
+	    if( useCfoilHCAL_CP ){
+	      double weightFCP = pow(0.006,-2); //6 mm
+	      sumweights += weightFCP;
+	      sumX += xfcptemp * weightFCP;
+	      sumY += yfcptemp * weightFCP;
+	      sumZ += zfcptemp * weightFCP;
+	      sumXZ += xfcptemp*zfcptemp * weightFCP;
+	      sumYZ += yfcptemp*zfcptemp * weightFCP;
+	      sumZ2 += pow(zfcptemp,2)* weightFCP;
+
+	      double weightBCP = pow(0.05,-2);
+	      sumweights += weightBCP;
+
+	      sumX += xbcptemp * weightBCP;
+	      sumY += ybcptemp * weightBCP;
+	      sumZ += zbcptemp * weightBCP;
+	      sumXZ += xbcptemp*zbcptemp * weightBCP;
+	      sumYZ += ybcptemp*zbcptemp * weightBCP;
+	      sumZ2 += pow(zbcptemp,2)* weightBCP;
+	    }
+	    // nhitsonbesttrack++;
+	    
 	  }
+
+	  TMatrixD Alin(4,4); //param order is x, xp, y, yp
+	  TVectorD blin(4);
+
+	  // Matrix elements are
+
+	  Alin(0,0) = sumweights;
+	  Alin(0,1) = sumZ;
+	  Alin(1,0) = sumZ;
+	  Alin(1,1) = sumZ2;
+
+	  Alin(0,2) = Alin(0,3) = Alin(2,0) = Alin(3,0) = 0.0;
+	  Alin(1,2) = Alin(2,1) = Alin(1,3) = Alin(3,1) = 0.0;
+	  
+	  Alin(2,2) = sumweights;
+	  Alin(2,3) = sumZ;
+	  Alin(3,2) = sumZ;
+	  Alin(3,3) = sumZ2;
+
+	  blin(0) = sumX;
+	  blin(1) = sumXZ;
+	  blin(2) = sumY;
+	  blin(3) = sumYZ; 
+	  
+	  // double nhits = nhits_included;
 	
-	  double nhits = nhitsonbesttrack;
-	
-	  double denom = (sumZ2*nhits - pow(sumZ,2));
-	  xptrack = (nhits*sumXZ - sumX*sumZ)/denom;
-	  yptrack = (nhits*sumYZ - sumY*sumZ)/denom;
-	  xtrack = (sumZ2*sumX - sumZ*sumXZ)/denom;
-	  ytrack = (sumZ2*sumY - sumZ*sumYZ)/denom;
+	  // double denom = (sumZ2*nhits - pow(sumZ,2));
+	  // xptrack = (nhits*sumXZ - sumX*sumZ)/denom;
+	  // yptrack = (nhits*sumYZ - sumY*sumZ)/denom;
+	  // xtrack = (sumZ2*sumX - sumZ*sumXZ)/denom;
+	  // ytrack = (sumZ2*sumY - sumZ*sumYZ)/denom;
+
+	  Alin.Invert();
+	  TVectorD LinFit = Alin * blin;
+	  xtrack = LinFit(0);
+	  xptrack = LinFit(1);
+	  ytrack = LinFit(2);
+	  yptrack = LinFit(3);
 
 	}
 
@@ -861,50 +1189,88 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	Txptrack = xptrack;
 	Typtrack = yptrack;
 
-	Tnhits = nhitsonbesttrack;
+	Tnhits = nhits_included;
 
         nhits_included = 0;
-      
-	for( int ihit=0; ihit<NHITS; ihit++ ){
-	  int tridx = int( hit_trackindex[ihit] );
-	  if( tridx == itrack ){
-	  
-	    int module = int( hit_module[ihit] );
 
-	    double ulocal = hit_ulocal[ihit]; //"U" local: generalized "X"
-	    double vlocal = hit_vlocal[ihit]; //"V" local: generalized "Y"
+	
+	
+	//second loop: calculate chi^2:
+	for( int ihit=0; ihit<NHITS; ihit++ ){
+	  int tridx, hitidx; 
+	  bool ongoodtrack=false;
+	  bool onbacktrack = false;
+	  if( ihit<NHITS_front ){
+	    hitidx = ihit;
+	    tridx = int( hit_trackindex[hitidx] );
+	    ongoodtrack = (tridx == itrack);
+	  } else {
+	    hitidx = ihit-NHITS_front;
+	    tridx = int( hit_trackindex_back[hitidx] );
+	    ongoodtrack = (tridx == itrack_back);
+	    onbacktrack = true;
+	  }
+
+	  //	  std::cout << "ihit, ontrack, onbacktrack = " << ihit << ", " << ongoodtrack << ", " << onbacktrack << std::endl;
+	 
+	  if( ongoodtrack ){
 	  
+	    int module = onbacktrack ? int( hit_module_back[hitidx] ) + nmodules : int( hit_module[hitidx] );
+	    
+	    //	    if( !fixmod[module] ){
+	    
+	    double ulocal = onbacktrack ? hit_ulocal_back[hitidx] : hit_ulocal[hitidx]; //"U" local: generalized "X"
+	    double vlocal = onbacktrack ? hit_vlocal_back[hitidx] : hit_vlocal[hitidx]; //"V" local: generalized "Y"
+	    
 	    double det = mod_Pxu[module]*mod_Pyv[module] - mod_Pyu[module]*mod_Pxv[module]; //cos( alphau) * sin(alphav) - sin(alphau)*cos(alphav) = 1 for alphau = 0, alphav = 90
-	  
+	    
 	    double xlocal = (mod_Pyv[module]*ulocal - mod_Pyu[module]*vlocal)/det; //(sin(alphav)*U - sin(alphau)*V)/det = U = X for alphau = 0, alphav = 90
 	    double ylocal = (mod_Pxu[module]*vlocal - mod_Pxv[module]*ulocal)/det; //(cos(alphau)*V - cos(alphav)*U)/det = V = Y for alphau = 0, alphav = 90
-
+	    
 	    TVector3 hitpos_local(xlocal,ylocal,0);
 	    TRotation R;
 	    R.RotateX( mod_ax[module] );
 	    R.RotateY( mod_ay[module] );
 	    R.RotateZ( mod_az[module] );
-
+	    
 	    TRotation Rinv = R;
 	    Rinv.Invert();
-	  
+	    
 	    TVector3 modcenter_global( mod_x0[module],mod_y0[module],mod_z0[module] );
 	    TVector3 hitpos_global = modcenter_global + R*hitpos_local;
-
+	    
 	    trackchi2 += ( pow( hitpos_global.X() - (xtrack + xptrack*hitpos_global.Z()), 2 ) +
 			   pow( hitpos_global.Y() - (ytrack + yptrack*hitpos_global.Z()), 2 ) )*pow(sigma_hitpos,-2);
 
+	    
 	    //for consistency with how we calculate residuals, should we change the chi2 calculation to be in terms of the u and v residuals instead of X and Y? 
-	  
+	    
 	    TVector3 trackpos_global( xtrack + xptrack * hitpos_global.Z(), ytrack + yptrack * hitpos_global.Z(), hitpos_global.Z() );
-	  
+	    
 	    TVector3 trackpos_local = Rinv * ( trackpos_global - modcenter_global );
-
+	    
 	    double utrack = trackpos_local.X()*mod_Pxu[module] + trackpos_local.Y()*mod_Pyu[module];
 	    double vtrack = trackpos_local.X()*mod_Pxv[module] + trackpos_local.Y()*mod_Pyv[module];
 
+	    // if( useCfoilHCAL_CP ){
+	    //   trackchi2 += pow((xtrack + xptrack*zfcptemp - xfcptemp)/.007,2) +
+	    // 	pow((ytrack+yptrack*zfcptemp - yfcptemp)/.007,2) +
+	    // 	pow((xtrack+xptrack*zbcptemp - xbcptemp)/.055,2) +
+	    // 	pow((ytrack+yptrack*zbcptemp - ybcptemp)/.05,2) +
+	    // 	pow((xptrack-xpHCAL)/.005,2) +
+	    // 	pow((yptrack-ypHCAL)/.005,2);
+	    // }
+	    
 	    //	  trackchi2 += ( pow( ulocal - utrack, 2 ) + pow( vlocal - vtrack, 2 ) ) * pow(sigma_hitpos, -2);
-	  
+
+	    if( iter == 0 && onbacktrack ){
+	      dxfrontback_mean[module-nmodules] += hitpos_global.X() - trackpos_global.X();
+	      dyfrontback_mean[module-nmodules] += hitpos_global.Y() - trackpos_global.Y();
+	      nhits_iter0[module-nmodules] += 1.;
+	      hdxmodFPP_iter0->Fill( module-nmodules, hitpos_global.X()-trackpos_global.X() );
+	      hdymodFPP_iter0->Fill( module-nmodules, hitpos_global.Y()-trackpos_global.Y() );
+	    }
+	    
 	    Tuhit[ihit] = ulocal;
 	    Tvhit[ihit] = vlocal;
 	    Txhit[ihit] = hitpos_global.X();
@@ -916,22 +1282,23 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	    Tvresid[ihit] = vlocal - vtrack;
 	    Thitlayer[ihit] = mod_layer[module];
 	    Thitmodule[ihit] = module;
-
-	    nhits_included++;
 	    
-	  }
-		      
+	    nhits_included++;
+	  
+	  }	      
 	}
 	// cout << "Old track (xp,yp,x,y)=(" << T->TrackXp << ", " << T->TrackYp << ", " << T->TrackX << ", " << T->TrackY
 	//      << ")" << endl;
 	// cout << "New track (xp,yp,x,y)=(" << xptrack << ", " << yptrack << ", " << xtrack << ", " << ytrack << ")" << endl;
-	double dof = double( 2*tracknhits[itrack] - 4 );
+	double dof = double( 2*nhits_included - 4 );
+
+	//	if( useCfoilHCAL_CP ) dof += 6;
 	trackchi2 /= dof;
 
 	Tchi2ndf = trackchi2;
       
-      
-	if( trackchi2 <= trackchi2_cut && nhits_included == nhitsonbesttrack){
+	//on first iteration we include all the hits:
+	if( (trackchi2 <= trackchi2_cut && nhits_included >= 8 ) ){
 	  if( nevent < NMAX && iter == niter ){ //fill TRACK arrays 
 	    NTRACKS++;
 	    XTRACK.push_back( xtrack );
@@ -960,23 +1327,41 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
       
       
 	  for( int ihit=0; ihit<NHITS; ihit++ ){
-	    int tridx = int( hit_trackindex[ihit] );
-	    if( tridx == itrack ){
-	  
-	      int module = int( hit_module[ihit] );
-	  
-	      double ulocal = hit_ulocal[ihit]; //"U" local: generalized "X"
-	      double vlocal = hit_vlocal[ihit]; //"V" local: generalized "Y"
 
-	      double det = mod_Pxu[module]*mod_Pyv[module] - mod_Pyu[module]*mod_Pxv[module]; //cos( alphau) * sin(alphav) - sin(alphau)*cos(alphav) = 1 for alphau = 0, alphav = 90
+	    int tridx, hitidx; 
+	    bool ongoodtrack=false;
+	    bool onbacktrack = false;
+	    if( ihit<NHITS_front ){
+	      hitidx = ihit;
+	      tridx = int( hit_trackindex[hitidx] );
+	      ongoodtrack = (tridx == itrack);
+	    } else {
+	      hitidx = ihit-NHITS_front;
+	      tridx = int( hit_trackindex_back[hitidx] );
+	      ongoodtrack = (tridx == itrack_back);
+	      onbacktrack = true;
+	    }
 	    
+	    //third loop: set up and do the fit:
+	    //	    int tridx = int( hit_trackindex[ihit] );
+	    if( ongoodtrack ){
+
+	      //	      std::cout << "incrementing fit matrices, event = " << nevent << std::endl;
+	      
+	      int module = onbacktrack ? int( hit_module_back[hitidx] ) + nmodules : int( hit_module[hitidx] );
+	      //if( !fixmod[module] ){
+	      double ulocal = onbacktrack ? hit_ulocal_back[hitidx] : hit_ulocal[hitidx]; //"U" local: generalized "X"
+	      double vlocal = onbacktrack ? hit_vlocal_back[hitidx] : hit_vlocal[hitidx]; //"V" local: generalized "Y"
+	      
+	      double det = mod_Pxu[module]*mod_Pyv[module] - mod_Pyu[module]*mod_Pxv[module]; //cos( alphau) * sin(alphav) - sin(alphau)*cos(alphav) = 1 for alphau = 0, alphav = 90
+	      
 	      double xlocal = (mod_Pyv[module]*ulocal - mod_Pyu[module]*vlocal)/det; //(sin(alphav)*U - sin(alphau)*V)/det = U = X for alphau = 0, alphav = 90
 	      double ylocal = (mod_Pxu[module]*vlocal - mod_Pxv[module]*ulocal)/det; //(cos(alphau)*V - cos(alphav)*U)/det = V = Y for alphau = 0, alphav = 90
-	    
+	      
 	      //On subsequent iterations after the first, we want to fit the changes in the parameters relative to the previous iteration. How can we do this properly?
 	      //We need to come up with a new definition for the "local" coordinates that properly accounts for the new coordinate system:
 	      //We already re-fit the track; this means that 
-	    
+	      
 	      if( nevent < NMAX && iter == niter ){
 		HITMODTEMP.push_back( module );
 		HITXTEMP.push_back( ulocal );
@@ -987,15 +1372,20 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	      R.RotateX( mod_ax[module] );
 	      R.RotateY( mod_ay[module] );
 	      R.RotateZ( mod_az[module] );
-	    
+	      
 	      TVector3 modcenter_global( mod_x0[module],mod_y0[module],mod_z0[module] );
 	      TVector3 hitpos_global = modcenter_global + R*hitpos_local;
-	    
+	      
 	      double sigma = 0.1e-3;
 	      double weight = pow(sigma_hitpos,-2);
-	    
+
+	      double residx = hitpos_global.X() - (xtrack + xptrack * hitpos_global.Z());
+	      double residy = hitpos_global.Y() - (ytrack + yptrack * hitpos_global.Z());
+
+	      bool goodhit = (iter == 0 || sqrt(pow(residx,2)+pow(residy,2))<=maxresid);
+	      
 	      // int ipar_fix[3] = {3*module,3*module+1,3*module+2};
-	    
+	      
 	      // if( refmod >= 0 && refmod < nmodules ){
 	      //   if( module > refmod ){
 	      //   // 	ipar_x0 = 6*(module-1);
@@ -1004,7 +1394,7 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	      //   // 	ipar_ax = 6*(module-1)+3;
 	      //   // 	ipar_ay = 6*(module-1)+4;
 	      //   // 	ipar_az = 6*(module-1)+5;
-	    
+	      
 	      //     ipar_fix[0] = 3*(module-1);
 	      //     ipar_fix[1] = 3*(module-1)+1;
 	      //     ipar_fix[2] = 3*(module-1)+2;
@@ -1012,26 +1402,34 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	      //     // }
 	      //   }
 	      // }
-	    
-	    
-	    
+
+	      
+	      
 	      double xcoeff[6] = {1.0, 0.0, -xptrack, -xptrack*ylocal, xptrack*xlocal, -ylocal };
 	      double ycoeff[6] = {0.0, 1.0, -yptrack, -yptrack*ylocal, yptrack*xlocal, xlocal };
-	    
-	      if(freemodindex.find(module) != freemodindex.end()){
-		int modidx = freemodindex[module];
 	      
+	      if(freemodindex.find(module) != freemodindex.end() &&
+		 goodhit ){
+		int modidx = freemodindex[module];
+
+		ngoodhitsmod[module] += 1.0;
+		
 		int ipar_x0 = 6*modidx;
 		int ipar_y0 = 6*modidx+1;
 		int ipar_z0 = 6*modidx+2;
 		int ipar_ax = 6*modidx+3;
 		int ipar_ay = 6*modidx+4;
 		int ipar_az = 6*modidx+5;
-	      
+		
 		int ipar_fix[3] = { 3*modidx, 3*modidx+1, 3*modidx+2 };
-	      
+		
 		int ipar[6] = {ipar_x0, ipar_y0, ipar_z0, ipar_ax, ipar_ay, ipar_az };
-	      
+
+		//how would we "bake in" an external constraint on the track?  
+		// the chi2 is like: sum_i=1^ntrack [ sum_j=1^nhit (xhit - xtrack)^2/sigma^2 + (yhit-ytrack)^2/sigma^2 ] 
+
+		
+		
 		for( int i=0; i<6; i++ ){
 		  for( int j=0; j<6; j++ ){
 		    M(ipar[i], ipar[j]) += weight*(xcoeff[i]*xcoeff[j] + ycoeff[i]*ycoeff[j]);
@@ -1039,7 +1437,7 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 		  b(ipar[i]) += weight*(xcoeff[i]*(xtrack - xlocal) + ycoeff[i]*(ytrack-ylocal));
 		  //b(ipar[i]) += xcoeff[i]*xRHS + ycoeff[i]*yRHS;
 		}
-	      
+		
 		for( int i=0; i<3; i++ ){
 		  for( int j=0; j<3; j++ ){
 		    Mpos( ipar_fix[i], ipar_fix[j] ) += weight*(xcoeff[i]*xcoeff[j]+ycoeff[i]*ycoeff[j]);
@@ -1053,22 +1451,42 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 		  brot( ipar_fix[i] ) += weight*( xcoeff[i+3]*(xtrack-xlocal - (xcoeff[0]*mod_x0[module]+xcoeff[1]*mod_y0[module]+xcoeff[2]*mod_z0[module])) +
 						  ycoeff[i+3]*(ytrack-ylocal - (ycoeff[0]*mod_x0[module]+ycoeff[1]*mod_y0[module]+ycoeff[2]*mod_z0[module])) );
 		}
-	      }
+	      } //module is in list of free modules
 	    }
-	  }
+	  } // hit is on good track
+	  //loop over all hits:
 	  
 	  if( nevent < NMAX && iter == niter ){
 	    HITMOD.push_back( HITMODTEMP );
 	    HITX.push_back( HITXTEMP );
 	    HITY.push_back( HITYTEMP );
 	  }
-	
+	  
 	  trackchi2_sum += trackchi2;
 	  ntracks_passed += 1.0;
-	}
-      }
-    }
+	} //first iteration or track passes chi2 cut:
+      } //passed global and tracks in both front and back
+    } //event loop
 
+    // if( iter == 0 ){
+    //   for( int imod=0; imod<nmodules_back; imod++ ){
+    // 	if( nhits_iter0[imod] > 0 ){
+    // 	  dxfrontback_mean[imod] /= nhits_iter0[imod];
+    // 	  dyfrontback_mean[imod] /= nhits_iter0[imod];
+
+    // 	  std::cout << "after first iteration, FPP module, (dxmean, dymean)=("
+    // 		    << imod << ", " 
+    // 		    << dxfrontback_mean[imod] << ", "
+    // 		    << dyfrontback_mean[imod] << ")" << std::endl;
+	
+    // 	  //this might lead to a "not good" solution but we'll see. 
+    // 	  mod_x0[imod+nmodules] += dxfrontback_mean[imod];
+    // 	  mod_y0[imod+nmodules] += dyfrontback_mean[imod];
+    // 	}
+    //   }
+
+    // }
+    
     oldmeanchi2 = meanchi2;
     meanchi2 = trackchi2_sum/ntracks_passed;
 
@@ -1200,14 +1618,14 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 
     //M.Print();
     //b.Print();
-
+    
     cout << "Matrix symmetric? = " << M.IsSymmetric() << endl;
 
     // Here is an idea: to fit the changes of the parameters instead of the parameters themselves, we subtract from the RHS another vector:
     TVectorD PreviousSolution(nparam);
     TVectorD PreviousSolution_posonly(nparam_pos);
     TVectorD PreviousSolution_rotonly(nparam_rot);
-    for( int imodule=0; imodule<nmodules; imodule++ ){
+    for( int imodule=0; imodule<nmodules_tot; imodule++ ){
 
       if( freemodindex.find(imodule) != freemodindex.end() ){
 	int modidx = freemodindex[imodule];
@@ -1240,6 +1658,45 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	PreviousSolution_rotonly(iparx) = mod_ax[imodule];
 	PreviousSolution_rotonly(ipary) = mod_ay[imodule];
 	PreviousSolution_rotonly(iparz) = mod_az[imodule];
+
+	if( ngoodhitsmod[imodule]<mingoodhitsmod ){
+
+	  //Now enough good hits on this module; zero out off-diagonal matrix elements:
+	  for( int ipar=0; ipar<nparam; ipar++ ){
+	    M(ipar_x0,ipar) = 0.0;
+	    M(ipar,ipar_x0) = 0.0;
+	    M(ipar_y0,ipar) = 0.0;
+	    M(ipar,ipar_y0) = 0.0;
+	    M(ipar_z0,ipar) = 0.0;
+	    M(ipar,ipar_z0) = 0.0;
+
+	    M(ipar_ax,ipar) = 0.0;
+	    M(ipar,ipar_ax) = 0.0;
+	    M(ipar_ay,ipar) = 0.0;
+	    M(ipar,ipar_ay) = 0.0;
+	    M(ipar_ay,ipar) = 0.0;
+	    M(ipar,ipar_ay) = 0.0;
+	  }
+
+	  //Set diagnoal elements to 1:
+	  M(ipar_x0, ipar_x0) = 1.0;
+	  M(ipar_y0, ipar_y0) = 1.0;
+	  M(ipar_z0, ipar_z0) = 1.0;
+
+	  M(ipar_ax, ipar_ax) = 1.0;
+	  M(ipar_ay, ipar_ay) = 1.0;
+	  M(ipar_az, ipar_az) = 1.0;
+
+	  //Set RHS vectors to zero:
+	  b(ipar_x0) = mod_x0[imodule];
+	  b(ipar_y0) = mod_y0[imodule];
+	  b(ipar_z0) = mod_z0[imodule];
+
+	  b(ipar_ax) = mod_ax[imodule];
+	  b(ipar_ay) = mod_ay[imodule];
+	  b(ipar_az) = mod_az[imodule];
+	  
+	}
       }
 
     }
@@ -1255,16 +1712,16 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
     M.Invert();
     Mpos.Invert();
     Mrot.Invert();
-    
-    if( iter >= 0 ){
+
+    if( iter < 0 ){
+      Solution = PreviousSolution;
+      Solution_posonly = PreviousSolution_posonly;
+      Solution_rotonly = PreviousSolution_rotonly;
+    } else {
       Solution = M*bshift;
       Solution_posonly = Mpos*bshiftpos;
       Solution_rotonly = Mrot*bshiftrot;
-    } else {
-      Solution = M*b;
-      Solution_posonly = Mpos * bpos;
-      Solution_rotonly = Mrot * brot;
-    }
+    } 
 
     
     
@@ -1279,9 +1736,9 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
     map<int,double> prev_ay = mod_ay;
     map<int,double> prev_az = mod_az;
 
-    double startpar[6*nmodules];
+    double startpar[6*nmodules_tot];
   
-    for( int imodule=0; imodule<nmodules; imodule++ ){
+    for( int imodule=0; imodule<nmodules_tot; imodule++ ){
       if( freemodindex.find(imodule) != freemodindex.end() ){
 	int modidx = freemodindex[imodule];
 	int ipar_x0 = modidx*6;
@@ -1298,14 +1755,14 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 	mod_ay[imodule] = Solution(ipar_ay);
 	mod_az[imodule] = Solution(ipar_az);
 
-	if( iter >= 0 ){
-	  mod_x0[imodule] += prev_x0[imodule];
-	  mod_y0[imodule] += prev_y0[imodule];
-	  mod_z0[imodule] += prev_z0[imodule];
-	  mod_ax[imodule] += prev_ax[imodule];
-	  mod_ay[imodule] += prev_ay[imodule];
-	  mod_az[imodule] += prev_az[imodule];
-	}
+	//	if( iter >= 1 ){
+	mod_x0[imodule] += prev_x0[imodule];
+	mod_y0[imodule] += prev_y0[imodule];
+	mod_z0[imodule] += prev_z0[imodule];
+	mod_ax[imodule] += prev_ax[imodule];
+	mod_ay[imodule] += prev_ay[imodule];
+	mod_az[imodule] += prev_az[imodule];
+	//}
 
 	//Strictly speaking, I don't think this is necessary:
 	PreviousSolution(ipar_x0) = mod_x0[imodule];
@@ -1434,7 +1891,7 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   
     ExtraFit->mnexcm("MIGRAD",arglist,2,ierflg);
 
-    for( int mod=0; mod<nmodules; mod++ ){
+    for( int mod=0; mod<nmodules_tot; mod++ ){
       double dummy;
       double dx0,dy0,dz0,dax,day,daz;
       ExtraFit->GetParameter(6*mod,dx0,dummy);
@@ -1465,31 +1922,68 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   //outfile << "mod_x0 ";
   TString x0line = "mod_x0 ", y0line="mod_y0 ", z0line = "mod_z0 ";
   TString axline = "mod_ax ", ayline="mod_ay ", azline = "mod_az ";
+
+  TString x0line_back = "mod_x0_back";
+  TString y0line_back = "mod_y0_back";
+  TString z0line_back = "mod_z0_back";
+
+  TString axline_back = "mod_ax_back";
+  TString ayline_back = "mod_ay_back";
+  TString azline_back = "mod_az_back";
+  
   for( map<int,double>::iterator imod=mod_x0.begin(); imod!=mod_x0.end(); ++imod ){
     int module = imod->first;
+    
     TString stemp;
-    stemp.Form( " %15.7g", mod_x0[module] );
-    x0line += stemp;
-    stemp.Form( " %15.7g", mod_y0[module] );
-    y0line += stemp;
-    stemp.Form( " %15.7g", mod_z0[module] );
-    z0line += stemp;
-    stemp.Form( " %15.7g", mod_ax[module] );
-    axline += stemp;
-    stemp.Form( " %15.7g", mod_ay[module] );
-    ayline += stemp;
-    stemp.Form( " %15.7g", mod_az[module] );
-    azline += stemp;
+    TString stempx,stempy,stempz,stempax,stempay,stempaz;
+    stempx.Form( " %15.7g", mod_x0[module] );
+    //x0line += stemp;
+    stempy.Form( " %15.7g", mod_y0[module] );
+    //y0line += stemp;
+    stempz.Form( " %15.7g", mod_z0[module] );
+    //z0line += stemp;
+    stempax.Form( " %15.7g", mod_ax[module] );
+    //axline += stemp;
+    stempay.Form( " %15.7g", mod_ay[module] );
+    //ayline += stemp;
+    stempaz.Form( " %15.7g", mod_az[module] );
+    //azline += stemp;
 
-    stemp.Form( "%s.m%d.position = %15.7g %15.7g %15.7g", prefix.Data(), module,
-		mod_x0[module], mod_y0[module], mod_z0[module] );
+    if( module < nmodules ){
+      x0line += stempx;
+      y0line += stempy;
+      z0line += stempz;
+      axline += stempax;
+      ayline += stempay;
+      azline += stempaz;
+      
+      stemp.Form( "%s.m%d.position = %15.7g %15.7g %15.7g", prefix.Data(), module,
+		  mod_x0[module], mod_y0[module], mod_z0[module] );
 
-    outfile_DB << stemp << endl;
+      outfile_DB << stemp << endl;
 
-    stemp.Form( "%s.m%d.angle = %15.7g %15.7g %15.7g", prefix.Data(), module,
-		mod_ax[module]*180.0/PI, mod_ay[module]*180.0/PI, mod_az[module]*180.0/PI );
+      stemp.Form( "%s.m%d.angle = %15.7g %15.7g %15.7g", prefix.Data(), module,
+		  mod_ax[module]*180.0/PI, mod_ay[module]*180.0/PI, mod_az[module]*180.0/PI );
+      
+      outfile_DB << stemp << endl;
+    } else {
+      x0line_back += stempx;
+      y0line_back += stempy;
+      z0line_back += stempz;
+      axline_back += stempax;
+      ayline_back += stempay;
+      azline_back += stempaz;
+      
+      stemp.Form( "%s.m%d.position = %15.7g %15.7g %15.7g", prefix_back.Data(), module-nmodules,
+		  mod_x0[module], mod_y0[module], mod_z0[module] );
+      
+      outfile_DB << stemp << endl;
 
-    outfile_DB << stemp << endl;
+      stemp.Form( "%s.m%d.angle = %15.7g %15.7g %15.7g", prefix_back.Data(), module-nmodules,
+		  mod_ax[module]*180.0/PI, mod_ay[module]*180.0/PI, mod_az[module]*180.0/PI );
+      
+      outfile_DB << stemp << endl;
+    }   
   }
   outfile << x0line << endl;
   outfile << y0line << endl;
@@ -1497,6 +1991,13 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   outfile << axline << endl;
   outfile << ayline << endl;
   outfile << azline << endl;
+  outfile << endl;
+  outfile << x0line_back << endl;
+  outfile << y0line_back << endl;
+  outfile << z0line_back << endl;
+  outfile << axline_back << endl;
+  outfile << ayline_back << endl;
+  outfile << azline_back << endl;
 
   
   

@@ -1017,9 +1017,9 @@ sbs.gemFT.gridedgetolerancex = 0.0025
 sbs.gemFT.gridedgetolerancey = 0.0025
 # min hits = 4
 # chi2 cut by num hits =  4  5  6  7  8
-#sbs.gemFT.trackchi2cut = 15 20 25 30 30 
+sbs.gemFT.trackchi2cut = 15 20 25 30 40 
 # temporarily relax chi2 cut until we can validate alignment with cH2 analyzer installed and field on:
-sbs.gemFT.trackchi2cut = 100.0
+#sbs.gemFT.trackchi2cut = 100.0
 
 # Adjust the grid bins and chi2 here during alignment. Comment them out after the alignment is complete:
 #For alignment with cosmics, we want to start with wider grid bins and a loose chi2 cut for tracking:
@@ -1180,7 +1180,7 @@ sbs.gemFT.m12.angle =       0.5068662       0.3355708     -0.03995951
 sbs.gemFT.m13.position =       0.7710533    0.0009659418        0.844378
 sbs.gemFT.m13.angle =       -1.553839      -0.3341202      0.06093349
 
-sbs.gemFT.usestriptimingcut = 1
+sbs.gemFT.usestriptimingcut = 0
 
 sbs.gemFT.useopticsconstraint = 1
 sbs.gemFT.xptar_min = -0.2
@@ -1204,6 +1204,8 @@ sbs.gemFT.multitracksearch = 0
 sbs.gemFT.usestriptimingcut = 0
 
 --------[ 2025-04-14 17:19:00 ] # done with zero-field, back to field-on running
+
+# turn on GEM strip timing cuts now
 
 sbs.gemFT.useopticsconstraint = 1
 sbs.gemFT.multitracksearch = 1
@@ -1303,7 +1305,7 @@ sbs.gemFT.m3.maxstrip_tsigma = 12.0 12.0
 sbs.gemFT.m4.maxstrip_tsigma = 12.0 12.0
 sbs.gemFT.m5.maxstrip_tsigma = 12.0 12.0
 
-# make timing cuts wider at first:
+# make timing cuts wider at first (these are in units of tsigma above)
 sbs.gemFT.m3.maxstrip_tcut = 4.0 
 sbs.gemFT.m4.maxstrip_tcut = 4.0 
 sbs.gemFT.m5.maxstrip_tcut = 4.0 
@@ -1314,7 +1316,7 @@ sbs.gemFT.m5.maxstrip_tcut = 4.0
 
 #I'm going to put some timestamped entries here to handle runs taken without zero suppression: 
 
----------[ 2025-04-22 14:19:00 ] # runs without pedestal subtraction, starting run 3175:
+---------[ 2025-04-22 14:00:00 ] # runs without pedestal subtraction, starting run 3175:
 sbs.gemFT.pedsub_online = 0
 
 ---------[ 2025-04-22 19:55:00 ] # online pedestal subtraction again starting run 3183
@@ -1325,3 +1327,37 @@ sbs.gemFT.pedsub_online = 0
 
 ---------[ 2025-04-23 01:04:00 ] # back to online zero suppression starting with run 3192
 sbs.gemFT.pedsub_online = 1 
+
+---------[ 2025-04-17 15:00:00 ] 
+
+# start production data with analyzer in; realign to account for difference between field-on/field-off. First layer of front tracker was fixed in this alignment:
+
+
+sbs.gemFT.m0.position =    -0.002192969   -0.0003452624     0.001014518
+sbs.gemFT.m0.angle =       -1.299408        0.927087     -0.01436749
+sbs.gemFT.m1.position =    -0.002105199    0.0008065975      0.07082575
+sbs.gemFT.m1.angle =      -0.8516164        1.003855     -0.06197564
+sbs.gemFT.m2.position =    0.0004498966   -0.0003978733       0.2101962
+sbs.gemFT.m2.angle =       -1.073536       0.8227393       0.2178734
+sbs.gemFT.m3.position =     0.003821412     0.006564228       0.3496131
+sbs.gemFT.m3.angle =       -1.115179       0.7206547      -0.1359436
+sbs.gemFT.m4.position =     0.005952468    -0.000938697       0.4961346
+sbs.gemFT.m4.angle =      -0.8890403        0.812602        0.210324
+sbs.gemFT.m5.position =     0.007839961     0.002209031       0.6340678
+sbs.gemFT.m5.angle =       -0.973361       0.7324572     -0.08435505
+sbs.gemFT.m6.position =      -0.7628112     0.003393371       0.7926007
+sbs.gemFT.m6.angle =       -1.046356       0.2588486      -0.1187663
+sbs.gemFT.m7.position =      -0.2510401     0.002238799       0.7445862
+sbs.gemFT.m7.angle =       -1.357213       0.4032532     -0.06891023
+sbs.gemFT.m8.position =       0.2619563   -0.0007499247       0.7767765
+sbs.gemFT.m8.angle =      -0.7051154        0.339835     -0.02120029
+sbs.gemFT.m9.position =        0.772186    0.0001901603       0.7266947
+sbs.gemFT.m9.angle =      -0.6260749         1.23612     -0.04166257
+sbs.gemFT.m10.position =      -0.7616801     0.004302916       0.9180964
+sbs.gemFT.m10.angle =       -1.022046     -0.03887218     -0.08659501
+sbs.gemFT.m11.position =      -0.2494009     0.002830733       0.8710197
+sbs.gemFT.m11.angle =       -1.226832      0.06433925      0.06220228
+sbs.gemFT.m12.position =       0.2616985     0.001268103       0.9066948
+sbs.gemFT.m12.angle =       -0.751813       0.1560721      -0.0238541
+sbs.gemFT.m13.position =       0.7730414    0.0006709589       0.8541257
+sbs.gemFT.m13.angle =      -0.3963464        1.577535     -0.02565919

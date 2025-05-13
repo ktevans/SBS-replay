@@ -87,9 +87,9 @@ th1d hclus_eng 'ECAL Cluster Energy (GeV)' earm.ecal.e 100 0 8.0 earm.ecal.nclus
 th2d h2clus_pos 'Position of Best Cluster' earm.ecal.colblk+1 earm.ecal.rowblk+1 27 1 28 69 1 70 earm.ecal.e>1&&sbs.hcal.e>0.05
 
 # Timing Stuff
-th1d hclus_atECAL 'ECAL ADC Clus time (ns)' earm.ecal.atimeblk 250 0 250 sbs.hcal.nclus>0&&earm.ecal.nclus>0
+th1d hclus_atECAL 'ECAL ADC Clus time; ns ; ' earm.ecal.atimeblk 250 0 250 sbs.hcal.nclus>0&&earm.ecal.nclus>0
 th1d hclus_atECAL_cut 'ECAL ADC Clus time w/ Strict Cut (ns)' earm.ecal.atimeblk 250 0 250 sbs.hcal.e>0.05&&earm.ecal.e>2.
-th1d hclus_atHCAL 'HCAL ADC Clus time (ns)' sbs.hcal.atimeblk 200 0 200 sbs.hcal.nclus>0&&earm.ecal.nclus>0
+th1d hclus_atHCAL 'HCAL ADC Clus time >> if largest peak not aroud 95 for COIN trig, call RC and start new run; ns; ' sbs.hcal.atimeblk 200 0 200 sbs.hcal.nclus>0&&earm.ecal.nclus>0
 th1d hclus_atHCAL_cut 'HCAL ADC Clus time w/ Strict Cut (ns)' sbs.hcal.atimeblk 200 0 200 sbs.hcal.e>0.05&&earm.ecal.e>2.
 th1d hclus_atimediff 'ECAL ADC Clus time - HCAL ADC Clus time (ns)' earm.ecal.atimeblk-sbs.hcal.atimeblk 300 -300 300 sbs.hcal.nclus>0&&earm.ecal.nclus>0
 

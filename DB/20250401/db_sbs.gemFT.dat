@@ -1374,9 +1374,20 @@ sbs.gemFT.m13.angle =      -0.3963464        1.577535     -0.02565919
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3523.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3523.dat
 
----------[ 2025-05-09 10:30:00 ]
+---------[ 2025-05-09 10:30:00 ] # Start C-foil Zero field runs.
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3572.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3572.dat
+
+sbs.gemFT.useopticsconstraint = 0
+sbs.gemFT.multitracksearch = 0
+sbs.gemFT.usestriptimingcut = 0
+sbs.gemFT.dump_geometry_info = 1
+
+---------[ 2025-05-09 20:00:00 ] # Begin production running on LH2.
+sbs.gemFT.useopticsconstraint = 1
+sbs.gemFT.multitracksearch = 1
+sbs.gemFT.usestriptimingcut = 1
+sbs.gemFT.dump_geometry_info = 0
 
 ---------[ 2025-05-11 08:30:00 ]
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3611.dat

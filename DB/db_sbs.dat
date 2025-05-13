@@ -1349,3 +1349,18 @@ sbs.backconstraint_x0 = -0.008 0.07
 sbs.backconstraint_y0 = -0.003 0.017
 sbs.backconstraintwidth_x = 0.04 0.35
 sbs.backconstraintwidth_y = 0.035 0.35
+
+---------[ 2025-05-09 10:30:00 ] # Start C-foil zero-field runs.
+sbs.geptrackingmode = 0
+sbs.polarimetermode = 1
+sbs.usedynamicconstraint = 1
+
+sbs.dynamicphslope = 0.1
+sbs.dynamicthslope = 0.1
+sbs.dynamicph0 = 0.0
+sbs.dynamicth0 = 0.0
+
+---------[ 2025-05-09 20:00:00 ] # Begin production running on LH2 with field ON.
+sbs.geptrackingmode = 1
+sbs.polarimetermode = 1
+sbs.usedynamicconstraint = 0

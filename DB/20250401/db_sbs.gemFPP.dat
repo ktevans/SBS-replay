@@ -2059,17 +2059,17 @@ sbs.gemFPP.trackchi2cut = 20.0 30.0 40.0 50.0 50.0
 sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3523.dat
 sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3523.dat
 
----------[ 2025-05-09 10:30:00 ] # Start of GEP3.
+---------[ 2025-05-09 10:30:00 ]
 sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3572.dat
 sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3572.dat
 
----------[ 2025-05-11 08:30:00 ] # Start of GEP3.
+---------[ 2025-05-11 08:30:00 ]
 sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3611.dat
 sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3611.dat
 # We may need a new alignment so setting these temporarily.
 sbs.gemFPP.dump_geometry_info = 1
 sbs.gemFPP.trackchi2cut = 500
 
----------[ 2025-05-12 11:30:00 ] # Start of GEP3.
+---------[ 2025-05-12 11:30:00 ]
 sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3647.dat
 sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3647.dat

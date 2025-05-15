@@ -1644,7 +1644,7 @@ sbs.gemFPP.deltat_cut = 30.0
 sbs.gemFPP.corrcoeff_cut = 0.5
 
 # turn on "soft" hit filtering:
-sbs.gemFPP.filterflag1D = -1 # -1 = no filtering: don't require 1D hits to pass any cuts other than basic zero suppression
+sbs.gemFPP.filterflag1D = 0 # -1 = no filtering: don't require 1D hits to pass any cuts other than basic zero suppression
 sbs.gemFPP.filterflag2D = 0  # 1 = "hard" filtering: require 2D hits to pass all cuts
 
 sbs.gemFPP.peakprominence_minsigma = 3.0 

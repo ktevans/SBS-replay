@@ -2,10 +2,12 @@
 
 Block: Physics
 GoodFrontTrack sbs.tr.n>0
+GoodBackTrack sbs.gemFPP.track.ntrack>0
 GoodECAL earm.ecal.nclus>0
 GoodHCAL sbs.hcal.nclus>0
 GoodECALHCAL GoodECAL||GoodHCAL
+AnyTrack GoodFrontTrack||GoodBackTrack
 
 #Physics_master GoodECALHCAL
 # for online replays don't require a track.
-Physics_master GoodFrontTrack
+Physics_master AnyTrack

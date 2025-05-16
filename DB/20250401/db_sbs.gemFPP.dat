@@ -2059,7 +2059,7 @@ sbs.gemFPP.trackchi2cut = 20.0 30.0 40.0 50.0 50.0
 sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3523.dat
 sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3523.dat
 
-sbs.gemFPP.trackchi2cut = 500
+sbs.gemFPP.trackchi2cut = 30
 
 ---------[ 2025-05-09 10:30:00 ] # Start C-foil Zero field runs.
 sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3572.dat
@@ -2068,6 +2068,73 @@ sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3572.dat
 sbs.gemFPP.usestriptimingcut = 0
 sbs.gemFPP.multitracksearch = 0
 sbs.gemFPP.dump_geometry_info = 1
+
+# ADR: 05/15/2025 - Alignment done with the C-foil Zero-field data. 
+sbs.gemFPP.m0.position =      -0.9475884    -0.006438562        2.100547
+sbs.gemFPP.m0.angle =       0.1804005      -0.6432557       0.1796618
+sbs.gemFPP.m1.position =       -0.434809    -0.005562018        2.059021
+sbs.gemFPP.m1.angle =     -0.05088063      -0.1767267       0.1625712
+sbs.gemFPP.m2.position =       0.0812533     -0.00256237         2.08305
+sbs.gemFPP.m2.angle =      -0.1561528      -0.4524745       0.1105316
+sbs.gemFPP.m3.position =       0.5928951    -0.001934815        2.041938
+sbs.gemFPP.m3.angle =      0.08517346       0.6776066       0.2532399
+sbs.gemFPP.m4.position =       -0.952413    -0.005151063          2.1822
+sbs.gemFPP.m4.angle =      -0.1206304       -0.990549       0.1450179
+sbs.gemFPP.m5.position =      -0.4391958    -0.003590896        2.153525
+sbs.gemFPP.m5.angle =      0.06563827      -0.4323564       0.2221492
+sbs.gemFPP.m6.position =      0.07666556    -0.003022972        2.170767
+sbs.gemFPP.m6.angle =      -0.4109616      -0.7176029       0.3742285
+sbs.gemFPP.m7.position =        0.587074    0.0001671677        2.142208
+sbs.gemFPP.m7.angle =      0.05435404       0.4374997      0.08233099
+sbs.gemFPP.m8.position =      -0.9494556    -0.005040436        2.320526
+sbs.gemFPP.m8.angle =     -0.01185013      -0.9337579       0.1280981
+sbs.gemFPP.m9.position =      -0.4367335    -0.003160605        2.295033
+sbs.gemFPP.m9.angle =     -0.02377107      -0.8598241       0.2595343
+sbs.gemFPP.m10.position =       0.0776089   -0.0002128673        2.319795
+sbs.gemFPP.m10.angle =      -0.7441186      -0.5922434       0.1134973
+sbs.gemFPP.m11.position =       0.5900526     0.001390301        2.294621
+sbs.gemFPP.m11.angle =       0.2593204       0.4440342      0.09287212
+sbs.gemFPP.m12.position =      -0.9491275    -0.003857704        2.405824
+sbs.gemFPP.m12.angle =      -0.0136637        -1.17319       0.1132659
+sbs.gemFPP.m13.position =       -0.437914    -0.003624202        2.374288
+sbs.gemFPP.m13.angle =      0.01128225      -0.9418682       0.1165108
+sbs.gemFPP.m14.position =      0.07698033   -0.0005754271        2.414089
+sbs.gemFPP.m14.angle =      -0.7766781      -0.9590973      0.04549752
+sbs.gemFPP.m15.position =       0.5894191    0.0008407006        2.377612
+sbs.gemFPP.m15.angle =      0.05346017        0.131598       0.1052396
+sbs.gemFPP.m16.position =      -0.9495237    -0.009228768        2.511579
+sbs.gemFPP.m16.angle =      -0.3614162       -1.339817      -0.2120222
+sbs.gemFPP.m17.position =      -0.4378374    -0.009555332        2.551716
+sbs.gemFPP.m17.angle =      -0.1729767       -0.375129     -0.06219766
+sbs.gemFPP.m18.position =      0.07682827     -0.01085683         2.50898
+sbs.gemFPP.m18.angle =       -0.919177      -0.4161863      -0.2221215
+sbs.gemFPP.m19.position =        0.589362     -0.00875974         2.56254
+sbs.gemFPP.m19.angle =      -0.1705993       0.9831154     -0.07877253
+sbs.gemFPP.m20.position =      -0.9584266    -0.007973458        2.605274
+sbs.gemFPP.m20.angle =      -0.2848977       -1.138883      -0.2054846
+sbs.gemFPP.m21.position =      -0.4436772    -0.008726635        2.660786
+sbs.gemFPP.m21.angle =       0.5650441       -1.079895     -0.07174423
+sbs.gemFPP.m22.position =      0.06862971     -0.01056754         2.61286
+sbs.gemFPP.m22.angle =      -0.5103934     -0.06347774      -0.2629716
+sbs.gemFPP.m23.position =       0.5851454    -0.008023895        2.668693
+sbs.gemFPP.m23.angle =       0.1831465       0.2880122      -0.2576811
+sbs.gemFPP.m24.position =      -0.9474368    -0.004693786        2.733857
+sbs.gemFPP.m24.angle =      -0.1089761      -0.9768349         0.11126
+sbs.gemFPP.m25.position =      -0.4351467    -0.003247011        2.787245
+sbs.gemFPP.m25.angle =       0.0763565       -1.033721       0.1807882
+sbs.gemFPP.m26.position =      0.07848674    -0.003703616        2.748084
+sbs.gemFPP.m26.angle =        -1.31539      -0.5618775     -0.01222081
+sbs.gemFPP.m27.position =       0.5934902    0.0006725741        2.815773
+sbs.gemFPP.m27.angle =       0.2084796       0.4267682     0.001159252
+sbs.gemFPP.m28.position =      -0.9352873    -0.001701505        2.826546
+sbs.gemFPP.m28.angle =      -0.1097032      -0.9077856    0.0002187608
+sbs.gemFPP.m29.position =      -0.4228073    -0.002093656        2.880726
+sbs.gemFPP.m29.angle =       0.1932527       -1.157039       0.1100621
+sbs.gemFPP.m30.position =      0.08982966   -0.0006364874        2.847933
+sbs.gemFPP.m30.angle =       -1.279413      -0.3935785      -0.1306987
+sbs.gemFPP.m31.position =       0.6057871     0.001719762        2.919469
+sbs.gemFPP.m31.angle =       0.2671225       0.7716155      -0.1407104
+
 
 ---------[ 2025-05-09 20:00:00 ] # Begin production running on LH2.
 sbs.gemFPP.usestriptimingcut = 1

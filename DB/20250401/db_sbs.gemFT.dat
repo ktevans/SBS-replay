@@ -1383,6 +1383,37 @@ sbs.gemFT.multitracksearch = 0
 sbs.gemFT.usestriptimingcut = 0
 sbs.gemFT.dump_geometry_info = 1
 
+
+# ADR 05/15/1015 - Alignment donw with the C-foil zero-field data.
+sbs.gemFT.m0.position =     -0.00219297    -0.000345262      0.00101452
+sbs.gemFT.m0.angle =       -1.299239       0.9271718      -0.0143656
+sbs.gemFT.m1.position =    -0.002183667    0.0008298996      0.07352498
+sbs.gemFT.m1.angle =        -1.25173       0.9048246     -0.06193852
+sbs.gemFT.m2.position =    0.0005504134   -0.0003954236       0.2114166
+sbs.gemFT.m2.angle =       -1.281136       0.8096431       0.2197113
+sbs.gemFT.m3.position =     0.003827713     0.006556713       0.3505416
+sbs.gemFT.m3.angle =       -1.088909       0.7166432      -0.1327161
+sbs.gemFT.m4.position =     0.005847327   -0.0009349071       0.4974426
+sbs.gemFT.m4.angle =       -1.001455       0.7808765       0.2149094
+sbs.gemFT.m5.position =     0.007737537     0.002210702       0.6345626
+sbs.gemFT.m5.angle =      -0.8699718       0.7098801      -0.0807945
+sbs.gemFT.m6.position =      -0.7626978      0.00337103       0.7927764
+sbs.gemFT.m6.angle =      -0.9858524     -0.02053263      -0.1155293
+sbs.gemFT.m7.position =      -0.2509987     0.002234779       0.7457513
+sbs.gemFT.m7.angle =       -1.311323       0.2261716     -0.06225881
+sbs.gemFT.m8.position =       0.2619393   -0.0007479413       0.7778468
+sbs.gemFT.m8.angle =      -0.4656286        0.698087     -0.02121591
+sbs.gemFT.m9.position =       0.7723005    0.0001915626        0.727553
+sbs.gemFT.m9.angle =      -0.6008874         1.15795     -0.04183991
+sbs.gemFT.m10.position =      -0.7617779     0.004315554        0.918922
+sbs.gemFT.m10.angle =      -0.9353633       -0.269773     -0.07893804
+sbs.gemFT.m11.position =      -0.2493704     0.002847479       0.8725333
+sbs.gemFT.m11.angle =       -1.175703      -0.1987966      0.06839085
+sbs.gemFT.m12.position =       0.2616626     0.001297144       0.9074854
+sbs.gemFT.m12.angle =       -0.271353       0.5942308     -0.02373584
+sbs.gemFT.m13.position =       0.7731784    0.0006394542       0.8538343
+sbs.gemFT.m13.angle =       -0.221331          1.7311     -0.04389869
+
 ---------[ 2025-05-09 20:00:00 ] # Begin production running on LH2.
 sbs.gemFT.useopticsconstraint = 1
 sbs.gemFT.multitracksearch = 1

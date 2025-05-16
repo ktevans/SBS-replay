@@ -36,7 +36,7 @@
 using namespace std;
 
 void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const char *fname_prefix="gep5", UInt_t firstsegment=0, UInt_t maxsegments=1, 
-		Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0, Int_t firststream=0, Int_t dogems=1)
+		Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0, Int_t firststream=0, Int_t dogems=1, Int_t requiretrack=0)
 {
     THaAnalyzer* analyzer = new THaAnalyzer;
     
@@ -234,6 +234,8 @@ void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const cha
 
     TString cdef_filename = "replay_gep.cdef"; // TO BE MADE!
 
+    if( requiretrack > 0 ) cdef_filename = "replay_gep_farm.cdef";
+    
     cdef_filename.Prepend( prefix );
 
     analyzer->SetCutFile( cdef_filename );

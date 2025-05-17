@@ -1428,16 +1428,6 @@ sbs.gemFT.m13.angle =      -0.3963464        1.577535     -0.02565919
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3523.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3523.dat
 
----------[ 2025-05-09 10:30:00 ] # Start C-foil Zero field runs.
-sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3572.dat
-sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3572.dat
-
-sbs.gemFT.useopticsconstraint = 0
-sbs.gemFT.multitracksearch = 0
-sbs.gemFT.usestriptimingcut = 0
-sbs.gemFT.dump_geometry_info = 1
-
-
 # ADR 05/15/1015 - Alignment donw with the C-foil zero-field data.
 sbs.gemFT.m0.position =     -0.00219297    -0.000345262      0.00101452
 sbs.gemFT.m0.angle =       -1.299239       0.9271718      -0.0143656
@@ -1467,6 +1457,23 @@ sbs.gemFT.m12.position =       0.2616626     0.001297144       0.9074854
 sbs.gemFT.m12.angle =       -0.271353       0.5942308     -0.02373584
 sbs.gemFT.m13.position =       0.7731784    0.0006394542       0.8538343
 sbs.gemFT.m13.angle =       -0.221331          1.7311     -0.04389869
+
+sbs.gemFT.threshold_sample = 50.0
+sbs.gemFT.threshold_stripsum = 200.0
+sbs.gemFT.threshold_clustersum = 300.0
+
+sbs.gemFT.filterflag1D = 0
+sbs.gemFT.filterflag2D = 0
+
+---------[ 2025-05-09 10:30:00 ] # Start C-foil Zero field runs.
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3572.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3572.dat
+
+sbs.gemFT.useopticsconstraint = 0
+sbs.gemFT.multitracksearch = 0
+sbs.gemFT.usestriptimingcut = 0
+sbs.gemFT.dump_geometry_info = 1
+
 
 ---------[ 2025-05-09 20:00:00 ] # Begin production running on LH2.
 sbs.gemFT.useopticsconstraint = 1

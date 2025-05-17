@@ -2166,15 +2166,14 @@ sbs.gemFPP.trackchi2cut = 20.0 30.0 40.0 50.0 50.0
 sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3523.dat
 sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3523.dat
 
-sbs.gemFPP.trackchi2cut = 30
+sbs.gemFPP.threshold_sample = 50.0
+sbs.gemFPP.threshold_stripsum = 200.0
+sbs.gemFPP.threshold_clustersum = 300.0
 
----------[ 2025-05-09 10:30:00 ] # Start C-foil Zero field runs.
-sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3572.dat
-sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3572.dat
-
-sbs.gemFPP.usestriptimingcut = 0
-sbs.gemFPP.multitracksearch = 0
-sbs.gemFPP.dump_geometry_info = 1
+sbs.gemFPP.filterflag1D = 0
+sbs.gemFPP.filterflag2D = 0
+sbs.gemFPP.minhitsontrack = 4
+sbs.gemFPP.trackchi2cut = 20 30 40 50 50 
 
 # ADR: 05/15/2025 - Alignment done with the C-foil Zero-field data. 
 sbs.gemFPP.m0.position =      -0.9475884    -0.006438562        2.100547
@@ -2241,6 +2240,16 @@ sbs.gemFPP.m30.position =      0.08982966   -0.0006364874        2.847933
 sbs.gemFPP.m30.angle =       -1.279413      -0.3935785      -0.1306987
 sbs.gemFPP.m31.position =       0.6057871     0.001719762        2.919469
 sbs.gemFPP.m31.angle =       0.2671225       0.7716155      -0.1407104
+
+---------[ 2025-05-09 10:30:00 ] # Start C-foil Zero field runs.
+sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3572.dat
+sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3572.dat
+
+sbs.gemFPP.usestriptimingcut = 0
+sbs.gemFPP.multitracksearch = 0
+sbs.gemFPP.dump_geometry_info = 1
+
+
 
 
 ---------[ 2025-05-09 20:00:00 ] # Begin production running on LH2.

@@ -1475,3 +1475,11 @@ sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3611.dat
 ---------[ 2025-05-12 11:30:00 ] 
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3647.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3647.dat
+
+---------[ 2025-05-14 12:00:00 ] 
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3710.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3710.dat
+
+---------[ 2025-05-16 10:00:00 ] 
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3760.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3760.dat

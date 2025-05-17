@@ -6,6 +6,6 @@ GoodECAL earm.ecal.nclus>0
 GoodHCAL sbs.hcal.nclus>0
 GoodECALHCAL GoodECAL||GoodHCAL
 
-#Physics_master GoodECALHCAL
+Physics_master GoodECALHCAL
 # for online replays don't require a track.
-Physics_master GoodFrontTrack
+#Physics_master GoodFrontTrack

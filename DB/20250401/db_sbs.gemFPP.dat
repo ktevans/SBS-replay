@@ -1634,9 +1634,13 @@ sbs.gemFPP.m31.chanmap =
 
 ############ parameters searched by SBSGEMModule::ReadDatabase() #################
 ############ offline thresholds: ############
-sbs.gemFPP.threshold_sample = 25.0
-sbs.gemFPP.threshold_stripsum = 100.0
-sbs.gemFPP.threshold_clustersum = 200.0
+#sbs.gemFPP.threshold_sample = 25.0
+#sbs.gemFPP.threshold_stripsum = 100.0
+#sbs.gemFPP.threshold_clustersum = 200.0
+
+sbs.gemFPP.threshold_sample = 50.0
+sbs.gemFPP.threshold_stripsum = 200.0
+sbs.gemFPP.threshold_clustersum = 300.0
 
 
 sbs.gemFPP.ADCasym_cut = 0.8 

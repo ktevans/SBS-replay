@@ -36,7 +36,7 @@
 using namespace std;
 
 void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const char *fname_prefix="gep5", UInt_t firstsegment=0, UInt_t maxsegments=1, 
-		Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0, Int_t firststream=0, Int_t dogems=1, Int_t requiretrack=0)
+		Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=0, Int_t firststream=0, Int_t dogems=1, Int_t requiretrack=0, Int_t nontrackingmode=0)
 {
     THaAnalyzer* analyzer = new THaAnalyzer;
     
@@ -80,11 +80,13 @@ void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const cha
     bool pm = ( pedestalmode != 0 );
     gemFT->SetPedestalMode( pm );
     gemFT->SetMakeCommonModePlots( cmplots );
+    gemFT->SetNonTrackingMode( nontrackingmode );
     if( dogems != 0 )harm->AddDetector( gemFT );
     // // FPP GEMs
     SBSGEMPolarimeterTracker* gemFPP = new SBSGEMPolarimeterTracker("gemFPP", "Focal plane polarimeter");
     gemFPP->SetPedestalMode( pm );
     gemFPP->SetMakeCommonModePlots( cmplots );
+    gemFPP->SetNonTrackingMode( nontrackingmode );
     if ( dogems != 0 )harm->AddDetector( gemFPP );
     
     gHaApps->Add(harm);

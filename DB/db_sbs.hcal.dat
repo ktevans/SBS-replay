@@ -117,9 +117,9 @@ sbs.hcal.ncols = 12
 sbs.hcal.tdc.tw = 0.78 0.50
 
 ## Position of first module
-#sbs.hcal.xyz = -2.190625 -0.85217 0.0 #Overridden by detailed ypos and xpos below
+sbs.hcal.xyz = -2.190625 -0.85217 0.0 #Overridden by detailed ypos and xpos below
 ## Space between modules
-#sbs.hcal.dxdydz = 0.15875 0.15494 0.0 #Overridden by detailed ypos and xpos below
+sbs.hcal.dxdydz = 0.15875 0.15494 0.0 #Overridden by detailed ypos and xpos below
 #Updated HCal position information from GMn/GEn data from MC database center to center distance. Overall range verified via physical measurement in hall. Update 6.15.23
 #Updated xpos to CAD drawing offset value of 75cm (assuming rounding error on drawing, 29.52")
 sbs.hcal.ypos =

@@ -623,7 +623,7 @@ earm.ecal.ypos =
 ## adc channels to mV assume F250 set fot 2V for 4096
 earm.ecal.adc.conv = 0.2441
 # Threshold for pulse finding in waveform (mV)
-earm.ecal.adc.thres = 5.0
+earm.ecal.adc.thres = 3.0
 # Number of bins (bin=4ns) at the beginning of waveform used to determing average Pedestal
 earm.ecal.adc.NPedBin = 4
 # Number of bins (bin=4ns) before Threshold Bin to use in integrating
@@ -1004,10 +1004,6 @@ earm.ecal.adc.gain =
 0.0182115 0.0235504 0.0149057 0.0155508 0.0108793 0.0155278 0.01 0.01 0.01 0.0122146 0.0125188 0.01 0.01 0.01 0.0214375 0.01 0.0209985 0.01 
 
 
-<<<<<<< HEAD
-# need to put a sufficiently early time-stamp here for these to work:
---------[ 2025-04-11 00:00:00 ] 
-=======
 --------[ 2025-04-20 20:30:00 ] #gep 
 
 #Convert adc integral in pC to GeV
@@ -1380,10 +1376,7 @@ earm.ecal.adc.gain = 0.0122327 0.0148004 0.018587 0.0124338 0.012 0.012 0.012 0.
 0.012 0.012 0.0164951 0.00741533 0.0150652 0.012 0.0120421 0.01 0.012 0.0163454 0.0160485 0.0138976 0.01 0.01 0.012 0.012 0.01 0.0159966 
 0.0136755 0.012 0.0154766 0.012 0.010434 0.013642 0.012 0.012 0.012 0.00721107 0.0160488 0.012 0.01 0.01 0.0151263 0.0149788 0.0138829 0.012 
 
-
-
-
->>>>>>> 7b23a2a (updates by various sub-system experts)
+-------[ 2025-04-11 00:00:00 ]
 
 ## ** Parameters related to ECAL clustering **
 # AJRP: let's make this a little more conservative at the beginning in case there are inaccuracies in the position database.

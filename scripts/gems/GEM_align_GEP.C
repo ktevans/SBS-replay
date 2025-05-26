@@ -512,6 +512,7 @@ void GEM_align_GEP( const char *configfilename, const char *outputfilename="newG
   C->SetBranchStatus("sbs.hcal.e",1);
   C->SetBranchStatus("sbs.hcal.x",1);
   C->SetBranchStatus("sbs.hcal.y",1);
+  C->SetBranchStatus("sbs.hcal.atimeblk",1);
   C->SetBranchStatus("sbs.hcal.Ref.*",1);
   C->SetBranchStatus("Ndata.sbs.hcal.Ref.*",1);
 
@@ -572,6 +573,10 @@ void GEM_align_GEP( const char *configfilename, const char *outputfilename="newG
   C->SetBranchAddress( "sbs.tr.ph",ypfront);
   C->SetBranchAddress( "sbs.tr.n",&ntrackfront );
   C->SetBranchAddress( "sbs.gemFT.track.chi2ndf",chi2ndf_front);
+
+  C->SetBranchStatus("g.runnum",1);
+  double runnum;
+  C->SetBranchAddress("g.runnum",&runnum);
   
   //GEM_cosmic_tracks *T = new GEM_cosmic_tracks(C);
 
@@ -595,10 +600,13 @@ void GEM_align_GEP( const char *configfilename, const char *outputfilename="newG
   double Txresid[nlayers], Tyresid[nlayers];
   int Thitlayer[nlayers], Thitmodule[nlayers];
 
+  int Trunnum;
+  
   TTree *Tout = new TTree("Tout", "GEM alignment results");
 
   int coinmatch = 0;
-  
+
+  Tout->Branch( "runnum", &Trunnum, "runnum/I" );
   Tout->Branch( "xtrack", &Txtrack, "xtrack/D" );
   Tout->Branch( "ytrack", &Tytrack, "ytrack/D" );
   Tout->Branch( "xptrack", &Txptrack, "xptrack/D" );
@@ -746,7 +754,9 @@ void GEM_align_GEP( const char *configfilename, const char *outputfilename="newG
       brot(ipar) = 0.0;
       bpos(ipar) = 0.0;
     }
-      
+
+    std::vector<double> ngoodhitsmod(nmodules,0.0);
+    
     
     // We wish to minimize the sum of squared residuals between all hits and tracks by varying the x,y,z position offsets and ax,ay,az
     // rotation angles of all nmodules modules:
@@ -828,11 +838,11 @@ void GEM_align_GEP( const char *configfilename, const char *outputfilename="newG
       T_EHCAL = EHCAL;
       T_xHCAL = xHCAL;
       T_yHCAL = yHCAL;
+
+      Trunnum = int(runnum);
       
       if( passed_global && itrack == 0 ){
 	double trackchi2 = 0.0;
-	
-	
 	
 	//cout << itrack << endl;
 	
@@ -1244,6 +1254,9 @@ void GEM_align_GEP( const char *configfilename, const char *outputfilename="newG
 						  ycoeff[i+3]*(ytrack-ylocal - (ycoeff[0]*mod_x0[module]+ycoeff[1]*mod_y0[module]+ycoeff[2]*mod_z0[module])) );
 		}
 	      }
+
+	      ngoodhitsmod[module]+=1.0;
+	      
 	    }
 	  }
 	  
@@ -1546,9 +1559,10 @@ void GEM_align_GEP( const char *configfilename, const char *outputfilename="newG
     cout << "ending solution: " << endl;
     for( map<int,double>::iterator imod=mod_x0.begin(); imod!=mod_x0.end(); ++imod ){
       int module = imod->first;
-      cout << "Module " << module << ": (x0,y0,z0,ax,ay,az)=("
+      cout << "Module " << module << ": (x0,y0,z0,ax,ay,az,ngoodhits)=("
 	   << mod_x0[module] << ", " << mod_y0[module] << ", " << mod_z0[module] << ", "
-	   << mod_ax[module] << ", " << mod_ay[module] << ", " << mod_az[module] << ")" << endl;
+	   << mod_ax[module] << ", " << mod_ay[module] << ", " << mod_az[module] << ", "
+	   << ngoodhitsmod[module] << ")" << endl;
     }
 
     oldmaxposchange = fabs(maxposchange);

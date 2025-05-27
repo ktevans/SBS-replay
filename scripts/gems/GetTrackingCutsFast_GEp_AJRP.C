@@ -761,7 +761,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
     if( htempU->GetEntries() >= 300 ){
       c1->cd(1)->SetLogy();
       htempU->SetTitle(histname.Format("FT mod %d; Max U strip max ADC sample;",imod));
-      htempU->Fit("landau","qS","",0,1500.);
+      htempU->Fit("landau","qS","",0,1000.);
       htempU->Draw();
 
       MPV_U = ( (TF1*) (htempU->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -769,7 +769,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
 
       c1->cd(2)->SetLogy();
       htempV->SetTitle(histname.Format("FT mod %d; Max V strip max ADC sample;",imod));
-      htempV->Fit("landau","qS","",0,1500.);
+      htempV->Fit("landau","qS","",0,1000.);
       htempV->Draw();
 
       MPV_V = ( (TF1*) (htempV->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -790,7 +790,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
       c1->cd(3)->SetLogy();
 
       htempU->SetTitle(histname.Format("FT mod %d; Max U strip ADC sum;",imod));
-      htempU->Fit("landau","qS","",0,5000.);
+      htempU->Fit("landau","qS","",0,3000.);
       htempU->Draw();
 
       MPV_U = ( (TF1*) (htempU->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -798,7 +798,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
 
       c1->cd(4)->SetLogy();
       htempV->SetTitle(histname.Format("FT mod %d; Max V strip ADC sum;",imod));
-      htempV->Fit("landau","qS","",0,5000.);
+      htempV->Fit("landau","qS","",0,3000.);
       htempV->Draw();
 
       MPV_V = ( (TF1*) (htempV->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -820,7 +820,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
       c1->cd(5)->SetLogy();
 
       htempU->SetTitle(histname.Format("FT mod %d; U cluster ADC sum;",imod));
-      htempU->Fit("landau","qS","",0,10000.);
+      htempU->Fit("landau","qS","",0,7500.);
       htempU->Draw();
 
       MPV_U = ( (TF1*) (htempU->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -828,7 +828,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
 
       c1->cd(6)->SetLogy();
       htempV->SetTitle(histname.Format("FT mod %d; V cluster ADC sum;",imod));
-      htempV->Fit("landau","qS","",0,10000.);
+      htempV->Fit("landau","qS","",0,7500.);
       htempV->Draw();
 
       MPV_V = ( (TF1*) (htempV->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -851,7 +851,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
       c1->cd(7)->SetLogy();
 
       htempU->SetTitle(histname.Format("FT mod %d; max U strip max deconv combo;",imod));
-      htempU->Fit("landau","qS","",0,1500.);
+      htempU->Fit("landau","qS","",0,1000.);
       htempU->Draw();
 
       MPV_U = ( (TF1*) (htempU->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -859,7 +859,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
 
       c1->cd(8)->SetLogy();
       htempV->SetTitle(histname.Format("FT mod %d; max V strip max deconv combo;",imod));
-      htempV->Fit("landau","qS","",0,1500.);
+      htempV->Fit("landau","qS","",0,1000.);
       htempV->Draw();
 
       MPV_V = ( (TF1*) (htempV->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -881,7 +881,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
       c1->cd(9)->SetLogy();
 
       htempU->SetTitle(histname.Format("FT mod %d; U cluster deconv ADC sum;",imod));
-      htempU->Fit("landau","qS","",0,5000.);
+      htempU->Fit("landau","qS","",0,3000.);
       htempU->Draw();
 
       MPV_U = ( (TF1*) (htempU->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -889,7 +889,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
 
       c1->cd(10)->SetLogy();
       htempV->SetTitle(histname.Format("FT mod %d; V cluster deconv ADC sum;",imod));
-      htempV->Fit("landau","qS","",0,5000.);
+      htempV->Fit("landau","qS","",0,3000.);
       htempV->Draw();
 
       MPV_V = ( (TF1*) (htempV->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -1103,7 +1103,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
     if( htempU->GetEntries() >= 300 ){
       c1->cd(1)->SetLogy();
       htempU->SetTitle(histname.Format("FPP mod %d; Max U strip max ADC sample;",imod));
-      htempU->Fit("landau","qS","",0,1500.);
+      htempU->Fit("landau","qS","",0,1000.);
       htempU->Draw();
 
       MPV_U = ( (TF1*) (htempU->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -1111,7 +1111,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
 
       c1->cd(2)->SetLogy();
       htempV->SetTitle(histname.Format("FPP mod %d; Max V strip max ADC sample;",imod));
-      htempV->Fit("landau","qS","",0,1500.);
+      htempV->Fit("landau","qS","",0,1000.);
       htempV->Draw();
 
       MPV_V = ( (TF1*) (htempV->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -1132,7 +1132,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
       c1->cd(3)->SetLogy();
 
       htempU->SetTitle(histname.Format("FPP mod %d; Max U strip ADC sum;",imod));
-      htempU->Fit("landau","qS","",0,5000.);
+      htempU->Fit("landau","qS","",0,3000.);
       htempU->Draw();
 
       MPV_U = ( (TF1*) (htempU->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -1140,7 +1140,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
 
       c1->cd(4)->SetLogy();
       htempV->SetTitle(histname.Format("FPP mod %d; Max V strip ADC sum;",imod));
-      htempV->Fit("landau","qS","",0,5000.);
+      htempV->Fit("landau","qS","",0,3000.);
       htempV->Draw();
 
       MPV_V = ( (TF1*) (htempV->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -1162,7 +1162,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
       c1->cd(5)->SetLogy();
 
       htempU->SetTitle(histname.Format("FPP mod %d; U cluster ADC sum;",imod));
-      htempU->Fit("landau","qS","",0,10000.);
+      htempU->Fit("landau","qS","",0,7500.);
       htempU->Draw();
 
       MPV_U = ( (TF1*) (htempU->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -1170,7 +1170,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
 
       c1->cd(6)->SetLogy();
       htempV->SetTitle(histname.Format("FPP mod %d; V cluster ADC sum;",imod));
-      htempV->Fit("landau","qS","",0,10000.);
+      htempV->Fit("landau","qS","",0,7500.);
       htempV->Draw();
 
       MPV_V = ( (TF1*) (htempV->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -1193,7 +1193,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
       c1->cd(7)->SetLogy();
 
       htempU->SetTitle(histname.Format("FPP mod %d; max U strip max deconv combo;",imod));
-      htempU->Fit("landau","qS","",0,1500.);
+      htempU->Fit("landau","qS","",0,1000.);
       htempU->Draw();
 
       MPV_U = ( (TF1*) (htempU->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -1201,7 +1201,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
 
       c1->cd(8)->SetLogy();
       htempV->SetTitle(histname.Format("FPP mod %d; max V strip max deconv combo;",imod));
-      htempV->Fit("landau","qS","",0,1500.);
+      htempV->Fit("landau","qS","",0,1000.);
       htempV->Draw();
 
       MPV_V = ( (TF1*) (htempV->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -1223,7 +1223,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
       c1->cd(9)->SetLogy();
 
       htempU->SetTitle(histname.Format("FPP mod %d; U cluster deconv ADC sum;",imod));
-      htempU->Fit("landau","qS","",0,5000.);
+      htempU->Fit("landau","qS","",0,3000.);
       htempU->Draw();
 
       MPV_U = ( (TF1*) (htempU->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");
@@ -1231,7 +1231,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
 
       c1->cd(10)->SetLogy();
       htempV->SetTitle(histname.Format("FPP mod %d; V cluster deconv ADC sum;",imod));
-      htempV->Fit("landau","qS","",0,5000.);
+      htempV->Fit("landau","qS","",0,3000.);
       htempV->Draw();
 
       MPV_V = ( (TF1*) (htempV->GetListOfFunctions()->FindObject("landau") ) )->GetParameter("MPV");

@@ -597,7 +597,7 @@ void GetTrackingCutsFast_GEp_AJRP( const char *configfilename, const char *outfi
       maxstrip_t0[imod][i] = 85.0;
       maxstrip_tsigma[imod][i] = 10.0;
       maxstrip_t0_deconv[imod][i] = 40.0;
-      maxstrip_tsigma[imod][i] = 20.0;
+      maxstrip_tsigma_deconv[imod][i] = 20.0;
 
       tmean[imod][i] = 85.0;
       tsigma[imod][i] = 10.0;

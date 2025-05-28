@@ -260,9 +260,6 @@ void GEM_GainMatch_gep( const char *configfilename, const char *outfname="GEM_ga
   //Remind me why TChain is important
   UInt_t MAXNTRACKS=100;
   
- 
-
-
   // TChain *C = new TChain("T");
 
   // C->Add( infilename );
@@ -403,7 +400,13 @@ void GEM_GainMatch_gep( const char *configfilename, const char *outfname="GEM_ga
   C->SetBranchStatus("sbs.y_fcp",1);
   C->SetBranchStatus("sbs.z_fcp",1);
 
-  //C->SetBranchStatus("e.kine.*",1);
+  C->SetBranchStatus("heep.dyECAL",1);
+  C->SetBranchStatus("heep.dxECAL",1);
+  C->SetBranchStatus("heep.dpp",1);
+  C->SetBranchStatus("heep.dt_ADC",1);
+
+
+//  C->SetBranchStatus("sbs.gemFT.track.nhits",1);
 
   cout << "Setting branch addresses: ";
 
@@ -435,6 +438,13 @@ void GEM_GainMatch_gep( const char *configfilename, const char *outfname="GEM_ga
   //changed output file name to include run number for file organization
   //  TString outfilename = Form("GEM_GainMatch_output/GainRatios_%s_%s.root",detname.Data(),runnum_char);
   
+  if (detname == "sbs.gemFPP") { 
+    outfname="GEMFPP_gainmatch_temp.root";
+    C->SetBranchStatus("sbs.gemFT.track.nhits",1);
+  } else {
+    outfname="GEMFT_gainmatch_temp.root";
+  }
+
   TString outfilename(outfname);
   
   C->SetBranchAddress( branchnames["hit.ADCmaxsampU"].Data(), &(hit_ADCmaxsampU[0]) );
@@ -647,14 +657,15 @@ void GEM_GainMatch_gep( const char *configfilename, const char *outfname="GEM_ga
       }
     }
   }
-  //cout << "Event " << nevent << " done" << endl;
+  cout << "Event " << nevent << " done" << endl;
+  cout << "Entries " << hADCavg_allhits->GetEntries() << " done" << endl;
 
   //Fitting landau's to something
   TFitResultPtr fitadcall = hADCavg_allhits->Fit("landau","qS","",2000.0,25000.);
 
   double MPV_all = ( (TF1*) hADCavg_allhits->GetListOfFunctions()->FindObject("landau") )->GetParameter("MPV");
 
-  //cout << "All hits ADC peak position = " << MPV_all << endl;
+  cout << "All hits ADC peak position = " << MPV_all << endl;
 
   
   
@@ -1414,7 +1425,7 @@ void GEM_GainMatch_gep( const char *configfilename, const char *outfname="GEM_ga
       }
     }
   }
-  //cout << "Event " << nevent << " done" << endl;
+  cout << "Event " << nevent << " done" << endl;
 
 
   //Adjust module ABSOLUTE gain AFTER correction for RELATIVE gain:

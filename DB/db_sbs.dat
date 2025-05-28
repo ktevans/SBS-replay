@@ -1283,8 +1283,11 @@ sbs.optics_origin = 0.0 0.0 3.714
 # starting with GEM origin from previous global alignment, adding 2.8 cm to the
 # z offset. This global alignment will need to be redone of course
 #sbs.gemorigin_xyz =    -0.153507   -0.0068747      3.61869
-sbs.gemorigin_xyz =    -0.153507   -0.0068747      3.648
-sbs.gemangles_xyz =    0.0702184    -0.393578     0.352327
+#sbs.gemorigin_xyz =    -0.153507   -0.0068747      3.648
+#sbs.gemangles_xyz =    0.0702184    -0.393578     0.352327
+
+sbs.gemorigin_xyz =    -0.147446  -0.00258276      3.61066
+sbs.gemangles_xyz =   -0.0290593    -0.342306     0.309045
 
 sbs.optics_order = 2
 
@@ -1372,13 +1375,13 @@ sbs.dynamicth0 = 0.0
 
 sbs.frontconstraint_x0 = 0.0 0.0
 sbs.frontconstraint_y0 = 0.0 0.0
-sbs.frontconstraintwidth_x = 0.05 0.15
-sbs.frontconstraintwidth_y = 0.05 0.15
+sbs.frontconstraintwidth_x = 0.1 0.2
+sbs.frontconstraintwidth_y = 0.1 0.2
 
 sbs.backconstraint_x0 = 0.0 0.0
 sbs.backconstraint_y0 = 0.0 0.0
-sbs.backconstraintwidth_x = 0.05 0.5
-sbs.backconstraintwidth_y = 0.05 0.5
+sbs.backconstraintwidth_x = 0.015 0.5
+sbs.backconstraintwidth_y = 0.03 0.5
 
 ---------[ 2025-05-09 20:00:00 ] # Begin production running on LH2 with field ON.
 sbs.geptrackingmode = 1
@@ -1394,3 +1397,4 @@ sbs.backconstraint_x0 = 0.0 0.0
 sbs.backconstraint_y0 = 0.0 0.0
 sbs.backconstraintwidth_x = 0.05 0.5
 sbs.backconstraintwidth_y = 0.05 0.5
+

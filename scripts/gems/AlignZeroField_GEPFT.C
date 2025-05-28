@@ -26,9 +26,10 @@ const double PI = TMath::Pi();
 // Align SBS GEM to Hall A coordinate system using single-foil, 
 // straight-through data
 
-const double Z0optics=3.685;
+double Z0optics=3.714;
 const double Z0FPPideal=2.074; //nominal distance from FP to first FPP layer
 
+bool CH2in = false;
 
 int NMAX=100000;
 
@@ -177,10 +178,13 @@ void CHI2_FCN( int &npar, double *gin, double &f, double *par, int flag ){
 
     double xHCAL_expect = xHCAL[i]+HCALPOS.X();
     double yHCAL_expect = yHCAL[i]+HCALPOS.Y();
+
+    double sigma_angle_HCAL = CH2in ? 0.008 : 0.005;
+    double sigma_pos_HCAL = CH2in ? 0.08 : 0.05;
     
     chi2 += pow( (TargPos.X()-BeamPos.X())/0.007,2 ) + pow( (TargPos.Y()-BeamPos.Y())/0.007,2) +
-      pow( (thtar_gem-thtar_HCAL)/0.005,2 ) + pow( (phtar_gem-phtar_HCAL)/0.005,2) +
-      pow( (TrackProj_HCAL.X()-xHCAL_expect)/0.05,2 ) + pow( (TrackProj_HCAL.Y()-yHCAL_expect)/0.05,2) + 
+      pow( (thtar_gem-thtar_HCAL)/sigma_angle_HCAL,2 ) + pow( (phtar_gem-phtar_HCAL)/sigma_angle_HCAL,2) +
+      pow( (TrackProj_HCAL.X()-xHCAL_expect)/sigma_pos_HCAL,2 ) + pow( (TrackProj_HCAL.Y()-yHCAL_expect)/sigma_pos_HCAL,2) + 
       pow( (XPTRACK[i]-xpfp_expect)/0.002, 2 ) + pow( (YPTRACK[i]-ypfp_expect)/0.002, 2 );
     
   }
@@ -241,6 +245,14 @@ void AlignZeroField_GEPFT( const char *configfilename, const char *outfilename =
 	    prefix_back = sval;
 	  }
 
+	  if( skey == "CH2in" ){
+	    CH2in = sval.Atoi() > 0;
+	  }
+	  
+	  if( skey == "Z0optics" ){
+	    Z0optics = sval.Atof();
+	  }
+	  
 	  if( skey == "GEMX0" ){
 	    GEMX0 = sval.Atof();
 	  }
@@ -330,6 +342,8 @@ void AlignZeroField_GEPFT( const char *configfilename, const char *outfilename =
     }
     
     C->SetBranchStatus("*",0);
+
+    C->SetBranchStatus("g.runnum",1);
     
     C->SetBranchStatus("sbs.x_bcp",1);
     C->SetBranchStatus("sbs.y_bcp",1);

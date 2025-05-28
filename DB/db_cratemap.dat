@@ -172,11 +172,11 @@
   30    4450    6
   11     514     86
 ==== Crate 29 type vme
-   4   6401     7
-   5   6401     7
-   6   6401     7
-   7   6401     7
-   8   6401     7
+   4   6401     7  cfg: suppress_hitFIFOwarn=100 # HCal F1 TDC on bank 7
+   5   6401     7  cfg: suppress_hitFIFOwarn=100 # HCal F1 TDC on bank 7
+   6   6401     7  cfg: suppress_hitFIFOwarn=100 # HCal F1 TDC on bank 7
+   7   6401     7  cfg: suppress_hitFIFOwarn=100 # HCal F1 TDC on bank 7
+   8   6401     7  cfg: suppress_hitFIFOwarn=100 # HCal F1 TDC on bank 7
   18    250     3
   19    250     3
   20    250     3

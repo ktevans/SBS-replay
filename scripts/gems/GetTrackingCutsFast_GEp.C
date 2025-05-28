@@ -108,6 +108,7 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
     }
   }
 
+
   cout << "number of modules = " << nmodules << endl;
   //Initialize branches:
   
@@ -224,6 +225,11 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
  // C->SetBranchAddress("Ndata.bb.tdctrig.tdc",&Ntrig);
  // C->SetBranchAddress("sbs.tdctrig.tdcelemID",trig_elemID);
  // C->SetBranchAddress("sbs.tdctrig.tdc",trig_tdc);
+
+  C->SetBranchStatus("heep.dxECAL",1);
+  C->SetBranchStatus("heep.dyECAL",1);
+  C->SetBranchStatus("heep.dpp",1);
+  C->SetBranchStatus("heep.dt_ADC",1);
 
   C->SetBranchStatus("sbs.tr.x",1);
   C->SetBranchStatus("sbs.tr.y",1);
@@ -344,6 +350,13 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
   C->SetBranchAddress( branchnames["hit.deltat"].Data(), deltat);
   C->SetBranchAddress( branchnames["hit.deltat_deconv"].Data(), deltatDeconv);
   C->SetBranchAddress( branchnames["hit.deltat_fit"].Data(), deltatFit);
+
+  if (detname == "sbs.gemFPP") {
+    outfilename="TrackingCuts_GEp_GEMFPP.root";
+    C->SetBranchStatus("sbs.gemFT.track.nhits",1);
+  } else {
+    outfilename="TrackingCuts_GEp_GEMFT.root";
+  }
 
   TFile *fout = new TFile(outfilename,"RECREATE");
   
@@ -771,14 +784,14 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
       
       TH1D *htU = htempU;
       htU->SetName(Form("htstripfitU_m%i",imod));
-      htU->SetTitle(Form("Module %i U Fit Time;deconv time (ns)",imod));
+      htU->SetTitle(Form("Module %i U Fit Time;fit time (ns)",imod));
       c2->cd(5);
       DrawHist(htU,resultsU,2);
       fitfuncU->Draw("same");
 
       TH1D *htV = htempV;
       htV->SetName(Form("htstripfitV_m%i",imod));
-      htV->SetTitle(Form("Module %i V Fit Time;deconv time (ns)",imod));
+      htV->SetTitle(Form("Module %i V Fit Time;fit time (ns)",imod));
       c2->cd(6);
       DrawHist(htV,resultsV,2);
       fitfuncV->Draw("same");
@@ -894,14 +907,14 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 
       TH1D *htU = htempU;
       htU->SetName(Form("htclustU_m%i",imod));
-      htU->SetTitle(Form("Module %i U Cluster Time;deconv time (ns)",imod));
+      htU->SetTitle(Form("Module %i U Cluster Time;time (ns)",imod));
       c4->cd(1);
       DrawHist(htU,resultsU,2);
       fitfuncU->Draw("same");
 
       TH1D *htV = htempV;
       htV->SetName(Form("htclustV_m%i",imod));
-      htV->SetTitle(Form("Module %i V Cluster Time;deconv time (ns)",imod));
+      htV->SetTitle(Form("Module %i V Cluster Time;time (ns)",imod));
       c4->cd(2);
       DrawHist(htV,resultsV,2);
       fitfuncV->Draw("same");
@@ -929,10 +942,10 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 
       ///// Now we create the histograms for the pdf results//////
       vector<double> resultsU, resultsV;
-      resultsU.push_back(tmean[imod][0]);
-      resultsU.push_back(tsigma[imod][0]);
-      resultsV.push_back(tmean[imod][1]);
-      resultsV.push_back(tsigma[imod][1]);
+      resultsU.push_back(tmean[imod][2]);
+      resultsU.push_back(tsigma[imod][2]);
+      resultsV.push_back(tmean[imod][3]);
+      resultsV.push_back(tsigma[imod][3]);
 
       TH1D *htU = htempU;
       htU->SetName(Form("htclustdeconU_m%i",imod));
@@ -971,21 +984,21 @@ void GetTrackingCutsFast_GEp( const char *configfilename, const char *outfilenam
 
       ///// Now we create the histograms for the pdf results//////
       vector<double> resultsU, resultsV;
-      resultsU.push_back(tmean[imod][0]);
-      resultsU.push_back(tsigma[imod][0]);
-      resultsV.push_back(tmean[imod][1]);
-      resultsV.push_back(tsigma[imod][1]);
+      resultsU.push_back(tmean[imod][4]);
+      resultsU.push_back(tsigma[imod][4]);
+      resultsV.push_back(tmean[imod][5]);
+      resultsV.push_back(tsigma[imod][5]);
 
       TH1D *htU = htempU;
       htU->SetName(Form("htclustfitU_m%i",imod));
-      htU->SetTitle(Form("Module %i U Cluster Fit Time;deconv time (ns)",imod));
+      htU->SetTitle(Form("Module %i U Cluster Fit Time;fit time (ns)",imod));
       c4->cd(5);
       DrawHist(htU,resultsU,2);
       fitfuncU->Draw("same");
 
       TH1D *htV = htempV;
       htV->SetName(Form("htclustfitV_m%i",imod));
-      htV->SetTitle(Form("Module %i V Cluster Fit Time;deconv time (ns)",imod));
+      htV->SetTitle(Form("Module %i V Cluster Fit Time;fit time (ns)",imod));
       c4->cd(6);
       DrawHist(htV,resultsV,2);
       fitfuncV->Draw("same");

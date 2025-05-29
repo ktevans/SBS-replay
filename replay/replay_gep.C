@@ -118,7 +118,7 @@ void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const cha
     LHRSScalerEvtHandler* lScaler = new LHRSScalerEvtHandler("Left", "HA scaler event type 140");;
     gHaEvtHandlers->Add(lScaler);
 
-    SBSScalerEvtHandler* sbsScaler = new SBSScalerEvtHandler("sbs","SBS Scaler Bank event type 1" );
+    SBSScalerEvtHandler* sbsScaler = new SBSScalerEvtHandler("sbsgep","SBS Scaler Bank event type 1" );
     sbsScaler->SetUseFirstEvent(kTRUE);
     gHaEvtHandlers->Add(sbsScaler);
 

@@ -1593,7 +1593,7 @@ sbs.gemFT.corrcoeff_cut_deconv = 0.0
 sbs.gemFT.clustering_flag = 0
 sbs.gemFT.deconvolution_flag = 0
 
-sbs.gemFT.zerosuppress_nsigma = 3.0
+sbs.gemFT.zerosuppress_nsigma = 3.5
 sbs.gemFT.suppressfirstlast = -1
 
 sbs.gemFT.m0.maxstrip_t0 =      83.0818      82.9203

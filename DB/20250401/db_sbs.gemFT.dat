@@ -1552,6 +1552,22 @@ sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3710.dat
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3760.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3760.dat
 
+---------[ 2025-05-21 16:00:00 ] 
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3977.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3977.dat
+
+---------[ 2025-05-22 15:00:00 ] 
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run4012.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run4012.dat
+
+---------[ 2025-05-22 17:30:00 ] 
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run4020.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run4020.dat
+
+---------[ 2025-05-28 16:00:00 ] 
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run4138.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run4138.dat
+
 
 
 ######################################################################################
@@ -2145,6 +2161,3 @@ sbs.gemFT.m10.ADCasym_sigma =     0.121418
 sbs.gemFT.m11.ADCasym_sigma =     0.110936
 sbs.gemFT.m12.ADCasym_sigma =     0.117732
 sbs.gemFT.m13.ADCasym_sigma =     0.110436
-
-
-

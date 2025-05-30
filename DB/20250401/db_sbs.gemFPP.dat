@@ -2285,6 +2285,22 @@ sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3710.dat
 sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3760.dat
 sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3760.dat
 
+---------[ 2025-05-21 16:00:00 ] 
+sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run3977.dat
+sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run3977.dat
+
+---------[ 2025-05-22 15:00:00 ] 
+sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run4012.dat
+sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run4012.dat
+
+---------[ 2025-05-22 17:30:00 ] 
+sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run4020.dat
+sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run4020.dat
+
+---------[ 2025-05-28 16:00:00 ] 
+sbs.gemFPP.pedfile = gemped/daq_ped_sbs_gemFPP_run4138.dat
+sbs.gemFPP.cmfile = gemped/db_cmr_sbs_gemFPP_run4138.dat
+
 
 ######################################################################################
 #                                                                                    #
@@ -3455,4 +3471,3 @@ sbs.gemFPP.m28.ADCasym_sigma =     0.100414
 sbs.gemFPP.m29.ADCasym_sigma =     0.108531
 sbs.gemFPP.m30.ADCasym_sigma =     0.090992
 sbs.gemFPP.m31.ADCasym_sigma =    0.0889001
-

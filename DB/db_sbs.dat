@@ -1398,3 +1398,37 @@ sbs.backconstraint_y0 = 0.0 0.0
 sbs.backconstraintwidth_x = 0.05 0.5
 sbs.backconstraintwidth_y = 0.05 0.5
 
+---------[ 2025-05-23 17:00:00 ] # Start C-foil zero-field runs taken after GEM work in Hall. FPP L0 L1 and L4 L5 were pulled out.
+sbs.geptrackingmode = 0
+sbs.polarimetermode = 1
+sbs.usedynamicconstraint = 1
+
+sbs.dynamicphslope = 0.1
+sbs.dynamicthslope = 0.1
+sbs.dynamicph0 = 0.0
+sbs.dynamicth0 = 0.0
+
+sbs.frontconstraint_x0 = 0.0 0.0
+sbs.frontconstraint_y0 = 0.0 0.0
+sbs.frontconstraintwidth_x = 0.1 0.2
+sbs.frontconstraintwidth_y = 0.1 0.2
+
+sbs.backconstraint_x0 = 0.0 0.0
+sbs.backconstraint_y0 = 0.0 0.0
+sbs.backconstraintwidth_x = 0.015 0.5
+sbs.backconstraintwidth_y = 0.03 0.5
+
+---------[ 2025-05-23 20:00:00 ] # Begin production running on LH2 with field ON.
+sbs.geptrackingmode = 1
+sbs.polarimetermode = 1
+sbs.usedynamicconstraint = 0
+
+sbs.frontconstraint_x0 = 0.0 0.0
+sbs.frontconstraint_y0 = 0.0 0.0
+sbs.frontconstraintwidth_x = 0.05 0.05
+sbs.frontconstraintwidth_y = 0.05 0.05
+
+sbs.backconstraint_x0 = 0.0 0.0
+sbs.backconstraint_y0 = 0.0 0.0
+sbs.backconstraintwidth_x = 0.05 0.5
+sbs.backconstraintwidth_y = 0.05 0.5

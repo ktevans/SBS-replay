@@ -1536,6 +1536,57 @@ sbs.gemFT.minhitsontrack = 4
 #   chi2 cut for nhits = 4    5    6    7    8
 sbs.gemFT.trackchi2cut = 10.0 20.0 30.0 40.0 50.0 
 
+---------[ 2025-05-23 17:00:00 ] # Start C-foil zero-field runs taken after GEM work in Hall. FPP L0 L1 and L4 L5 were pulled out.
+sbs.gemFT.useopticsconstraint = 0
+sbs.gemFT.useslopeconstraint = 0
+sbs.gemFT.multitracksearch = 0
+sbs.gemFT.usestriptimingcut = 0
+sbs.gemFT.dump_geometry_info = 1
+
+sbs.gemFT.trackchi2cut = 30.0
+
+# ADR 6/4/2025 - new C foil internal alignment after the Hall work in 5/23/2025. FT was not moved and results are not much different to the previous alignment:
+sbs.gemFT.m0.position =      -0.0022369     -0.00036415      0.00502309
+sbs.gemFT.m0.angle =       -1.257946       0.7992647    0.0005411054
+sbs.gemFT.m1.position =    -0.002265194    0.0007917635      0.07786703
+sbs.gemFT.m1.angle =       -1.426366       0.8320934     -0.04433291
+sbs.gemFT.m2.position =    0.0005446825   -0.0003887713        0.215573
+sbs.gemFT.m2.angle =       -1.390684       0.7070758       0.2329765
+sbs.gemFT.m3.position =     0.003801107     0.006557074       0.3545363
+sbs.gemFT.m3.angle =       -1.199645        0.657682      -0.1225277
+sbs.gemFT.m4.position =     0.005818726   -0.0009219661       0.5010956
+sbs.gemFT.m4.angle =       -1.069212       0.7700268       0.2237405
+sbs.gemFT.m5.position =     0.007708947     0.002225421       0.6379182
+sbs.gemFT.m5.angle =      -0.8773407       0.7423647     -0.07278594
+sbs.gemFT.m6.position =       -0.762689     0.003306672       0.7965693
+sbs.gemFT.m6.angle =      -0.9476139     -0.05164289      -0.1020087
+sbs.gemFT.m7.position =      -0.2509634      0.00220726       0.7489353
+sbs.gemFT.m7.angle =        -1.28469       0.1881764     -0.05187122
+sbs.gemFT.m8.position =       0.2618947   -0.0007084945       0.7804896
+sbs.gemFT.m8.angle =      -0.3826047       0.8674216     -0.01469593
+sbs.gemFT.m9.position =       0.7723072    0.0002291313       0.7300039
+sbs.gemFT.m9.angle =      -0.5272954        1.156329     -0.05911903
+sbs.gemFT.m10.position =      -0.7615725     0.004237384       0.9216153
+sbs.gemFT.m10.angle =      -0.8776847      -0.4339881     -0.07133304
+sbs.gemFT.m11.position =      -0.2492617     0.002797322       0.8750507
+sbs.gemFT.m11.angle =       -1.065186      -0.1956649      0.08009959
+sbs.gemFT.m12.position =       0.2616163     0.001318415       0.9096996
+sbs.gemFT.m12.angle =      -0.1481864       0.8391139     -0.02066269
+sbs.gemFT.m13.position =       0.7732439    0.0006903553       0.8551133
+sbs.gemFT.m13.angle =        -0.21104        1.855113     -0.05117343
+
+
+
+---------[ 2025-05-23 20:00:00 ] # Begin production running on LH2 with field ON.
+sbs.gemFT.useopticsconstraint = 1
+sbs.gemFT.useslopeconstraint = 1
+sbs.gemFT.multitracksearch = 1
+sbs.gemFT.usestriptimingcut = 1
+sbs.gemFT.dump_geometry_info = 0
+
+#   chi2 cut for nhits = 4    5    6    7    8
+sbs.gemFT.trackchi2cut = 10.0 20.0 30.0 40.0 50.0
+
 ---------[ 2025-05-11 08:30:00 ]
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3611.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3611.dat

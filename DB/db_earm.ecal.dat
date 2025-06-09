@@ -244,7 +244,7 @@ earm.ecal.emin_clSeed = 0.1
 earm.ecal.emin_clTotal = 0.5
 
 ## Maximum time difference between cluster seed & additional clusters [Default = 1000ns]
-earm.ecal.tmax = 100.0
+earm.ecal.tmax = 25.0
 
 
 ## ECal rows and columns
@@ -941,6 +941,10 @@ earm.ecal.yprofiles =
 
 
 ---------[ 2025-05-05 00:00:00 ] # start Kin. 3: new ECAL shower profiles (these are also from Kin. 3 Monte Carlo:
+
+# ADC time cuts for ECAL best cluster selection (exclude badly out-of-time clusters)
+earm.ecal.adctime_min_clusterselect = 65.0
+earm.ecal.adctime_max_clusterselect = 125.0
 
 earm.ecal.nbinsxprof = 7
 earm.ecal.nbinsyprof = 1

@@ -2262,9 +2262,6 @@ sbs.gemFPP.usestriptimingcut = 1
 sbs.gemFPP.multitracksearch = 1
 sbs.gemFPP.dump_geometry_info = 0
 
-sbs.gemFPP.threshold_sample = 50.0
-sbs.gemFPP.threshold_stripsum = 100.0
-sbs.gemFPP.threshold_clustersum = 200.0
 
 ---------[ 2025-05-23 17:00:00 ] # Start C-foil zero-field runs taken after GEM work in Hall. FPP L0 L1 and L4 L5 were pulled out.
 sbs.gemFPP.usestriptimingcut = 0
@@ -2539,7 +2536,7 @@ sbs.gemFPP.m11.maxstrip_tsigma_deconv =      16.7212      17.4783
 sbs.gemFPP.m12.maxstrip_tsigma_deconv =      20.1924      17.5119
 sbs.gemFPP.m13.maxstrip_tsigma_deconv =      18.1556      19.6468
 sbs.gemFPP.m14.maxstrip_tsigma_deconv =      17.0194      16.4684
-sbs.gemFPP.m15.maxstrip_tsigma_deconv = 2.21871e-314  6.9516e-310
+sbs.gemFPP.m15.maxstrip_tsigma_deconv =         20            20
 sbs.gemFPP.m16.maxstrip_tsigma_deconv =      18.2075      16.5569
 sbs.gemFPP.m17.maxstrip_tsigma_deconv =      16.1394      14.3135
 sbs.gemFPP.m18.maxstrip_tsigma_deconv =      14.0411      13.4172
@@ -3550,3 +3547,28 @@ sbs.gemFPP.m28.ADCasym_sigma =     0.100414
 sbs.gemFPP.m29.ADCasym_sigma =     0.108531
 sbs.gemFPP.m30.ADCasym_sigma =     0.090992
 sbs.gemFPP.m31.ADCasym_sigma =    0.0889001
+
+-------[ 2025-05-09 20:00:00 ]
+
+sbs.gemFPP.filterflag1D = 3
+sbs.gemFPP.filterflag2D = 7
+sbs.gemFPP.corrcoeff_cut = 0.4
+
+sbs.gemFPP.commonmode_flag = 2
+sbs.gemFPP.commonmode_nstriplo = 10
+sbs.gemFPP.commonmode_nstriphi = 20
+sbs.gemFPP.commonmode_niter = 3
+sbs.gemFPP.commonmode_minstrips = 15
+
+# histogramming-method parameters: 
+sbs.gemFPP.commonmode_binwidth_nsigma = 2.5
+sbs.gemFPP.commonmode_scanrange_nsigma = 15.0
+sbs.gemFPP.commonmode_stepsize_nsigma = 0.25
+
+sbs.gemFPP.commonmode_online_flag = 4
+
+sbs.gemFPP.use_commonmode_rolling_average = 1
+sbs.gemFPP.commonmode_nevents_lookback = 5
+
+sbs.gemFPP.zerosuppress_nsigma = 3.5
+

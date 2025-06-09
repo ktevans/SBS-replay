@@ -1074,20 +1074,22 @@ sbs.gemFT.chan_cm_flags = 640 # defines the "dummy" reference channel for storin
 sbs.gemFT.commonmode_nstriplo = 20 # for sorting method
 sbs.gemFT.commonmode_nstriphi = 20 # for sorting method
 sbs.gemFT.commonmode_niter = 3
-sbs.gemFT.commonmode_minstrips = 20
+sbs.gemFT.commonmode_minstrips = 15
 
 # histogramming-method parameters: 
-sbs.gemFT.commonmode_binwidth_nsigma = 2.0
-sbs.gemFT.commonmode_scanrange_nsigma = 5.0
+sbs.gemFT.commonmode_binwidth_nsigma = 2.5
+sbs.gemFT.commonmode_scanrange_nsigma = 15.0
 sbs.gemFT.commonmode_stepsize_nsigma = 0.25
+
+sbs.gemFT.commonmode_online_flag = 4
 
 # attempt to correct common-mode for negative bias:
 sbs.gemFT.correct_common_mode = 0
-sbs.gemFT.correct_common_mode_minstrips = 15
+sbs.gemFT.correct_common_mode_minstrips = 20
 sbs.gemFT.correct_common_mode_nsigma = 2.0
 
 sbs.gemFT.use_commonmode_rolling_average = 1
-sbs.gemFT.commonmode_nevents_lookback = 10
+sbs.gemFT.commonmode_nevents_lookback = 5
 
 sbs.gemFT.plot_common_mode = 0
 sbs.gemFT.pedsub_online = 1 # normally this should always be set to 1
@@ -1925,8 +1927,8 @@ sbs.gemFT.m13.ADCasym_sigma =     0.142377
 sbs.gemFT.filterflag1D = -1
 sbs.gemFT.filterflag2D = -1
 
-sbs.gemFT.m4.suppressfirstlast = 0
-sbs.gemFT.m5.suppressfirstlast = 0
+sbs.gemFT.m4.suppressfirstlast = -1
+sbs.gemFT.m5.suppressfirstlast = -1
 
 # this will disable any suppression of "small" local maxima overlapping higher peaks in the 1D clustering:
 sbs.gemFT.peakprominence_minsigma = 2.0
@@ -1937,8 +1939,8 @@ sbs.gemFT.deltat_cut = 4.5 # sigmas
 sbs.gemFT.ADCasym_cut = 0.8
 
 sbs.gemFT.maxstrip_tcut = 3.0 3.0	   
-sbs.gemFT.addstrip_tcut = 40.0
-sbs.gemFT.addstrip_ccor_cut = 0.2
+sbs.gemFT.addstrip_tcut = 35.0
+sbs.gemFT.addstrip_ccor_cut = 0.4
 
 sbs.gemFT.maxstrip_tcut_deconv = 3.5 3.5 
 sbs.gemFT.threshold_sample_deconv = 0.0
@@ -1950,6 +1952,9 @@ sbs.gemFT.deconvolution_flag = 0
 
 sbs.gemFT.zerosuppress_nsigma = 3.5
 sbs.gemFT.suppressfirstlast = -1
+
+sbs.gemFT.m4.zerosuppress_nsigma = 3.5
+sbs.gemFT.m5.zerosuppress_nsigma = 3.5
 
 sbs.gemFT.minhighqualityhitsontrack = 2
 sbs.gemFT.sigmatrackt0 = 5.0
@@ -2212,3 +2217,73 @@ sbs.gemFT.m10.ADCasym_sigma =     0.121418
 sbs.gemFT.m11.ADCasym_sigma =     0.110936
 sbs.gemFT.m12.ADCasym_sigma =     0.117732
 sbs.gemFT.m13.ADCasym_sigma =     0.110436
+
+----------[ 2025-05-09 20:00:01 ] # start Kin. 3:
+
+sbs.gemFT.m0.threshold_sample = 75.0
+sbs.gemFT.m0.threshold_stripsum = 250.0
+sbs.gemFT.m0.threshold_clustersum = 400.0
+
+sbs.gemFT.m1.threshold_sample = 75.0
+sbs.gemFT.m1.threshold_stripsum = 250.0
+sbs.gemFT.m1.threshold_clustersum = 400.0
+
+sbs.gemFT.m2.threshold_sample = 75.0
+sbs.gemFT.m2.threshold_stripsum = 250.0
+sbs.gemFT.m2.threshold_clustersum = 400.0
+
+sbs.gemFT.m3.threshold_sample = 75.0
+sbs.gemFT.m3.threshold_stripsum = 250.0
+sbs.gemFT.m3.threshold_clustersum = 400.0
+
+sbs.gemFT.m4.threshold_sample = 75.0
+sbs.gemFT.m4.threshold_stripsum = 250.0
+sbs.gemFT.m4.threshold_clustersum = 400.0
+
+sbs.gemFT.m5.threshold_sample = 75.0
+sbs.gemFT.m5.threshold_stripsum = 250.0
+sbs.gemFT.m5.threshold_clustersum = 400.0
+
+sbs.gemFT.filterflag1D = 3 # flag + 1 = 4, bits = 100, this SHOULD lead to hard filtering by cluster ADC sum and no cluster size filtering
+
+
+sbs.gemFT.filterflag2D = 13 # We want bits = 1110 = 14 = flag + 1, so flag = 13 
+sbs.gemFT.corrcoeff_cut = 0.4
+
+sbs.gemFT.suppressfirstlast = -1
+sbs.gemFT.m4.suppressfirstlast = -1
+sbs.gemFT.m5.suppressfirstlast = -1
+sbs.gemFT.m4.maxstrip_t0 = 85. 85. 
+sbs.gemFT.m5.maxstrip_t0 = 85. 85. 
+
+sbs.gemFT.zerosuppress_nsigma = 3.5
+sbs.gemFT.m0.zerosuppress_nsigma = 3.5
+sbs.gemFT.m1.zerosuppress_nsigma = 3.5
+sbs.gemFT.m2.zerosuppress_nsigma = 3.5
+sbs.gemFT.m3.zerosuppress_nsigma = 3.5
+sbs.gemFT.m4.zerosuppress_nsigma = 3.5
+sbs.gemFT.m5.zerosuppress_nsigma = 3.5
+
+sbs.gemFT.addstrip_tcut = 30.0
+sbs.gemFT.addstrip_ccor_cut = 0.4
+
+sbs.gemFT.minhighqualityhitsontrack = 2
+sbs.gemFT.ADCasym_cut = 0.75
+sbs.gemFT.deltat_cut = 25.0 # this should be in units of sigma
+
+sbs.gemFT.use_enhanced_chi2 = 1
+
+sbs.gemFT.trackchi2cut_hitquality = 12.0
+
+sbs.gemFT.minhitsontrack = 4
+sbs.gemFT.trackchi2cut = 10.0 15.0 20.0 25.0 30.0
+sbs.gemFT.minhighqualityhitsontrack = 2
+
+sbs.gemFT.useelasticconstraint = 1
+sbs.gemFT.dpp0 = 0.016
+sbs.gemFT.dppcut = 0.1 # loose cuts initially
+sbs.gemFT.dthtar0 = 0.0
+sbs.gemFT.dthtarcut = 0.02
+sbs.gemFT.dphtar0 = 0.0
+sbs.gemFT.dphtarcut = 0.015
+

@@ -28,7 +28,7 @@
 #include "TSpectrum.h"
 #include "TClonesArray.h"
 
-void GetBBCalInternalOffsets(const char *configfilename, const std::string det, const std::string offsetBefore="bb_sh_meantime_gen3_TEST.dat", const char *outputfilename="BBCalInternalOffsets_temp.root")
+void GetBBCalInternalOffsets(const char *configfilename, const std::string det, const std::string offsetBefore="bb_sh_meantime_gen3.dat", const char *outputfilename="BBCalInternalOffsets_temp.root")
 {
   gErrorIgnoreLevel = kError; // Ignore all ROOT warnings
 

@@ -1088,6 +1088,8 @@ sbs.gemFT.correct_common_mode = 0
 sbs.gemFT.correct_common_mode_minstrips = 20
 sbs.gemFT.correct_common_mode_nsigma = 2.0
 
+sbs.gemFT.commonmode_online_flag = 4 # GEN+ version of online CM calculation
+
 sbs.gemFT.use_commonmode_rolling_average = 1
 sbs.gemFT.commonmode_nevents_lookback = 5
 
@@ -1651,6 +1653,8 @@ sbs.gemFT.gridedgetolerancey = 0.0015
 
 sbs.gemFT.filterflag1D = -1
 sbs.gemFT.filterflag2D = -1
+
+sbs.gemFT.minhighqualityhitsontrack = 2
 
 # this will disable any suppression of "small" local maxima overlapping higher peaks in the 1D clustering:
 sbs.gemFT.peakprominence_minsigma = 2.0

@@ -1807,9 +1807,9 @@ sbs.hcal.adc.gain =
 
 # let's go ahead and put in some sensible offline clustering thresholds:
 # lowering these offline thresholds as they seem to be cutting out too many good hits.
-sbs.hcal.emin = 0.002 # 1 MeV, hit threshold.
-sbs.hcal.emin_clSeed = 0.005 # 5 MeV, cluster seed threshold (offline)
-sbs.hcal.emin_clTotal = 0.01 # 10 MeV, cluster total threshold (offline) 
+sbs.hcal.emin = 0.02 #
+sbs.hcal.emin_clSeed = 0.1 # 5 MeV, cluster seed threshold (offline)
+sbs.hcal.emin_clTotal = 0.5 # 10 MeV, cluster total threshold (offline) 
 
 sbs.hcal.tmax = 15.0 # will shrink when we do FADC time alignment
 

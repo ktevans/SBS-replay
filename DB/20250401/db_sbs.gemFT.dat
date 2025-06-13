@@ -2220,28 +2220,28 @@ sbs.gemFT.m13.ADCasym_sigma =     0.110436
 
 ----------[ 2025-05-09 20:00:01 ] # start Kin. 3:
 
-sbs.gemFT.m0.threshold_sample = 75.0
-sbs.gemFT.m0.threshold_stripsum = 250.0
+sbs.gemFT.m0.threshold_sample = 100.0
+sbs.gemFT.m0.threshold_stripsum = 300.0
 sbs.gemFT.m0.threshold_clustersum = 400.0
 
-sbs.gemFT.m1.threshold_sample = 75.0
-sbs.gemFT.m1.threshold_stripsum = 250.0
+sbs.gemFT.m1.threshold_sample = 100.0
+sbs.gemFT.m1.threshold_stripsum = 300.0
 sbs.gemFT.m1.threshold_clustersum = 400.0
 
-sbs.gemFT.m2.threshold_sample = 75.0
-sbs.gemFT.m2.threshold_stripsum = 250.0
+sbs.gemFT.m2.threshold_sample = 100.0
+sbs.gemFT.m2.threshold_stripsum = 300.0
 sbs.gemFT.m2.threshold_clustersum = 400.0
 
-sbs.gemFT.m3.threshold_sample = 75.0
-sbs.gemFT.m3.threshold_stripsum = 250.0
+sbs.gemFT.m3.threshold_sample = 100.0
+sbs.gemFT.m3.threshold_stripsum = 300.0
 sbs.gemFT.m3.threshold_clustersum = 400.0
 
-sbs.gemFT.m4.threshold_sample = 75.0
-sbs.gemFT.m4.threshold_stripsum = 250.0
+sbs.gemFT.m4.threshold_sample = 100.0
+sbs.gemFT.m4.threshold_stripsum = 300.0
 sbs.gemFT.m4.threshold_clustersum = 400.0
 
-sbs.gemFT.m5.threshold_sample = 75.0
-sbs.gemFT.m5.threshold_stripsum = 250.0
+sbs.gemFT.m5.threshold_sample = 100.0
+sbs.gemFT.m5.threshold_stripsum = 300.0
 sbs.gemFT.m5.threshold_clustersum = 400.0
 
 sbs.gemFT.filterflag1D = 3 # flag + 1 = 4, bits = 100, this SHOULD lead to hard filtering by cluster ADC sum and no cluster size filtering
@@ -2257,12 +2257,12 @@ sbs.gemFT.m4.maxstrip_t0 = 85. 85.
 sbs.gemFT.m5.maxstrip_t0 = 85. 85. 
 
 sbs.gemFT.zerosuppress_nsigma = 3.5
-sbs.gemFT.m0.zerosuppress_nsigma = 3.5
-sbs.gemFT.m1.zerosuppress_nsigma = 3.5
-sbs.gemFT.m2.zerosuppress_nsigma = 3.5
-sbs.gemFT.m3.zerosuppress_nsigma = 3.5
-sbs.gemFT.m4.zerosuppress_nsigma = 3.5
-sbs.gemFT.m5.zerosuppress_nsigma = 3.5
+sbs.gemFT.m0.zerosuppress_nsigma = 4.5
+sbs.gemFT.m1.zerosuppress_nsigma = 4.5
+sbs.gemFT.m2.zerosuppress_nsigma = 4.5
+sbs.gemFT.m3.zerosuppress_nsigma = 4.5
+sbs.gemFT.m4.zerosuppress_nsigma = 4.5
+sbs.gemFT.m5.zerosuppress_nsigma = 4.5
 
 sbs.gemFT.addstrip_tcut = 30.0
 sbs.gemFT.addstrip_ccor_cut = 0.4

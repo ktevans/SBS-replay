@@ -83,7 +83,7 @@ th2d hTDC_vs_clus_ID 'HCAL TDC vs Module >> Consult expert if no data in few cha
 #th2d hADCamp_hcalT_r 'HCal Trigger Sum r-{1-10} ADC Amplitude; hcal trig Ch; amplitude [mV]' sbs.trig.adcelemID[I] sbs.trig.a_amp_p[I] 10 0.5 10.5 500 0 500
 
 # Page 7: Cluster Plots
-th1d hNClus_vs_elem_hcal 'Number of clusters per event : HCAL; N' sbs.hcal.nclus 50 0 50  #Multiplicity
+th1d hNClus_vs_elem_hcal 'Number of clusters per event : HCAL; N' sbs.hcal.nclus 50 0 80  #Multiplicity
 th1d hNBlk_per_cluster 'Number of blocks per cluster : HCAL; N' sbs.hcal.nblk 50 0 50 
 th2d hE_vs_mult_clus 'Primary Cluster E vs Cluster Size; GeV; Number of blocks' sbs.hcal.e sbs.hcal.nblk 100 0 5.0 50 0 50
 th2d hClusE_vs_elem_hcal 'Primary Cluster Energy vs element ID : HCAL; channel; GeV' sbs.hcal.clus_blk.id[I] sbs.hcal.clus_blk.e[I] 288 0.5 288.5 100 0 0.5 sbs.hcal.clus_blk.atime[I]>0

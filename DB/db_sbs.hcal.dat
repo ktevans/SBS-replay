@@ -1811,7 +1811,7 @@ sbs.hcal.emin = 0.02 #
 sbs.hcal.emin_clSeed = 0.1 # 5 MeV, cluster seed threshold (offline)
 sbs.hcal.emin_clTotal = 0.5 # 10 MeV, cluster total threshold (offline) 
 
-sbs.hcal.tmax = 15.0 # will shrink when we do FADC time alignment
+sbs.hcal.tmax = 20.0 # will shrink when we do FADC time alignment (reduced from 100.0 during gep 6/2)
 
 
 

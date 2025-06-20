@@ -166,12 +166,12 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
 
     int ECAL_MAXBLOCKS = 30;
     
-    double ECAL_clusblk_e[MAXBLOCKS];
-    double ECAL_clusblk_atime[MAXBLOCKS];
-    double ECAL_clusblk_again[MAXBLOCKS];
-    double ECAL_clusblk_id[MAXBLOCKS];
-    double ECAL_clusblk_x[MAXBLOCKS];
-    double ECAL_clusblk_y[MAXBLOCKS];
+    double ECAL_clusblk_e[ECAL_MAXBLOCKS];
+    double ECAL_clusblk_atime[ECAL_MAXBLOCKS];
+    double ECAL_clusblk_again[ECAL_MAXBLOCKS];
+    double ECAL_clusblk_id[ECAL_MAXBLOCKS];
+    double ECAL_clusblk_x[ECAL_MAXBLOCKS];
+    double ECAL_clusblk_y[ECAL_MAXBLOCKS];
 
     Tout->Branch("ECAL_clusblk_e", ECAL_clusblk_e);
     Tout->Branch("ECAL_clusblk_atime", ECAL_clusblk_atime);
@@ -181,12 +181,12 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
     Tout->Branch("ECAL_clusblk_y", ECAL_clusblk_y);
     
     int HCAL_MAXBLOCKS = 30;
-    double HCAL_clusblk_e[MAXBLOCKS];
-    double HCAL_clusblk_atime[MAXBLOCKS];
-    double HCAL_clusblk_again[MAXBLOCKS];
-    double HCAL_clusblk_id[MAXBLOCKS];
-    double HCAL_clusblk_x[MAXBLOCKS];
-    double HCAL_clusblk_y[MAXBLOCKS];
+    double HCAL_clusblk_e[HCAL_MAXBLOCKS];
+    double HCAL_clusblk_atime[HCAL_MAXBLOCKS];
+    double HCAL_clusblk_again[HCAL_MAXBLOCKS];
+    double HCAL_clusblk_id[HCAL_MAXBLOCKS];
+    double HCAL_clusblk_x[HCAL_MAXBLOCKS];
+    double HCAL_clusblk_y[HCAL_MAXBLOCKS];
 
     Tout->Branch("HCAL_clusblk_e", HCAL_clusblk_e);
     Tout->Branch("HCAL_clusblk_atime", HCAL_clusblk_atime);
@@ -229,7 +229,7 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
     C->SetBranchStatus("sbs.y_bcp",1);
     C->SetBranchStatus("sbs.y_bcp",1);
     C->SetBranchStatus("sbs.ecal.clus_blk.*",1);
-    C->SetBranchStatus("sbs.hcal.clus_blk.*",1)
+    C->SetBranchStatus("sbs.hcal.clus_blk.*",1);
     C->SetBranchStatus("g.*",1);
     C->SetBranchStatus("scalhel.*",1);
     C->SetBranchStatus("IGL1I00OD16_16",1);

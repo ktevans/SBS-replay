@@ -9,6 +9,7 @@ variable sbs.hcal.adccol
 variable sbs.hcal.adcxpos
 variable sbs.hcal.adcypos
 variable sbs.hcal.a_time
+variable sbs.hcal.ped
 
 variable sbs.hcal.e
 variable sbs.hcal.eblk

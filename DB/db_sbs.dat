@@ -1423,12 +1423,53 @@ sbs.geptrackingmode = 1
 sbs.polarimetermode = 1
 sbs.usedynamicconstraint = 0
 
+sbs.frontconstraint_x0 = 0.005 0.0
+sbs.frontconstraint_y0 = 0.0 0.002
+sbs.frontconstraintwidth_x = 0.041 0.025
+sbs.frontconstraintwidth_y = 0.036 0.025
+
+sbs.backconstraint_x0 = 0.0066 0.062
+sbs.backconstraint_y0 = 0.0 -0.023
+sbs.backconstraintwidth_x = 0.05 0.25
+sbs.backconstraintwidth_y = 0.045 0.21
+
+---------[ 2025-05-29 20:40:00 ] # Multi-foil optics runs. SBS current 1756.5 A (same as production). Beam currents 1-1.5 uA. Used 4 foil and 2 foil optics targets with the corresponding run numbes 4200 and 4203. 
+sbs.geptrackingmode = 0
+sbs.polarimetermode = 1
+sbs.usedynamicconstraint = 1
+
+sbs.dynamicphslope = 0.1
+sbs.dynamicthslope = 0.1
+sbs.dynamicph0 = 0.0
+sbs.dynamicth0 = -0.05
+
 sbs.frontconstraint_x0 = 0.0 0.0
 sbs.frontconstraint_y0 = 0.0 0.0
-sbs.frontconstraintwidth_x = 0.05 0.05
-sbs.frontconstraintwidth_y = 0.05 0.05
+sbs.frontconstraintwidth_x = 0.1 0.5
+sbs.frontconstraintwidth_y = 0.1 0.3
 
 sbs.backconstraint_x0 = 0.0 0.0
 sbs.backconstraint_y0 = 0.0 0.0
-sbs.backconstraintwidth_x = 0.05 0.5
-sbs.backconstraintwidth_y = 0.05 0.5
+sbs.backconstraintwidth_x = 0.02 0.5
+sbs.backconstraintwidth_y = 0.02 0.5
+
+
+---------[ 2025-05-30 00:45:00 ] # Back to production running.
+sbs.geptrackingmode = 1
+sbs.polarimetermode = 1
+sbs.usedynamicconstraint = 0
+
+sbs.dynamicphslope = 0.1
+sbs.dynamicthslope = 0.1
+sbs.dynamicph0 = 0.0
+sbs.dynamicth0 = 0.0 
+
+sbs.frontconstraint_x0 = 0.005 0.0
+sbs.frontconstraint_y0 = 0.0 0.002
+sbs.frontconstraintwidth_x = 0.041 0.025
+sbs.frontconstraintwidth_y = 0.036 0.025
+
+sbs.backconstraint_x0 = 0.0066 0.062
+sbs.backconstraint_y0 = 0.0 -0.023
+sbs.backconstraintwidth_x = 0.05 0.25
+sbs.backconstraintwidth_y = 0.045 0.21

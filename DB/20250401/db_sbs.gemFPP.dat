@@ -3558,7 +3558,7 @@ sbs.gemFPP.m28.ADCasym_sigma =     0.100414
 sbs.gemFPP.m29.ADCasym_sigma =     0.108531
 sbs.gemFPP.m30.ADCasym_sigma =     0.090992
 sbs.gemFPP.m31.ADCasym_sigma =    0.0889001
-<<<<<<< HEAD
+
 
 -------[ 2025-05-09 20:00:00 ]
 
@@ -3584,5 +3584,8 @@ sbs.gemFPP.commonmode_nevents_lookback = 5
 
 sbs.gemFPP.zerosuppress_nsigma = 3.5
 
-=======
->>>>>>> 2a6b5da (Adding latest GEM pedestal runs after increasing the APV baselines values (Vsps=33))
+---------[ 2025-05-29 20:40:00 ] # Multi-foil optics runs. SBS current 1756.5 A (same as production). Beam currents 1-1.5 uA. Used 4 foil and 2 foil optics targets with the corresponding run numbes 4200 and 4203. 
+sbs.gemFPP.multitracksearch=0
+
+---------[ 2025-05-30 00:45:00 ] # Back to production running.
+sbs.gemFPP.multitracksearch=1

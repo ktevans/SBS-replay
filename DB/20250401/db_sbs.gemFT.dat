@@ -2231,7 +2231,6 @@ sbs.gemFT.m10.ADCasym_sigma =     0.121418
 sbs.gemFT.m11.ADCasym_sigma =     0.110936
 sbs.gemFT.m12.ADCasym_sigma =     0.117732
 sbs.gemFT.m13.ADCasym_sigma =     0.110436
-<<<<<<< HEAD
 
 ----------[ 2025-05-09 20:00:01 ] # start Kin. 3:
 
@@ -2302,5 +2301,15 @@ sbs.gemFT.dthtarcut = 0.02
 sbs.gemFT.dphtar0 = 0.0
 sbs.gemFT.dphtarcut = 0.015
 
-=======
->>>>>>> 2a6b5da (Adding latest GEM pedestal runs after increasing the APV baselines values (Vsps=33))
+
+---------[ 2025-05-29 20:40:00 ] # Multi-foil optics runs. SBS current 1756.5 A (same as production). Beam currents 1-1.5 uA. Used 4 foil and 2 foil optics targets with the corresponding run numbes 4200 and 4203. 
+sbs.gemFT.multitracksearch=0
+sbs.gemFT.pmin = 2.5
+sbs.gemFT.useslopeconstraint=0
+sbs.gemFT.useelasticconstraint = 0
+
+---------[ 2025-05-30 00:45:00 ] # Back to production running.
+sbs.gemFT.multitracksearch=1
+sbs.gemFT.pmin = 5.0
+sbs.gemFT.useslopeconstraint=1
+sbs.gemFT.useelasticconstraint = 1

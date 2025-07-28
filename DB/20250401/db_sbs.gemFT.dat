@@ -1639,6 +1639,10 @@ sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run4780.dat
 sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run5265.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run5265.dat
 
+---------[ 2025-07-28 14:00:00 ] 
+sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run5514.dat
+sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run5514.dat
+
 ######################################################################################
 #                                                                                    #
 #      begin time-dependent clustering parameters/thresholds/tracking cuts/etc       # 

@@ -230,6 +230,10 @@ void replay_gep(UInt_t runnum, Long_t nevents=-1, Long_t firstevent=1, const cha
 
     TString odef_filename = "replay_gep.odef"; // TO BE MADE!
 
+    if( requiretrack > 0 ){
+      odef_filename = "replay_gep_light.odef";
+    }
+
     odef_filename.Prepend( prefix );
 
     analyzer->SetOdefFile( odef_filename );

@@ -84,3 +84,8 @@
    variable   2     30          2           .2_30.scalerRate                     BCM Channel 30 
    variable   2     31          1           .2_31.scaler                         BCM Channel 31 
    variable   2     31          2           .2_31.scalerRate                     BCM Channel 31
+
+# TS10 changed from ECalScint to COINMatch.
+--------[ 2025-04-16 11:00:00 ]
+   variable   2      6          1           .TS10_COINMatch.scaler               BCM TS10_COINMatch 
+   variable   2      6          2           .TS10_COINMatch.scalerRate           BCM TS10_COINMatch 

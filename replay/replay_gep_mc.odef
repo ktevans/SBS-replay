@@ -4,6 +4,10 @@
 #include "replay_hcal.odef"
 #include "replay_ECal.odef"
 #include "replay_FTGEM_gep.odef"
+#include "replay_FPPGEM_gep.odef"
+# comment out CDET outputs until a working class is ready
+# #include "replay_cdet.odef"
+#include "replay_gepheep.odef"
 
 # block MC.simc*
 block MC.mc*
@@ -15,5 +19,8 @@ block *ptridx
 block *sdtridx
 block MC.ptrack*
 block MC.sdtrack*
+
+
+
 # variable MC.bbps_esum
 # variable MC.bbsh_esum

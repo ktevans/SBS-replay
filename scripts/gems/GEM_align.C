@@ -157,7 +157,7 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
   double minposchange = 5e-6; // 5 um
   double minanglechange = 5e-5; // 50 urad
 
-  double trackchi2_cut = 100.0;
+  double trackchi2_cut = 1000.0;
   
   TString prefix = "bb.uvagem";
 
@@ -590,12 +590,14 @@ void GEM_align( const char *configfilename, const char *outputfilename="newGEMal
 
  
   //niter = 1;
- 
+
+  // double trackchi2_cut = 3000.0;
+
   double oldchi2cut = trackchi2_cut;
   //double resid_cut = 100.0; //mm
   //double resid2_sum = 0.0;
 
-  double maxresid = 0.5e-3; //mm
+  double maxresid = 7.5e-4; 
 
   double ndf_max = 2.0*nlayers-4;
   

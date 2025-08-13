@@ -1711,6 +1711,7 @@ sbs.gemFPP.trackchi2cut = 500.0
 sbs.gemFPP.sigmahitpos = 0.0001
 sbs.gemFPP.do_efficiencies = 1
 sbs.gemFPP.dump_geometry_info = 1
+sbs.gemFPP.dump_rawADCrange = 1
 
 sbs.gemFPP.efficiency_bin_width_1D = 0.02
 sbs.gemFPP.efficiency_bin_width_2D = 0.04
@@ -1735,7 +1736,7 @@ sbs.gemFPP.ypfp_max = 0.12
 
 # # basic flags controlling decoding:
 sbs.gemFPP.pedestalmode = 0
-sbs.gemFPP.commonmode_flag = 2 # 1 = Danning, 0 = sorting, 2 = histogramming
+sbs.gemFPP.commonmode_flag = 0 # 1 = Danning, 0 = sorting, 2 = histogramming
 sbs.gemFPP.chan_cm_flags = 640 # defines the "dummy" reference channel for storing the cm_enable and build_all_samples flags -(40 x 16) "sbsvtp2" and "sbsvtp4"currently has 36 and 20 MPDs respectively right now. 
 sbs.gemFPP.commonmode_nstriplo = 20 # for sorting method
 sbs.gemFPP.commonmode_nstriphi = 20 # for sorting method
@@ -2418,13 +2419,13 @@ sbs.gemFPP.filterflag2D = -1
 
 # this will disable any suppression of "small" local maxima overlapping higher peaks in the 1D clustering:
 sbs.gemFPP.peakprominence_minsigma = 2.0
-sbs.gemFPP.peakprominence_minfraction = 0.0
+sbs.gemFPP.peakprominence_minfraction = 0.1
 
 sbs.gemFPP.corrcoeff_cut = 0.5
 sbs.gemFPP.deltat_cut = 4.5 # sigmas
 sbs.gemFPP.ADCasym_cut = 0.8
 
-sbs.gemFPP.maxstrip_tcut = 3.0 3.0	   
+sbs.gemFPP.maxstrip_tcut = 3.5 3.5	   
 sbs.gemFPP.addstrip_tcut = 35.0
 sbs.gemFPP.addstrip_ccor_cut = 0.4
 
@@ -3570,20 +3571,32 @@ sbs.gemFPP.m31.ADCasym_sigma =    0.0889001
 
 -------[ 2025-05-09 20:00:00 ]
 
-sbs.gemFPP.filterflag1D = 3
-sbs.gemFPP.filterflag2D = 7
+sbs.gemFPP.maxhitcombos_total = 1.e24
+
+sbs.gemFPP.threshold_sample = 100.0
+sbs.gemFPP.threshold_stripsum = 250.0
+sbs.gemFPP.threshold_clustersum = 400.0
+
+sbs.gemFPP.filterflag1D = 3 # 3 + 1 = 4 = 0100
+sbs.gemFPP.filterflag2D = 9 # 9 + 1 = 10 = 1010
+
+#sbs.gemFPP.filterflag1D = -1
+sbs.gemFPP.filterflag2D = -1
 sbs.gemFPP.corrcoeff_cut = 0.4
 
-sbs.gemFPP.commonmode_flag = 2
+sbs.gemFPP.minhitsontrack = 4
+sbs.gemFPP.trackchi2cut = 20.0 30.0 40.0 50.0 50.0
+
+sbs.gemFPP.commonmode_flag = 0
 sbs.gemFPP.commonmode_nstriplo = 10
-sbs.gemFPP.commonmode_nstriphi = 20
+sbs.gemFPP.commonmode_nstriphi = 50 # optimal for ~40% occupancy
 sbs.gemFPP.commonmode_niter = 3
-sbs.gemFPP.commonmode_minstrips = 15
+sbs.gemFPP.commonmode_minstrips = 25
 
 # histogramming-method parameters: 
-sbs.gemFPP.commonmode_binwidth_nsigma = 2.5
-sbs.gemFPP.commonmode_scanrange_nsigma = 15.0
-sbs.gemFPP.commonmode_stepsize_nsigma = 0.25
+sbs.gemFPP.commonmode_binwidth_nsigma = 6.0 # +/- 3.0*DBsigma
+sbs.gemFPP.commonmode_scanrange_nsigma = 5.0
+sbs.gemFPP.commonmode_stepsize_nsigma = 0.5
 
 sbs.gemFPP.commonmode_online_flag = 4
 
@@ -3597,3 +3610,117 @@ sbs.gemFPP.multitracksearch=0
 
 ---------[ 2025-05-30 00:45:00 ] # Back to production running.
 sbs.gemFPP.multitracksearch=1
+
+
+---------[ 2025-07-21 22:50:00 ] # thresholds based on 3550 V data for run 5415:
+
+sbs.gemFPP.use_enhanced_chi2 = 1
+sbs.gemFPP.trackchi2cut_hitquality = 20.0
+sbs.gemFPP.minhighqualityhitsontrack = 2
+
+
+sbs.gemFPP.filterflag1D = -1
+sbs.gemFPP.filterflag2D = -1
+
+sbs.gemFPP.minhitsontrack = 4
+sbs.gemFPP.trackchi2cut = 10.0 20.0 30.0 40.0 50.0 
+
+sbs.gemFPP.maxhitcombos_total = 1.e23
+
+sbs.gemFPP.m0.threshold_sample =          63.236
+sbs.gemFPP.m0.threshold_stripsum =          158.09
+sbs.gemFPP.m0.threshold_clustersum =          252.95
+sbs.gemFPP.m1.threshold_sample =           80.62
+sbs.gemFPP.m1.threshold_stripsum =          201.55
+sbs.gemFPP.m1.threshold_clustersum =          322.48
+sbs.gemFPP.m2.threshold_sample =           72.86
+sbs.gemFPP.m2.threshold_stripsum =          182.15
+sbs.gemFPP.m2.threshold_clustersum =          291.44
+sbs.gemFPP.m3.threshold_sample =          68.246
+sbs.gemFPP.m3.threshold_stripsum =          170.62
+sbs.gemFPP.m3.threshold_clustersum =          272.98
+sbs.gemFPP.m4.threshold_sample =          57.104
+sbs.gemFPP.m4.threshold_stripsum =          142.76
+sbs.gemFPP.m4.threshold_clustersum =          228.42
+sbs.gemFPP.m5.threshold_sample =          62.067
+sbs.gemFPP.m5.threshold_stripsum =          155.17
+sbs.gemFPP.m5.threshold_clustersum =          248.27
+sbs.gemFPP.m6.threshold_sample =          74.187
+sbs.gemFPP.m6.threshold_stripsum =          185.47
+sbs.gemFPP.m6.threshold_clustersum =          296.75
+sbs.gemFPP.m7.threshold_sample =          69.888
+sbs.gemFPP.m7.threshold_stripsum =          174.72
+sbs.gemFPP.m7.threshold_clustersum =          279.55
+sbs.gemFPP.m8.threshold_sample =          58.551
+sbs.gemFPP.m8.threshold_stripsum =          146.38
+sbs.gemFPP.m8.threshold_clustersum =           234.2
+sbs.gemFPP.m9.threshold_sample =          60.608
+sbs.gemFPP.m9.threshold_stripsum =          151.52
+sbs.gemFPP.m9.threshold_clustersum =          242.43
+sbs.gemFPP.m10.threshold_sample =          59.236
+sbs.gemFPP.m10.threshold_stripsum =          148.09
+sbs.gemFPP.m10.threshold_clustersum =          236.94
+sbs.gemFPP.m11.threshold_sample =          61.646
+sbs.gemFPP.m11.threshold_stripsum =          154.12
+sbs.gemFPP.m11.threshold_clustersum =          246.59
+sbs.gemFPP.m12.threshold_sample =          60.427
+sbs.gemFPP.m12.threshold_stripsum =          151.07
+sbs.gemFPP.m12.threshold_clustersum =          241.71
+sbs.gemFPP.m13.threshold_sample =          53.166
+sbs.gemFPP.m13.threshold_stripsum =          132.92
+sbs.gemFPP.m13.threshold_clustersum =          212.66
+sbs.gemFPP.m14.threshold_sample =          64.084
+sbs.gemFPP.m14.threshold_stripsum =          160.21
+sbs.gemFPP.m14.threshold_clustersum =          256.34
+sbs.gemFPP.m15.threshold_sample =          64.217
+sbs.gemFPP.m15.threshold_stripsum =          160.54
+sbs.gemFPP.m15.threshold_clustersum =          256.87
+sbs.gemFPP.m16.threshold_sample =          60.219
+sbs.gemFPP.m16.threshold_stripsum =          150.55
+sbs.gemFPP.m16.threshold_clustersum =          240.88
+sbs.gemFPP.m17.threshold_sample =          67.828
+sbs.gemFPP.m17.threshold_stripsum =          169.57
+sbs.gemFPP.m17.threshold_clustersum =          271.31
+sbs.gemFPP.m18.threshold_sample =          77.392
+sbs.gemFPP.m18.threshold_stripsum =          193.48
+sbs.gemFPP.m18.threshold_clustersum =          309.57
+sbs.gemFPP.m19.threshold_sample =          66.197
+sbs.gemFPP.m19.threshold_stripsum =          165.49
+sbs.gemFPP.m19.threshold_clustersum =          264.79
+sbs.gemFPP.m20.threshold_sample =          65.895
+sbs.gemFPP.m20.threshold_stripsum =          164.74
+sbs.gemFPP.m20.threshold_clustersum =          263.58
+sbs.gemFPP.m21.threshold_sample =          56.004
+sbs.gemFPP.m21.threshold_stripsum =          140.01
+sbs.gemFPP.m21.threshold_clustersum =          224.01
+sbs.gemFPP.m22.threshold_sample =          71.414
+sbs.gemFPP.m22.threshold_stripsum =          178.53
+sbs.gemFPP.m22.threshold_clustersum =          285.65
+sbs.gemFPP.m23.threshold_sample =          67.503
+sbs.gemFPP.m23.threshold_stripsum =          168.76
+sbs.gemFPP.m23.threshold_clustersum =          270.01
+sbs.gemFPP.m24.threshold_sample =            59.9
+sbs.gemFPP.m24.threshold_stripsum =          149.75
+sbs.gemFPP.m24.threshold_clustersum =           239.6
+sbs.gemFPP.m25.threshold_sample =          54.425
+sbs.gemFPP.m25.threshold_stripsum =          136.06
+sbs.gemFPP.m25.threshold_clustersum =           217.7
+sbs.gemFPP.m26.threshold_sample =          66.344
+sbs.gemFPP.m26.threshold_stripsum =          165.86
+sbs.gemFPP.m26.threshold_clustersum =          265.38
+sbs.gemFPP.m27.threshold_sample =           66.09
+sbs.gemFPP.m27.threshold_stripsum =          165.22
+sbs.gemFPP.m27.threshold_clustersum =          264.36
+sbs.gemFPP.m28.threshold_sample =           57.17
+sbs.gemFPP.m28.threshold_stripsum =          142.92
+sbs.gemFPP.m28.threshold_clustersum =          228.68
+sbs.gemFPP.m29.threshold_sample =          52.619
+sbs.gemFPP.m29.threshold_stripsum =          131.55
+sbs.gemFPP.m29.threshold_clustersum =          210.48
+sbs.gemFPP.m30.threshold_sample =          59.865
+sbs.gemFPP.m30.threshold_stripsum =          149.66
+sbs.gemFPP.m30.threshold_clustersum =          239.46
+sbs.gemFPP.m31.threshold_sample =           55.12
+sbs.gemFPP.m31.threshold_stripsum =           137.8
+sbs.gemFPP.m31.threshold_clustersum =          220.48
+

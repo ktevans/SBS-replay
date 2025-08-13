@@ -1272,7 +1272,7 @@ sbs.backconstraint_y0 = -0.003 0.017
 sbs.backconstraintwidth_x = 0.04 0.35
 sbs.backconstraintwidth_y = 0.035 0.35
 
---------[ 2025-05-05 00:00:00 ] # start kin 3
+--------[ 2025-05-05 00:00:00 ] # start kin 3/GEP-3/GEP3
 
 
 # here the main change needed (initially) is a new optics model (forward and backward):
@@ -1385,18 +1385,33 @@ sbs.backconstraintwidth_y = 0.03 0.5
 
 ---------[ 2025-05-09 20:00:00 ] # Begin production running on LH2 with field ON.
 sbs.geptrackingmode = 1
+sbs.geptrackingflag = 1
 sbs.polarimetermode = 1
 sbs.usedynamicconstraint = 0
 
-sbs.frontconstraint_x0 = 0.005 0.0
-sbs.frontconstraint_y0 = 0.0 0.002
-sbs.frontconstraintwidth_x = 0.041 0.025
-sbs.frontconstraintwidth_y = 0.036 0.025
+# use these constraints for "tracking flag 0" (FT first)
+#sbs.frontconstraint_x0 = 0.005 0.0
+#sbs.frontconstraint_y0 = 0.0 0.002
+#sbs.frontconstraintwidth_x = 0.041 0.025
+#sbs.frontconstraintwidth_y = 0.036 0.025
 
-sbs.backconstraint_x0 = 0.0066 0.062
-sbs.backconstraint_y0 = 0.0 -0.023
-sbs.backconstraintwidth_x = 0.05 0.25
-sbs.backconstraintwidth_y = 0.045 0.21
+#sbs.backconstraint_x0 = 0.0066 0.062
+#sbs.backconstraint_y0 = 0.0 -0.023
+#sbs.backconstraintwidth_x = 0.05 0.25
+#sbs.backconstraintwidth_y = 0.045 0.21
+
+# for "tracking flag 1" (FPP first), use the following initially (we'll analyze low-current data to get these tuned up):
+
+sbs.frontconstraint_x0 = 0.005 0.0
+sbs.frontconstraint_y0 = 0.0 0.0
+sbs.frontconstraintwidth_x = 0.04 0.08
+sbs.frontconstraintwidth_y = 0.04 0.08
+
+sbs.backconstraint_x0 = 0.007 0.0
+sbs.backconstraint_y0 = 0.0 0.0
+sbs.backconstraintwidth_x = 0.04 0.25
+sbs.backconstraintwidth_y = 0.04 0.25
+
 
 ---------[ 2025-05-23 17:00:00 ] # Start C-foil zero-field runs taken after GEM work in Hall. FPP L0 L1 and L4 L5 were pulled out.
 sbs.geptrackingmode = 0
@@ -1420,18 +1435,33 @@ sbs.backconstraintwidth_y = 0.03 0.5
 
 ---------[ 2025-05-23 20:00:00 ] # Begin production running on LH2 with field ON.
 sbs.geptrackingmode = 1
+sbs.geptrackingflag = 1
 sbs.polarimetermode = 1
 sbs.usedynamicconstraint = 0
 
-sbs.frontconstraint_x0 = 0.005 0.0
-sbs.frontconstraint_y0 = 0.0 0.002
-sbs.frontconstraintwidth_x = 0.041 0.025
-sbs.frontconstraintwidth_y = 0.036 0.025
+# use these constraints for "tracking flag 0" (FT first)
+#sbs.frontconstraint_x0 = 0.005 0.0
+#sbs.frontconstraint_y0 = 0.0 0.002
+#sbs.frontconstraintwidth_x = 0.041 0.025
+#sbs.frontconstraintwidth_y = 0.036 0.025
 
-sbs.backconstraint_x0 = 0.0066 0.062
-sbs.backconstraint_y0 = 0.0 -0.023
-sbs.backconstraintwidth_x = 0.05 0.25
-sbs.backconstraintwidth_y = 0.045 0.21
+#sbs.backconstraint_x0 = 0.0066 0.062
+#sbs.backconstraint_y0 = 0.0 -0.023
+#sbs.backconstraintwidth_x = 0.05 0.25
+#sbs.backconstraintwidth_y = 0.045 0.21
+
+# for "tracking flag 1" (FPP first), use the following initially (we'll analyze low-current data to get these tuned up):
+
+sbs.frontconstraint_x0 = 0.005 0.0
+sbs.frontconstraint_y0 = 0.0 0.0
+sbs.frontconstraintwidth_x = 0.04 0.08
+sbs.frontconstraintwidth_y = 0.04 0.08
+
+sbs.backconstraint_x0 = 0.007 0.0
+sbs.backconstraint_y0 = 0.0 0.0
+sbs.backconstraintwidth_x = 0.04 0.25
+sbs.backconstraintwidth_y = 0.04 0.25
+
 
 ---------[ 2025-05-29 20:40:00 ] # Multi-foil optics runs. SBS current 1756.5 A (same as production). Beam currents 1-1.5 uA. Used 4 foil and 2 foil optics targets with the corresponding run numbes 4200 and 4203. 
 sbs.geptrackingmode = 0
@@ -1450,26 +1480,87 @@ sbs.frontconstraintwidth_y = 0.1 0.3
 
 sbs.backconstraint_x0 = 0.0 0.0
 sbs.backconstraint_y0 = 0.0 0.0
-sbs.backconstraintwidth_x = 0.02 0.5
-sbs.backconstraintwidth_y = 0.02 0.5
-
+sbs.backconstraintwidth_x = 0.05 0.5
+sbs.backconstraintwidth_y = 0.05 0.5
 
 ---------[ 2025-05-30 00:45:00 ] # Back to production running.
+
 sbs.geptrackingmode = 1
+sbs.geptrackingflag = 2
 sbs.polarimetermode = 1
 sbs.usedynamicconstraint = 0
+
+# use these constraints for "tracking flag 0" (FT first)
+#sbs.frontconstraint_x0 = 0.005 0.0
+#sbs.frontconstraint_y0 = 0.0 0.002
+#sbs.frontconstraintwidth_x = 0.041 0.025
+#sbs.frontconstraintwidth_y = 0.036 0.025
+
+#sbs.backconstraint_x0 = 0.0066 0.062
+#sbs.backconstraint_y0 = 0.0 -0.023
+#sbs.backconstraintwidth_x = 0.05 0.25
+#sbs.backconstraintwidth_y = 0.045 0.21
+
+# for "tracking flag 1" (FPP first), use the following initially (we'll analyze low-current data to get these tuned up):
+
+sbs.frontconstraint_x0 = 0.005 0.0
+sbs.frontconstraint_y0 = 0.0 0.0
+sbs.frontconstraintwidth_x = 0.04 0.08
+sbs.frontconstraintwidth_y = 0.04 0.08
+
+sbs.backconstraint_x0 = 0.007 0.0
+sbs.backconstraint_y0 = 0.0 0.0
+sbs.backconstraintwidth_x = 0.04 0.25
+sbs.backconstraintwidth_y = 0.04 0.25
+
+----------[ 2025-07-11 08:36:00 ] # start more zero-field data (this time with multi-foil C targets)
+
+sbs.geptrackingmode = 0
+sbs.polarimetermode = 1
+sbs.usedynamicconstraint = 1
 
 sbs.dynamicphslope = 0.1
 sbs.dynamicthslope = 0.1
 sbs.dynamicph0 = 0.0
-sbs.dynamicth0 = 0.0 
+sbs.dynamicth0 = 0.0
+
+sbs.frontconstraint_x0 = 0.0 0.0
+sbs.frontconstraint_y0 = 0.0 0.0
+sbs.frontconstraintwidth_x = 0.1 0.2
+sbs.frontconstraintwidth_y = 0.2 0.2
+
+sbs.backconstraint_x0 = 0.0 0.0
+sbs.backconstraint_y0 = 0.0 0.0
+sbs.backconstraintwidth_x = 0.05 0.5
+sbs.backconstraintwidth_y = 0.05 0.5
+
+
+----------[ 2025-07-11 15:52:00 ] # back to production:
+
+sbs.geptrackingmode = 1
+sbs.geptrackingflag = 2
+sbs.polarimetermode = 1
+sbs.usedynamicconstraint = 0
+
+# use these constraints for "tracking flag 0" (FT first)
+#sbs.frontconstraint_x0 = 0.005 0.0
+#sbs.frontconstraint_y0 = 0.0 0.002
+#sbs.frontconstraintwidth_x = 0.041 0.025
+#sbs.frontconstraintwidth_y = 0.036 0.025
+
+#sbs.backconstraint_x0 = 0.0066 0.062
+#sbs.backconstraint_y0 = 0.0 -0.023
+#sbs.backconstraintwidth_x = 0.05 0.25
+#sbs.backconstraintwidth_y = 0.045 0.21
+
+# for "tracking flag 1" (FPP first), use the following initially (we'll analyze low-current data to get these tuned up):
 
 sbs.frontconstraint_x0 = 0.005 0.0
-sbs.frontconstraint_y0 = 0.0 0.002
-sbs.frontconstraintwidth_x = 0.041 0.025
-sbs.frontconstraintwidth_y = 0.036 0.025
+sbs.frontconstraint_y0 = 0.0 0.0
+sbs.frontconstraintwidth_x = 0.04 0.08
+sbs.frontconstraintwidth_y = 0.04 0.08
 
-sbs.backconstraint_x0 = 0.0066 0.062
-sbs.backconstraint_y0 = 0.0 -0.023
-sbs.backconstraintwidth_x = 0.05 0.25
-sbs.backconstraintwidth_y = 0.045 0.21
+sbs.backconstraint_x0 = 0.007 0.0
+sbs.backconstraint_y0 = 0.0 0.0
+sbs.backconstraintwidth_x = 0.04 0.25
+sbs.backconstraintwidth_y = 0.04 0.25

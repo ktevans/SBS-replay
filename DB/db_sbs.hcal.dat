@@ -1595,6 +1595,15 @@ sbs.hcal.adc.timeoffset = 0.0
 
 --------[ 2024-10-01 00:00:00 ] # start GEP: 
 
+# let's go ahead and put in some sensible offline clustering thresholds:
+# lowering these offline thresholds as they seem to be cutting out too many good hits.
+sbs.hcal.emin = 0.02 #
+sbs.hcal.emin_clSeed = 0.1 # 5 MeV, cluster seed threshold (offline)
+sbs.hcal.emin_clTotal = 0.5 # 10 MeV, cluster total threshold (offline) 
+
+
+sbs.hcal.tmax = 20.0 # will shrink when we do FADC time alignment (reduced from 100.0 during gep 6/2)
+
 # HCAL position for back tracker search region constraint:
 # AJRP 2025-04-07: we offset HCAL position vertically to compensate for vertical offset of GEM coordinate system. The "position" variable specifies the HCAL origin in
 # GEM coordinates (we might need to modify the code too, oh wait, nope, the code already does this correctly). 
@@ -1603,6 +1612,8 @@ sbs.hcal.adc.timeoffset = 0.0
 
 # adjusting HCAL position relative to aligned GEM coordinate system 
 # (AJRP 4/20/2025):
+# this one works for Kin. 1:
+
 sbs.hcal.position = 0.1535 0.0 6.3813
 
 
@@ -1916,23 +1927,20 @@ sbs.hcal.adc.gain =
 0.125 0.1 0.034 0.024 0.017330286 0.017 0.0288543 0.0230001 0.014 0.024485857 0.036 0.044077
 0.08 0.08 0.024 0.015 0.018 0.015 0.024 0.022808429 0.027858143 0.017479286 0.037625143 0.051
 
-# let's go ahead and put in some sensible offline clustering thresholds:
-# lowering these offline thresholds as they seem to be cutting out too many good hits.
-sbs.hcal.emin = 0.02 #
-sbs.hcal.emin_clSeed = 0.1 # 5 MeV, cluster seed threshold (offline)
-sbs.hcal.emin_clTotal = 0.5 # 10 MeV, cluster total threshold (offline) 
-
-sbs.hcal.tmax = 20.0 # will shrink when we do FADC time alignment (reduced from 100.0 during gep 6/2)
 
 
 
---------[ 2025-05-09 00:00:00 ] #gep 
+
+--------[ 2025-05-09 00:00:00 ] #gep3 
 
 sbs.hcal.reftdc.GoodTimeCut = 0.0 0.0 0.0 0.0 110.0 110.0 110.0 110.0
 
 sbs.hcal.adctime_min_clusterselect = 80.0
 sbs.hcal.adctime_max_clusterselect = 110.0
 
+# implement "effective z" for HCAL applicable to Kin. 3
+# NOTE: these offsets will need to be updated after re-optimizing the GEM global alignment:
+sbs.hcal.position = 0.192 -0.0215 6.696
 
 --------[ 2025-04-14 17:00:00 ] ## ECAL and HCAL trigger signal sent to different channels 
 ## crate slot start_channel end_channel ref_channel(0:HCal cosmic, 2:Beam)

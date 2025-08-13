@@ -1045,6 +1045,7 @@ sbs.gemFT.trackchi2cut = 15 20 25 30 40
 sbs.gemFT.sigmahitpos = 0.0001
 sbs.gemFT.do_efficiencies = 1
 sbs.gemFT.dump_geometry_info = 1
+sbs.gemFT.dump_rawADCrange = 1
 
 sbs.gemFT.efficiency_bin_width_1D = 0.02
 sbs.gemFT.efficiency_bin_width_2D = 0.04
@@ -1069,17 +1070,17 @@ sbs.gemFT.ypfp_max = 0.12
 
 # # basic flags controlling decoding:
 sbs.gemFT.pedestalmode = 0
-sbs.gemFT.commonmode_flag = 2 # 1 = Danning, 0 = sorting, 2 = histogramming
+sbs.gemFT.commonmode_flag = 0 # 1 = Danning, 0 = sorting, 2 = histogramming, 3 = online Danning (GMN version), 4 = online Danning (GEN version), 5 = online histogramming (GEP, possibly others)
 sbs.gemFT.chan_cm_flags = 640 # defines the "dummy" reference channel for storing the cm_enable and build_all_samples flags -(40 x 16) "sbsvtp2" and "sbsvtp4"currently has 36 and 20 MPDs respectively right now. 
-sbs.gemFT.commonmode_nstriplo = 20 # for sorting method
-sbs.gemFT.commonmode_nstriphi = 20 # for sorting method
+sbs.gemFT.commonmode_nstriplo = 10 # for sorting method
+sbs.gemFT.commonmode_nstriphi = 50 # for sorting method... for an occupancy ~40%
 sbs.gemFT.commonmode_niter = 3
-sbs.gemFT.commonmode_minstrips = 15
+sbs.gemFT.commonmode_minstrips = 25
 
 # histogramming-method parameters: 
-sbs.gemFT.commonmode_binwidth_nsigma = 2.5
-sbs.gemFT.commonmode_scanrange_nsigma = 15.0
-sbs.gemFT.commonmode_stepsize_nsigma = 0.25
+sbs.gemFT.commonmode_binwidth_nsigma = 7.0 # +/- 3.5 * DB sigma
+sbs.gemFT.commonmode_scanrange_nsigma = 5.0 
+sbs.gemFT.commonmode_stepsize_nsigma = 0.75
 
 sbs.gemFT.commonmode_online_flag = 4
 
@@ -1520,6 +1521,7 @@ sbs.gemFT.pedfile = gemped/daq_ped_sbs_gemFT_run3572.dat
 sbs.gemFT.cmfile = gemped/db_cmr_sbs_gemFT_run3572.dat
 
 sbs.gemFT.useopticsconstraint = 0
+sbs.gemFT.useelasticconstraint = 0
 sbs.gemFT.useslopeconstraint = 0
 sbs.gemFT.multitracksearch = 0
 sbs.gemFT.usestriptimingcut = 0
@@ -1534,6 +1536,7 @@ sbs.gemFT.useopticsconstraint = 1
 sbs.gemFT.useslopeconstraint = 1
 sbs.gemFT.multitracksearch = 1
 sbs.gemFT.usestriptimingcut = 1
+sbs.gemFT.useelasticconstraint = 1
 sbs.gemFT.dump_geometry_info = 0
 
 sbs.gemFT.minhitsontrack = 4
@@ -1543,6 +1546,7 @@ sbs.gemFT.trackchi2cut = 10.0 20.0 30.0 40.0 50.0
 ---------[ 2025-05-23 17:00:00 ] # Start C-foil zero-field runs taken after GEM work in Hall. FPP L0 L1 and L4 L5 were pulled out.
 sbs.gemFT.useopticsconstraint = 0
 sbs.gemFT.useslopeconstraint = 0
+sbs.gemFT.useelasticconstraint = 0
 sbs.gemFT.multitracksearch = 0
 sbs.gemFT.usestriptimingcut = 0
 sbs.gemFT.dump_geometry_info = 1
@@ -1586,6 +1590,7 @@ sbs.gemFT.useopticsconstraint = 1
 sbs.gemFT.useslopeconstraint = 1
 sbs.gemFT.multitracksearch = 1
 sbs.gemFT.usestriptimingcut = 1
+sbs.gemFT.useelasticconstraint = 1
 sbs.gemFT.dump_geometry_info = 0
 
 #   chi2 cut for nhits = 4    5    6    7    8
@@ -1954,7 +1959,7 @@ sbs.gemFT.m5.suppressfirstlast = -1
 
 # this will disable any suppression of "small" local maxima overlapping higher peaks in the 1D clustering:
 sbs.gemFT.peakprominence_minsigma = 2.0
-sbs.gemFT.peakprominence_minfraction = 0.0
+sbs.gemFT.peakprominence_minfraction = 0.1
 
 sbs.gemFT.corrcoeff_cut = 0.5
 sbs.gemFT.deltat_cut = 4.5 # sigmas
@@ -2242,6 +2247,8 @@ sbs.gemFT.m13.ADCasym_sigma =     0.110436
 
 ----------[ 2025-05-09 20:00:01 ] # start Kin. 3:
 
+sbs.gemFT.maxhitcombos_total = 1.e20
+
 sbs.gemFT.m0.threshold_sample = 100.0
 sbs.gemFT.m0.threshold_stripsum = 300.0
 sbs.gemFT.m0.threshold_clustersum = 400.0
@@ -2266,10 +2273,13 @@ sbs.gemFT.m5.threshold_sample = 100.0
 sbs.gemFT.m5.threshold_stripsum = 300.0
 sbs.gemFT.m5.threshold_clustersum = 400.0
 
-sbs.gemFT.filterflag1D = 3 # flag + 1 = 4, bits = 100, this SHOULD lead to hard filtering by cluster ADC sum and no cluster size filtering
+#sbs.gemFT.filterflag1D = 3 # flag + 1 = 4, bits = 100, this SHOULD lead to hard filtering by cluster ADC sum and no cluster size filtering
 
 
-sbs.gemFT.filterflag2D = 13 # We want bits = 1110 = 14 = flag + 1, so flag = 13 
+#sbs.gemFT.filterflag2D = 13 # We want bits = 1110 = 14 = flag + 1, so flag = 13 
+sbs.gemFT.filterflag1D = -1
+sbs.gemFT.filterflag2D = -1
+
 sbs.gemFT.corrcoeff_cut = 0.4
 
 sbs.gemFT.suppressfirstlast = -1
@@ -2279,12 +2289,12 @@ sbs.gemFT.m4.maxstrip_t0 = 85. 85.
 sbs.gemFT.m5.maxstrip_t0 = 85. 85. 
 
 sbs.gemFT.zerosuppress_nsigma = 3.5
-sbs.gemFT.m0.zerosuppress_nsigma = 4.5
-sbs.gemFT.m1.zerosuppress_nsigma = 4.5
-sbs.gemFT.m2.zerosuppress_nsigma = 4.5
-sbs.gemFT.m3.zerosuppress_nsigma = 4.5
-sbs.gemFT.m4.zerosuppress_nsigma = 4.5
-sbs.gemFT.m5.zerosuppress_nsigma = 4.5
+sbs.gemFT.m0.zerosuppress_nsigma = 3.5
+sbs.gemFT.m1.zerosuppress_nsigma = 3.5
+sbs.gemFT.m2.zerosuppress_nsigma = 3.5
+sbs.gemFT.m3.zerosuppress_nsigma = 3.5
+sbs.gemFT.m4.zerosuppress_nsigma = 3.5
+sbs.gemFT.m5.zerosuppress_nsigma = 3.5
 
 sbs.gemFT.addstrip_tcut = 30.0
 sbs.gemFT.addstrip_ccor_cut = 0.4
@@ -2310,14 +2320,357 @@ sbs.gemFT.dphtar0 = 0.0
 sbs.gemFT.dphtarcut = 0.015
 
 
----------[ 2025-05-29 20:40:00 ] # Multi-foil optics runs. SBS current 1756.5 A (same as production). Beam currents 1-1.5 uA. Used 4 foil and 2 foil optics targets with the corresponding run numbes 4200 and 4203. 
+---------[ 2025-05-29 20:40:00 ] # Multi-foil optics runs. SBS current 1756.5 A (same as production). Beam currents 1-1.5 uA. Used 4 foil and 2 foil optics targets with the corresponding run numbers 4200 and 4203. 
 sbs.gemFT.multitracksearch=0
-sbs.gemFT.pmin = 2.5
-sbs.gemFT.useslopeconstraint=0
 sbs.gemFT.useelasticconstraint = 0
+sbs.gemFT.useopticsconstraint = 1
+sbs.gemFT.pmin = 2.5
+
+sbs.gemFT.useslopeconstraint=0
+sbs.gemFT.constraintwidth_theta = 0.06
+sbs.gemFT.constraintwidth_phi = 0.06
+
 
 ---------[ 2025-05-30 00:45:00 ] # Back to production running.
 sbs.gemFT.multitracksearch=1
 sbs.gemFT.pmin = 5.0
 sbs.gemFT.useslopeconstraint=1
+
 sbs.gemFT.useelasticconstraint = 1
+sbs.gemFT.constraintwidth_theta = 0.02
+sbs.gemFT.constraintwidth_phi = 0.03
+
+
+#######################################################################################
+#                                                                                     #
+#  DEFINE TIME-DEPENDENT RAW ADC MIN VALUES TO AVOID NEGATIVE SATURATION IN OFFLINE   #
+#  COMMON-MODE CALCULATION                                                            #
+#                                                                                     #
+#######################################################################################                 
+
+--------[ 2025-04-01 00:00:00 ] # values from run 4482 (before baseline shift):
+sbs.gemFT.m0.rawADCminU = 
+        190         190         270         298         254         190         274         270 
+          0         238           0         218         234         246         274         258 
+        274         274         325         235         310         474         512         420 
+        372         246         198         188         128         112         136 
+
+sbs.gemFT.m0.rawADCminV = 
+        266         198         262         218         174         250         234         274 
+        262         302         270         342         258         262         246         226 
+        282         266         242         218         202         222         238         306 
+        142         184         368 
+
+sbs.gemFT.m1.rawADCminU = 
+        182         142         246         254         314         214         198         306 
+        246         250         222         290         214         298         286         200 
+        246         142         298         362         318         226         302         290 
+        250         254         230         182         254         274         214 
+
+sbs.gemFT.m1.rawADCminV = 
+        302         230         286         218         290         162         234         326 
+        274         298         358         306         254         258         278         270 
+        278         250         362         314         358         278         282         302 
+        262         250         106 
+
+sbs.gemFT.m2.rawADCminU = 
+        190         242         274         225         194         290         118         230 
+        210         218         250         214         238         302         240         266 
+        178         270         250         202         310         322         202         214 
+        158         222         154         300         290         144 
+
+sbs.gemFT.m2.rawADCminV = 
+        222         -52         330         274         278         242         182         290 
+        194         274         210         230         250         246         202         322 
+        218         298         278         278         354         318         290         330 
+        -28         262         274         355         230         152 
+
+sbs.gemFT.m3.rawADCminU = 
+        262         250         254           0         198          98         302         254 
+        230         218         250         254         330         214         246         218 
+        234         258         258         310         274         226         246         230 
+        238         222         302         250         200         116 
+
+sbs.gemFT.m3.rawADCminV = 
+         82         270         206         254         270         278         290         190 
+        218         242         278         266         242         230         266           0 
+        210         406         294         390         278         246         214         278 
+        350         390         294         325         250         272 
+
+sbs.gemFT.m4.rawADCminU = 
+          0         278         298         370         190         314         266         322 
+        302         245         330         334         210         235         270         338 
+        294         330         298         246         278         334         294         262 
+        306         370         294         246         322         300 
+
+sbs.gemFT.m4.rawADCminV = 
+        270         274         238         242         302         306         314         230 
+        558         282         200         226         146         402         338         362 
+        346         334         334         238         286         226         310         278 
+        362         354         314         294         120         140 
+
+sbs.gemFT.m5.rawADCminU = 
+        302         226         306         294         318         226         298         310 
+        290         194         266         210         234         130         234         286 
+        238         318         290         258         242         330         214         218 
+        226         214         246         170         194         112 
+
+sbs.gemFT.m5.rawADCminV = 
+        222         194         250         278         270         194         234         200 
+        200         270         280         250         258         326         198         290 
+        262         238         290         274         310         258        1106         194 
+        258         290         218         234         315         410 
+
+sbs.gemFT.m6.rawADCminU = 
+        228         204         152         188         196         168         180         184 
+        184         358 
+
+sbs.gemFT.m6.rawADCminV = 
+        244         220         236         232         224         204         208         196 
+        232         228         184         160 
+
+sbs.gemFT.m7.rawADCminU = 
+         56         242         124         -52         176          36         104           0 
+        124         152 
+
+sbs.gemFT.m7.rawADCminV = 
+        100         256         230         190         160         136         256         136 
+        148         172         168           0 
+
+sbs.gemFT.m8.rawADCminU = 
+        246         218         182         156         104         132         116          64 
+        214         254 
+
+sbs.gemFT.m8.rawADCminV = 
+        196         124         304         216         136         200         180         184 
+        116         234         172         276 
+
+sbs.gemFT.m9.rawADCminU = 
+        186          64          68         104         140         288         252         200 
+        312         168 
+
+sbs.gemFT.m9.rawADCminV = 
+        188         256         172         152         140         268         124         230 
+         52          52         266         164 
+
+sbs.gemFT.m10.rawADCminU = 
+        184         112         140         172         190         174         234         250 
+        194         174 
+
+sbs.gemFT.m10.rawADCminV = 
+        194         210         190         274         382         282         330         150 
+        206         218         358         140 
+
+sbs.gemFT.m11.rawADCminU = 
+        190         338         148         206         -52         242          84         244 
+        170         174 
+
+sbs.gemFT.m11.rawADCminV = 
+        140         380         204         212          64         160         228         164 
+         96         176         212         104 
+
+sbs.gemFT.m12.rawADCminU = 
+        282         218         152         100          28         136         108         116 
+        262         282 
+
+sbs.gemFT.m12.rawADCminV = 
+        124         132         140         120         164         172         220         180 
+         92         192         148         140 
+
+sbs.gemFT.m13.rawADCminU = 
+         80         234          84         188         116         128         202         160 
+        152         144 
+
+sbs.gemFT.m13.rawADCminV = 
+        392         264         452         192         372         168         372         292 
+        428         216         340         384 
+
+                                      
+
+--------[ 2025-06-18 16:50:00 ] # values determined from run 5326:
+
+sbs.gemFT.m0.rawADCminU = 
+        210         218         318         338         270         218         290         334 
+          0         350         270         258         278         278         298         290 
+        310         266         370         298         378         426         604         488 
+        504         274         330         334         384         408         396 
+
+sbs.gemFT.m0.rawADCminV = 
+        294         262         310         274         222         258         254         350 
+        318         334         298         378         290         306         278         262 
+        298         282         310         242         230         222         278         342 
+        246         528         668 
+
+sbs.gemFT.m1.rawADCminU = 
+        218         206         306         286         346         218         246         354 
+        310         318         258         338         246         326         302         238 
+        250          52         330         382         338         270         322         302 
+        274         282         266         190         188         228         230 
+
+sbs.gemFT.m1.rawADCminV = 
+        216         250         318         254         338         198         286         370 
+        286         318         366         350         302         306         346         322 
+        314         298         398         318         374         318         322         354 
+        168         148         142 
+
+sbs.gemFT.m2.rawADCminU = 
+        144         282         338         254         226         338         286         290 
+        246         294         254         258         294         346         294         290 
+        194         294         286         222         346         358         258         250 
+        190         238         170         512         212         436 
+
+sbs.gemFT.m2.rawADCminV = 
+        208         286         386         306         314         270         222         330 
+        246         362         278         258         286         274         254         354 
+        282         334         330         326         394         286         322         374 
+        262         338         212         352         364         440 
+
+sbs.gemFT.m3.rawADCminU = 
+        208         176         318           0         266         130         330         278 
+        270         246         262         314         378         238         262         258 
+        282         282         306         386         350         266         226         144 
+        298         258         342         256         540         520 
+
+sbs.gemFT.m3.rawADCminV = 
+        242         314         274         176         310         322         334         238 
+        270         294         310         318         274         282         290           0 
+        270         446         342         470         314         306         278         338 
+        386         442         208         300         512         536 
+
+sbs.gemFT.m4.rawADCminU = 
+          0         224         244         410         234         350         282         338 
+        350         234         402         370         218         258         306         370 
+        334         362         334         302         306         386         322         298 
+        314         430         346         266         268         224 
+
+sbs.gemFT.m4.rawADCminV = 
+        200         274         176         290         354         244         370         282 
+        586         318         234         254         246         442         378         382 
+        378         362         386         254         286         282         346         278 
+        390         312           0         318         392         412 
+
+sbs.gemFT.m5.rawADCminU = 
+        380         238         224         382         354         242         342         378 
+        294         238         282         230         274         290         282         306 
+        278         334         318         294         290         346         234         262 
+        226         230         180         210         104         152 
+
+sbs.gemFT.m5.rawADCminV = 
+        176         148         310         200         294         226         258         226 
+        242         286         294         282         306         370         246         294 
+        300         294         350         318         346         278         286         218 
+        310         212         278         270         260         524 
+
+sbs.gemFT.m6.rawADCminU = 
+        264         500         436         472         476         500         496         220 
+        404         384 
+
+sbs.gemFT.m6.rawADCminV = 
+        508         452         508         516         472         292         240         600 
+        464         560         204         452 
+
+sbs.gemFT.m7.rawADCminU = 
+        108         278         372         180         392         232         340         248 
+        272         220 
+
+sbs.gemFT.m7.rawADCminV = 
+        208         528         254         184         392         408         484         192 
+        372         444         192           0 
+
+sbs.gemFT.m8.rawADCminU = 
+        180         258         222         196         160         300         328         308 
+        294         338 
+
+sbs.gemFT.m8.rawADCminV = 
+        580         310         600         468         252         416         208         452 
+        232         286         464         508 
+
+sbs.gemFT.m9.rawADCminU = 
+        112         152         236         320         368         544         524         384 
+        512         326 
+
+sbs.gemFT.m9.rawADCminV = 
+        500         288         280         340         420         524         328         238 
+         84         180         352         408 
+
+sbs.gemFT.m10.rawADCminU = 
+        524         512         172         452         152         226         188         196 
+        132         116 
+
+sbs.gemFT.m10.rawADCminV = 
+        210         144         250         358         316         346         382         198 
+        282         294         308         220 
+
+sbs.gemFT.m11.rawADCminU = 
+        136         390         212         144         116         282         156         368 
+        274         136 
+
+sbs.gemFT.m11.rawADCminV = 
+        216         624         440         236         156         352         372         408 
+        368         452         600         352 
+
+sbs.gemFT.m12.rawADCminU = 
+        220         246         200         316         220         348         364         344 
+        220         220 
+
+sbs.gemFT.m12.rawADCminV = 
+        416         368         244         172         444         468         456         396 
+        140         220         324         372 
+
+sbs.gemFT.m13.rawADCminU = 
+        276         184         360         404         164         380         164         444 
+        396         376 
+
+sbs.gemFT.m13.rawADCminV = 
+        628         440         640         460         568         380         596         420 
+        640         412         564         620 
+
+---------[ 2025-07-21 22:50:00 ] # thresholds based on 3550 V data for run 5415:
+
+sbs.gemFT.minhitsontrack = 4
+
+sbs.gemFT.maxhitcombos_total = 1.e24
+
+sbs.gemFT.m0.threshold_sample =          84.082
+sbs.gemFT.m0.threshold_stripsum =          210.21
+sbs.gemFT.m0.threshold_clustersum =          336.33
+sbs.gemFT.m1.threshold_sample =           100.2
+sbs.gemFT.m1.threshold_stripsum =           250.5
+sbs.gemFT.m1.threshold_clustersum =           400.8
+sbs.gemFT.m2.threshold_sample =          84.849
+sbs.gemFT.m2.threshold_stripsum =          212.12
+sbs.gemFT.m2.threshold_clustersum =          339.39
+sbs.gemFT.m3.threshold_sample =          77.758
+sbs.gemFT.m3.threshold_stripsum =          194.39
+sbs.gemFT.m3.threshold_clustersum =          311.03
+sbs.gemFT.m4.threshold_sample =          93.136
+sbs.gemFT.m4.threshold_stripsum =          232.84
+sbs.gemFT.m4.threshold_clustersum =          372.55
+sbs.gemFT.m5.threshold_sample =          90.515
+sbs.gemFT.m5.threshold_stripsum =          226.29
+sbs.gemFT.m5.threshold_clustersum =          362.06
+sbs.gemFT.m6.threshold_sample =           62.55
+sbs.gemFT.m6.threshold_stripsum =          156.38
+sbs.gemFT.m6.threshold_clustersum =           250.2
+sbs.gemFT.m7.threshold_sample =          79.341
+sbs.gemFT.m7.threshold_stripsum =          198.35
+sbs.gemFT.m7.threshold_clustersum =          317.36
+sbs.gemFT.m8.threshold_sample =          87.426
+sbs.gemFT.m8.threshold_stripsum =          218.56
+sbs.gemFT.m8.threshold_clustersum =           349.7
+sbs.gemFT.m9.threshold_sample =          78.232
+sbs.gemFT.m9.threshold_stripsum =          195.58
+sbs.gemFT.m9.threshold_clustersum =          312.93
+sbs.gemFT.m10.threshold_sample =          72.468
+sbs.gemFT.m10.threshold_stripsum =          181.17
+sbs.gemFT.m10.threshold_clustersum =          289.87
+sbs.gemFT.m11.threshold_sample =          79.172
+sbs.gemFT.m11.threshold_stripsum =          197.93
+sbs.gemFT.m11.threshold_clustersum =          316.69
+sbs.gemFT.m12.threshold_sample =          83.204
+sbs.gemFT.m12.threshold_stripsum =          208.01
+sbs.gemFT.m12.threshold_clustersum =          332.82
+sbs.gemFT.m13.threshold_sample =          67.804
+sbs.gemFT.m13.threshold_stripsum =          169.51
+sbs.gemFT.m13.threshold_clustersum =          271.22
+

@@ -39,6 +39,7 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
   ifstream infile(configfilename);
 
   if( !infile ){
+    cout << "config file " << configfilename << " not opened, quitting..." << endl;
     return;
   } else {
     TString currentline;
@@ -52,6 +53,8 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
       }
     }
 
+    cout << "Finished adding root files, n files = " << C->GetNtrees() << endl;
+    
     TCut globalcut = "";
     
     while( currentline.ReadLine( infile ) && !currentline.BeginsWith("endcut")){
@@ -60,6 +63,8 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
       }
     }
 
+    cout << "Finished defining global cut, cut = \"" << globalcut << "\"" << endl;
+    
     fout->cd();
 
     TTree *Tout = new TTree("Tout", "GEP elastic parsing");

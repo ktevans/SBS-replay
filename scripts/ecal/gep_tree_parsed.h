@@ -100,18 +100,18 @@ public :
    Double_t        yECAL;
    Double_t        tECAL_ADC;
    Int_t           nblkECAL;
-   Double_t        ECAL_clusblk_e[33];   //[nblkECAL]
-   Double_t        ECAL_clusblk_atime[33];   //[nblkECAL]
-   Double_t        ECAL_clusblk_again[33];   //[nblkECAL]
-   Int_t           ECAL_clusblk_id[33];   //[nblkECAL]
-   Double_t        ECAL_clusblk_x[33];   //[nblkECAL]
-   Double_t        ECAL_clusblk_y[33];   //[nblkECAL]
-   Double_t        HCAL_clusblk_e[26];   //[nblkHCAL]
-   Double_t        HCAL_clusblk_atime[26];   //[nblkHCAL]
-   Double_t        HCAL_clusblk_again[26];   //[nblkHCAL]
-   Int_t           HCAL_clusblk_id[26];   //[nblkHCAL]
-   Double_t        HCAL_clusblk_x[26];   //[nblkHCAL]
-   Double_t        HCAL_clusblk_y[26];   //[nblkHCAL]
+   Double_t        ECAL_clusblk_e[50];   //[nblkECAL]
+   Double_t        ECAL_clusblk_atime[50];   //[nblkECAL]
+   Double_t        ECAL_clusblk_again[50];   //[nblkECAL]
+   Int_t           ECAL_clusblk_id[50];   //[nblkECAL]
+   Double_t        ECAL_clusblk_x[50];   //[nblkECAL]
+   Double_t        ECAL_clusblk_y[50];   //[nblkECAL]
+   Double_t        HCAL_clusblk_e[50];   //[nblkHCAL]
+   Double_t        HCAL_clusblk_atime[50];   //[nblkHCAL]
+   Double_t        HCAL_clusblk_again[50];   //[nblkHCAL]
+   Int_t           HCAL_clusblk_id[50];   //[nblkHCAL]
+   Double_t        HCAL_clusblk_x[50];   //[nblkHCAL]
+   Double_t        HCAL_clusblk_y[50];   //[nblkHCAL]
    Double_t        helicity;
    Double_t        IHWP;
 

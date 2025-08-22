@@ -20,6 +20,10 @@
 #include "TH2D.h"
 #include "TGraph.h"
 #include "TF1.h"
+#include "TCanvas.h"
+#include "TPad.h"
+#include "TSystem.h"
+#include "TLine.h"
 
 using namespace std;
 
@@ -46,7 +50,7 @@ const int ncols[nrows] =
     18, 18, 18 };
     
     
-    
+
 
 void ECAL_HCAL_calib_parsed_output(const char *configfilename, const char *outfilename="GEP_ECAL_HCAL_calib_temp.root"){
   // What inputs do we need?
@@ -77,6 +81,9 @@ void ECAL_HCAL_calib_parsed_output(const char *configfilename, const char *outfi
     }
   }
 
+  TCanvas *c1 = new TCanvas("c1","c1",1200,900);
+  c1->Divide(2,1,.001,.001);
+  
   int minhits_ECAL = 100;
   int minhits_HCAL = 500; 
 
@@ -549,96 +556,111 @@ void ECAL_HCAL_calib_parsed_output(const char *configfilename, const char *outfi
 	    
 	    //if( Esum_good_hcal_new/Tp < SampFracMeanHCAL - 2.0*SampFracSigmaHCAL || Esum_good_hcal_new/Tp > SampFracMeanHCAL + 2.0*SampFracSigmaHCAL ) goodhcalclust = false;
 
-	    if( Esum_good_hcal_new/Tp < SampFracMinHCAL || Esum_good_hcal_new/Tp > SampFracMaxHCAL ){
-	      goodhcalclust = false;
-	    }
+	    // if( Esum_good_hcal_new/Tp < SampFracMinHCAL || Esum_good_hcal_new/Tp > SampFracMaxHCAL ){
+	    //   goodhcalclust = false;
+	    // }
 	  }
 
 	  if( goodhcalclust ){
-	    for( int i=0; i<T->nblkHCAL; i++ ){
-	      //	      double A_i = T->HCAL_clusblk_e[i]/T->HCAL_clusblk_again[i];
-	      double t_i = T->HCAL_clusblk_atime[i];
-	      double x_i = T->HCAL_clusblk_x[i];
-	      double y_i = T->HCAL_clusblk_y[i];
-	      int id_i = T->HCAL_clusblk_id[i]-1;
-	      double oldgain_i = T->HCAL_clusblk_again[i];
-	      double e_i = T->HCAL_clusblk_e[i];
-	      double A_i = e_i/oldgain_i;
-	      
-	      if( iter > 0 ){
-		e_i = A_i * PreviousSolutionHCAL[id_i];
-	      }
 
-	      if( i == 0 ){
-		xseedHCAL = x_i;
-		yseedHCAL = y_i;
-		eseedHCAL = e_i;
-		tseedHCAL = t_i;
-		idseedHCAL = id_i;
-	      }
+	    bool useevent_in_calib = false;
+	    if( iter == 0 || (Esum_good_hcal_new/Tp >= SampFracMinHCAL && Esum_good_hcal_new/Tp <= SampFracMaxHCAL ) ){
+	      useevent_in_calib = true;
+	    }
 
-	      if( eseedHCAL < seed_thresh_HCAL ) continue;
-
-	      bool goodblock_i = true;
-
-	      double distfromseed = sqrt(pow(x_i-xseedHCAL,2)+pow(y_i-yseedHCAL,2));
-	      if( fabs( t_i - tseedHCAL ) > dtcut_HCAL ||
-		  distfromseed > Rmax_HCAL || e_i < hit_thresh_HCAL ){
-		goodblock_i = false;
-	      }
-	      if( !goodblock_i ) continue;
-
-	      if( iter > 0 && !goodcalibHCAL[id_i] && nbadcalib_thishcalclust == 1 ){
-		sumEmiss_ratio[id_i] += e_i/(Tp - (Esum_good_hcal_new-e_i) );
-		neventsEmiss_ratio[id_i] += 1.0;
-	      }
-
-	      if( iter == 0 ) Esum_good_hcal_old += e_i;
-
-	      for( int j=0; j<T->nblkHCAL; j++ ){
-		int id_j = T->HCAL_clusblk_id[j]-1;
-		double x_j = T->HCAL_clusblk_x[j];
-		double y_j = T->HCAL_clusblk_y[j];
-		double e_j = T->HCAL_clusblk_e[j];
-		double t_j = T->HCAL_clusblk_atime[j];
-		double oldgain_j = T->HCAL_clusblk_again[j];
-		double A_j = e_j/oldgain_j;
-
-		if( iter > 0 ) e_j = A_j * PreviousSolutionHCAL[id_j];
-
-		bool goodblock_j = true;
-
-		distfromseed = sqrt(pow(x_j-xseedHCAL,2)+pow(y_j-yseedHCAL,2));
-		if( fabs( t_j - tseedHCAL ) > dtcut_HCAL ||
-		    distfromseed > Rmax_HCAL || e_j < hit_thresh_HCAL ){
-		  goodblock_j = false;
+	    if( useevent_in_calib ){
+	      for( int i=0; i<T->nblkHCAL; i++ ){
+		//	      double A_i = T->HCAL_clusblk_e[i]/T->HCAL_clusblk_again[i];
+		double t_i = T->HCAL_clusblk_atime[i];
+		double x_i = T->HCAL_clusblk_x[i];
+		double y_i = T->HCAL_clusblk_y[i];
+		int id_i = T->HCAL_clusblk_id[i]-1;
+		double oldgain_i = T->HCAL_clusblk_again[i];
+		double e_i = T->HCAL_clusblk_e[i];
+		double A_i = e_i/oldgain_i;
+		
+		if( iter > 0 ){
+		  e_i = A_i * PreviousSolutionHCAL[id_i];
 		}
-		if( !goodblock_j ) continue;
+		
+		if( i == 0 ){
+		  xseedHCAL = x_i;
+		  yseedHCAL = y_i;
+		  eseedHCAL = e_i;
+		  tseedHCAL = t_i;
+		  idseedHCAL = id_i;
+		}
 
-		MHCAL(id_i, id_j) += A_i * A_j;
-	      }
+		if( eseedHCAL < seed_thresh_HCAL ) continue;
 
-	      bHCAL(id_i) += A_i * Tp;
-
-	      Nhit_chan_HCAL[id_i] += 1;
-	    } // loop over HCAL blocks
-
+		bool goodblock_i = true;
+		
+		double distfromseed = sqrt(pow(x_i-xseedHCAL,2)+pow(y_i-yseedHCAL,2));
+		if( fabs( t_i - tseedHCAL ) > dtcut_HCAL ||
+		    distfromseed > Rmax_HCAL || e_i < hit_thresh_HCAL ){
+		  goodblock_i = false;
+		}
+		if( !goodblock_i ) continue;
+		
+		if( iter > 0 && !goodcalibHCAL[id_i] && nbadcalib_thishcalclust == 1 ){
+		  sumEmiss_ratio[id_i] += e_i/(Tp - (Esum_good_hcal_new-e_i) );
+		  neventsEmiss_ratio[id_i] += 1.0;
+		}
+		
+		if( iter == 0 ) Esum_good_hcal_old += e_i;
+		
+		
+		
+		for( int j=0; j<T->nblkHCAL; j++ ){
+		  int id_j = T->HCAL_clusblk_id[j]-1;
+		  double x_j = T->HCAL_clusblk_x[j];
+		  double y_j = T->HCAL_clusblk_y[j];
+		  double e_j = T->HCAL_clusblk_e[j];
+		  double t_j = T->HCAL_clusblk_atime[j];
+		  double oldgain_j = T->HCAL_clusblk_again[j];
+		  double A_j = e_j/oldgain_j;
+		  
+		  if( iter > 0 ) e_j = A_j * PreviousSolutionHCAL[id_j];
+		  
+		  bool goodblock_j = true;
+		  
+		  distfromseed = sqrt(pow(x_j-xseedHCAL,2)+pow(y_j-yseedHCAL,2));
+		  if( fabs( t_j - tseedHCAL ) > dtcut_HCAL ||
+		      distfromseed > Rmax_HCAL || e_j < hit_thresh_HCAL ){
+		    goodblock_j = false;
+		  }
+		  if( !goodblock_j ) continue;
+		  
+		  MHCAL(id_i, id_j) += A_i * A_j;
+		}
+		
+		bHCAL(id_i) += A_i * Tp;
+		
+		Nhit_chan_HCAL[id_i] += 1;
+	      } // loop over HCAL blocks
+	    } //check if event is to be used in calibration (first iteration or sampling fraction within limits
+	    
 	    if( iter == 0 ){
 	      hsampfrac_old_HCAL->Fill( Esum_good_hcal_old / Tp );
 	      hsampfrac_x_old_HCAL->Fill( T->xHCAL, Esum_good_hcal_old / Tp );
 	      hsampfrac_y_old_HCAL->Fill( T->yHCAL, Esum_good_hcal_old / Tp );
 	      Esum_good_hcal_new = Esum_good_hcal_old;
 	    }
-
-	    hSampFrac_temp_HCAL->Fill( Esum_good_hcal_new / Tp );
 	    
+	    hSampFrac_temp_HCAL->Fill( Esum_good_hcal_new / Tp );
 	  } //check if cluster is "good"
+	
 	} // small-angle cut on FPP track;
       }
     
       if( nevent % 1000 == 0 ) cout << "Event " << nevent << endl;
     }
- 
+
+    c1->cd(1);
+    hEoverP_temp_ECAL->Draw();
+    c1->cd(2);
+    hSampFrac_temp_HCAL->Draw();
+    
     list_uncalibrated.clear();
     list_uncalibrated_HCAL.clear();
     //list of uncalibrated channels:
@@ -689,6 +711,8 @@ void ECAL_HCAL_calib_parsed_output(const char *configfilename, const char *outfi
     cout << "done" << endl;
     
     if( iter > 0 ){
+
+      c1->cd(1);
       hEoverP_temp_ECAL->Fit("gaus","SQ","",meanEoverP-1.5*sigmaEoverP,meanEoverP+1.5*sigmaEoverP);
 
       meanEoverP = ( (TF1*) (hEoverP_temp_ECAL->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
@@ -701,10 +725,17 @@ void ECAL_HCAL_calib_parsed_output(const char *configfilename, const char *outfi
       //     SampFracMeanHCAL = ( (TF1*) (hSampFrac_temp_HCAL->GetListOfFunctions()->FindObject("gaus")))->GetParameter("Mean");
       //SampFracSigmaHCAL = ( (TF1*) (hSampFrac_temp_HCAL->GetListOfFunctions()->FindObject("gaus")))->GetParameter("Sigma");
 
+      c1->cd(2);
       int maxbinhcal = hSampFrac_temp_HCAL->GetMaximumBin();
+
+      double HCALmax = hSampFrac_temp_HCAL->GetBinContent(maxbinhcal);
       
       int binlow = maxbinhcal;
       int binhigh = maxbinhcal;
+
+      int binlow7 = maxbinhcal;
+      int binhigh7 = maxbinhcal;
+      
       while( binlow >= 1 && hSampFrac_temp_HCAL->Integral(1,binlow) > 0.001*hSampFrac_temp_HCAL->Integral() ){
 	binlow--;
       }
@@ -713,12 +744,23 @@ void ECAL_HCAL_calib_parsed_output(const char *configfilename, const char *outfi
       while( binhigh <= nbinsxhcal && hSampFrac_temp_HCAL->Integral(binhigh,nbinsxhcal) > 0.02*hSampFrac_temp_HCAL->Integral() ){
 	binhigh++;
       }
+
+      while( binlow7 >= 1 && hSampFrac_temp_HCAL->GetBinContent(binlow7) >= 0.7*HCALmax ){binlow7--;}
+      while( binhigh7 <= nbinsxhcal && hSampFrac_temp_HCAL->GetBinContent(binhigh7) >= 0.7*HCALmax){binhigh7++;}
       
       SampFracMeanHCAL = hSampFrac_temp_HCAL->GetMean();
       SampFracSigmaHCAL = hSampFrac_temp_HCAL->GetRMS();
 
       SampFracMinHCAL = hSampFrac_temp_HCAL->GetBinLowEdge(binlow+1);
       SampFracMaxHCAL = hSampFrac_temp_HCAL->GetBinLowEdge(binhigh);
+
+      hSampFrac_temp_HCAL->Fit("gaus","SQ","",hSampFrac_temp_HCAL->GetBinLowEdge(binlow7),hSampFrac_temp_HCAL->GetBinLowEdge(binhigh7+1));
+
+      SampFracMeanHCAL = ( (TF1*) (hSampFrac_temp_HCAL->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
+      SampFracSigmaHCAL = ( (TF1*) (hSampFrac_temp_HCAL->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Sigma");
+      c1->Update();
+      gPad->Modified();
+      gSystem->ProcessEvents();
     }
 
     double ngoodcalib = 0;
@@ -812,7 +854,20 @@ void ECAL_HCAL_calib_parsed_output(const char *configfilename, const char *outfi
 	 << ngoodcalib << ", " << SampFracMeanHCAL << ", " << SampFracSigmaHCAL << ")" << endl;
     
   } //end loop over iterations:
-    
+
+
+  //Before we write the DB file, calculate "fudge factors" to apply to both ECAL and HCAL gains:
+  //int binmax_ECAL
+
+  double fudgefactor_ECAL = 1.0/meanEoverP;
+  double fudgefactor_HCAL = 1.0/SampFracMeanHCAL;
+
+  for( int i=0; i<nchan_ECAL; i++ ){
+    bECAL(i) *= fudgefactor_ECAL;
+  }
+  for( int i=0; i<nchan_HCAL; i++ ){
+    bHCAL(i) *= fudgefactor_HCAL;
+  }
   
   //Now loop over the data again and see how we did:
 
@@ -865,8 +920,9 @@ void ECAL_HCAL_calib_parsed_output(const char *configfilename, const char *outfi
   for( int i=0; i<nchan_ECAL; i++ ){
     if( list_uncalibrated.find(i) != list_uncalibrated.end() || !goodcalibECAL[i] ){
       if( gotoldgain_ECAL ){
-	newcoeff[i] = defaultGainECAL[i];
+	newcoeff[i] = defaultGainECAL[i]*fudgefactor_ECAL;
 	rationewold[i] = newcoeff[i] / defaultGainECAL[i]; //1
+	//newcoeff[i] *= fudgefactor_ECAL; // for database:
       } else {
 	newcoeff[i] = avgcoeff;
       }
@@ -893,7 +949,7 @@ void ECAL_HCAL_calib_parsed_output(const char *configfilename, const char *outfi
   for( int i=0; i<nchan_HCAL; i++ ){
     if( list_uncalibrated_HCAL.find(i) != list_uncalibrated_HCAL.end() || !goodcalibHCAL[i] ){
       if( gotoldgain_HCAL ){
-	newhcalcoeff[i] = defaultGainHCAL[i];
+	newhcalcoeff[i] = defaultGainHCAL[i]*fudgefactor_HCAL;
 	rationewoldhcal[i] = newhcalcoeff[i]/defaultGainHCAL[i];
       } else {
 	newcoeff[i] = avgcoeffhcal;

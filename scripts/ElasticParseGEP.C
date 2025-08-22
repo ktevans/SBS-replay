@@ -70,7 +70,8 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
     TTree *Tout = new TTree("Tout", "GEP elastic parsing");
 
     int runnum;
-    double etheta,ephi,ptheta,pphi,ecalo,pp,eprime_eth,pp_eth,pth_eth,pp_pth,eprime_pth,eth_pth,eprime_pp,eth_pp,Q2_pp,Q2_eth,Q2_pth,Q2_p4vect,Q2_e4vect,eps_pp, eps_eth,eps_pth,eps_4vect,K_eth,K_pth,K_pp,K_p4vect,dpp,dpe,dphi,acopl,inel,dxECAL,dyECAL,dxECAL4vect,dyECAL4vect,dtADC;
+    double etheta,ephi,ptheta,pphi,ecalo,pp,eprime_eth,pp_eth,pth_eth,pp_pth,eprime_pth,eth_pth,eprime_pp,eth_pp,Q2_pp,Q2_eth,Q2_pth,Q2_p4vect,Q2_e4vect,eps_pp, eps_eth,eps_pth,eps_4vect,K_eth,K_pth,K_pp,K_p4vect,dpp,dpe,dphi,acopl,inel,dxECAL,dyECAL,dxECAL4vect,dyECAL4vect,dtADC,ecalo_VTP, xECAL_VTP, yECAL_VTP, tECAL_VTP;
+    int nblkECAL_VTP;
 
     Tout->Branch("runnum",&runnum);
     Tout->Branch("etheta",&etheta);
@@ -78,6 +79,7 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
     Tout->Branch("ptheta",&ptheta);
     Tout->Branch("pphi",&pphi);
     Tout->Branch("ECALO",&ecalo);
+    Tout->Branch("ECALO_VTP",&ecalo_VTP);
     Tout->Branch("pp",&pp);
     Tout->Branch("eprime_eth",&eprime_eth);
     Tout->Branch("pp_eth",&pp_eth);
@@ -179,6 +181,11 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
     Tout->Branch("tECAL_ADC",&tECAL_ADC);
     Tout->Branch("nblkECAL",&nblkECAL);
 
+    Tout->Branch("xECAL_VTP",&xECAL_VTP);
+    Tout->Branch("yECAL_VTP",&yECAL_VTP);
+    Tout->Branch("tECAL_ADC_VTP", &tECAL_VTP);
+    Tout->Branch("nblkECAL_VTP", &nblkECAL_VTP);
+    
     int ECAL_MAXBLOCKS = 50;
     
     double ECAL_clusblk_e[ECAL_MAXBLOCKS];
@@ -210,6 +217,15 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
     Tout->Branch("HCAL_clusblk_x", HCAL_clusblk_x, "HCAL_clusblk_x[nblkHCAL]/D");
     Tout->Branch("HCAL_clusblk_y", HCAL_clusblk_y, "HCAL_clusblk_y[nblkHCAL]/D");
 
+    double EHCAL_VTP, xHCAL_VTP, yHCAL_VTP, tHCAL_VTP;
+    int nblkHCAL_VTP;
+
+    Tout->Branch( "EHCAL_VTP", &EHCAL_VTP );
+    Tout->Branch( "xHCAL_VTP", &xHCAL_VTP );
+    Tout->Branch( "yHCAL_VTP", &yHCAL_VTP );
+    Tout->Branch( "tHCAL_VTP", &tHCAL_VTP );
+    Tout->Branch( "nblkHCAL_VTP", &nblkHCAL_VTP );
+    
     
     
     double helicity;
@@ -247,6 +263,8 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
     C->SetBranchStatus("sbs.hcal.clus_blk.*",1);
     C->SetBranchStatus("g.*",1);
     C->SetBranchStatus("scalhel.*",1);
+    C->SetBranchStatus("earm.ecal.vtp.*",1);
+    C->SetBranchStatus("sbs.hcal.vtp.*",1);
     C->SetBranchStatus("IGL1I00OD16_16",1);
     //    C->SetBranchStatus("sbs.x_bcp",1);
     
@@ -307,6 +325,55 @@ void ElasticParseGEP(const char *configfilename, const char *outfilename="temp.r
 	dxECAL4vect = T->heep_dxECAL4vect;
 	dyECAL4vect = T->heep_dyECAL4vect;
 	dtADC = T->heep_dt_ADC;
+
+	//Loop on all the VTP clusters and grab the one with highest energy:
+	int nclusECAL_VTP = T->Ndata_earm_ecal_vtp_clus_e;
+	double emax_VTP = 0.0;
+	int imax_VTP = -1;
+	for( int iclus=0; iclus<nclusECAL_VTP; iclus++ ){
+	  if( iclus == 0 || T->earm_ecal_vtp_clus_e[iclus] > emax_VTP ){
+	    emax_VTP = T->earm_ecal_vtp_clus_e[iclus];
+	    imax_VTP = iclus;
+	  }
+	}
+
+	if( imax_VTP >= 0 ){
+	  ecalo_VTP = T->earm_ecal_vtp_clus_e[imax_VTP];
+	  xECAL_VTP = T->earm_ecal_vtp_clus_x[imax_VTP];
+	  yECAL_VTP = T->earm_ecal_vtp_clus_y[imax_VTP];
+	  tECAL_VTP = T->earm_ecal_vtp_clus_time[imax_VTP];
+	  nblkECAL_VTP = T->earm_ecal_vtp_clus_size[imax_VTP];
+	} else {
+	  ecalo_VTP = -1000.;
+	  xECAL_VTP = -1000.;
+	  yECAL_VTP = -1000.;
+	  tECAL_VTP = -1000.;
+	  nblkECAL_VTP = 0;
+	}
+
+	int nclusHCAL_VTP = T->Ndata_sbs_hcal_vtp_clus_e;
+	emax_VTP = 0.0;
+	imax_VTP = -1;
+	for( int iclus=0; iclus<nclusHCAL_VTP; iclus++ ){
+	  if( iclus == 0 || T->sbs_hcal_vtp_clus_e[iclus] > emax_VTP ){
+	    emax_VTP = T->sbs_hcal_vtp_clus_e[iclus];
+	    imax_VTP = iclus;
+	  }
+	}
+
+	if( imax_VTP >= 0 ){
+	  EHCAL_VTP = T->sbs_hcal_vtp_clus_e[imax_VTP];
+	  xHCAL_VTP = T->sbs_hcal_vtp_clus_x[imax_VTP];
+	  yHCAL_VTP = T->sbs_hcal_vtp_clus_y[imax_VTP];
+	  tHCAL_VTP = T->sbs_hcal_vtp_clus_time[imax_VTP];
+	  nblkHCAL_VTP = T->sbs_hcal_vtp_clus_size[imax_VTP];
+	} else {
+	  EHCAL_VTP = -1000.;
+	  xHCAL_VTP = -1000.;
+	  yHCAL_VTP = -1000.;
+	  tHCAL_VTP = -1000.;
+	  nblkHCAL_VTP = 0;
+	}
 
 	
 	

@@ -2674,3 +2674,10 @@ sbs.gemFT.m13.threshold_sample =          67.804
 sbs.gemFT.m13.threshold_stripsum =          169.51
 sbs.gemFT.m13.threshold_clustersum =          271.22
 
+---------[ 2025-07-11 8:30:00 ] # Start C-foil zero-field runs taken on 7/11/2025. Single-foil, 2-foil, and 4-foil runs.
+sbs.gemFT.multitracksearch = 0
+sbs.gemFT.dump_geometry_info = 1
+
+---------[ 2025-07-11 15:55:00 ] # Back to production running on LH2 with field ON.
+sbs.gemFT.multitracksearch = 1
+sbs.gemFT.dump_geometry_info = 0

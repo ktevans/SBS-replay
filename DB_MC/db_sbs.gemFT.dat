@@ -7,12 +7,31 @@ sbs.gemFT.pedestalmode = 0
 sbs.gemFT.commonmode_flag = -1
 sbs.gemFT.modules = m0  m1  m2  m3  m4  m5  m6 m7 m8 m9  m10 m11 m12 m13
 
-sbs.gemFT.useconstraint = 0
+sbs.gemFT.useconstraint = 1
 
-sbs.gemFT.gridbinwidthx = 0.01
-sbs.gemFT.gridbinwidthy = 0.01
-sbs.gemFT.gridedgetolerancex = 0.003
-sbs.gemFT.gridedgetolerancey = 0.003
+sbs.gemFT.useopticsconstraint = 1
+
+# these should probably be tighter later on:
+sbs.gemFT.xptar_min = -0.2
+sbs.gemFT.xptar_max = 0.22
+
+sbs.gemFT.yptar_min = -0.07
+sbs.gemFT.yptar_max = 0.08
+
+sbs.gemFT.ytar_min = -0.12
+sbs.gemFT.ytar_max = 0.07
+
+sbs.gemFT.pmin = 5.0
+sbs.gemFT.pmax = 8.5
+
+sbs.gemFT.useelasticconstraint = 0
+
+sbs.gemFT.multitracksearch = 1 # testing for the first time!
+
+sbs.gemFT.gridbinwidthx = 0.005
+sbs.gemFT.gridbinwidthy = 0.005
+sbs.gemFT.gridedgetolerancex = 0.0015
+sbs.gemFT.gridedgetolerancey = 0.0015
 
 sbs.gemFT.minhitsontrack = 4
 
@@ -28,7 +47,7 @@ sbs.gemFT.threshold_clustersum = 400.0
 
 sbs.gemFT.peakprominence_minsigma = 3.5
 sbs.gemFT.peakprominence_minfraction = 0.15
-sbs.gemFT.trackchi2cut = 150.0
+sbs.gemFT.trackchi2cut = 30.0
 
 sbs.gemFT.maxnu_charge = 4
 sbs.gemFT.maxnv_charge = 4

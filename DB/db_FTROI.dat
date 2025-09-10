@@ -1,0 +1,25 @@
+# starting GEP: database for Front Tracker Region of Interest Module:
+---------[ 2024-10-01 00:00:00 ]
+
+# GEP target is 30-cm thick and starts 9-cm upstream of origin:
+
+FTROI.nbins_zvertex = 24
+FTROI.zvertex_min = -0.27 # -27 cm (extra 3 cm for resolution tolerance)
+FTROI.zvertex_max = 0.09 # +9 cm (extra 3 cm for resolution tolerance)
+
+FTROI.earm_name = earm
+FTROI.edet_name = ecal
+FTROI.parm_name = sbs
+FTROI.pdet_name = gemFT
+
+FTROI.z0targ = -0.09
+
+---------[ 2025-05-09 00:00:00 ] # start kin. 3
+
+# For kin. 3 the SBS is pointing about 1 cm downstream of target center:
+FTROI.z0targ = -0.1 
+
+FTROI.nbins_zvertex = 24
+FTROI.zvertex_min = -0.28
+FTROI.zvertex_max = 0.08
+

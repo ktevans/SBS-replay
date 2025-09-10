@@ -20,6 +20,8 @@
 #include "SBSECal.h"
 #include "SBSGEPEArm.h"
 
+#include "SBSVTP.h"
+
 
 void replay_ECal(UInt_t runnum=10491, Long_t nevents=-1, Long_t firstevent=1, const char *fname_prefix="e1209016", UInt_t firstsegment=0, UInt_t maxsegments=10, Int_t maxstream=2, Int_t pedestalmode=0, Int_t cmplots=1, Int_t usesbsgems=1)
 		 //int run_number = 124, uint nev = -1, TString start_name = "e1209019", uint nseg = 0)
@@ -42,6 +44,10 @@ void replay_ECal(UInt_t runnum=10491, Long_t nevents=-1, Long_t firstevent=1, co
   // earm->AddDetector( scinttrig );   
   
   //--- Set up the run we want to replay ---
+
+  SBSVTP* evtp = new SBSVTP("ecal.vtp", "VTP");
+  earm->AddDetector(evtp);
+  gHaApps->Add(earm);
 
   TString prefix = gSystem->Getenv("DATA_DIR");
 

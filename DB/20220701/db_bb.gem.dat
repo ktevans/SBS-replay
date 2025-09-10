@@ -3146,7 +3146,7 @@ bb.gem.useforwardopticsconstraint = 0
 bb.gem.useopticsconstraint = 1
 bb.gem.useslopeconstraint = 1
 
-bb.gem.useforwardopticsconstraint = 1
+bb.gem.useforwardopticsconstraint = 0
 bb.gem.useconstraint = 1
 
 ---------[ 2023-11-02 00:00:00 ] # Cosmic data before A_LL

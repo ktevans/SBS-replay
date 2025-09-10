@@ -7,13 +7,11 @@
 
 # block MC.simc*
 block MC.mc*
-# variable MC.nbbtracks
-# block MC.bbtrack*
-# variable MC.nbbgemhits
-# block MC.bbgemhit*
+block MC.gep*
+
 block *ptridx
+block *otridx
 block *sdtridx
 block MC.ptrack*
+block MC.otrack*
 block MC.sdtrack*
-# variable MC.bbps_esum
-# variable MC.bbsh_esum

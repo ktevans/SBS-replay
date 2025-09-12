@@ -119,6 +119,10 @@ bb.hodotdc.crate_trigtime = 5
 bb.hodotdc.slot_trigtime = 3
 bb.hodotdc.chan_trigtime = 127
 
+bb.hodotdc.usetrigphasecorr = 1
+bb.hodotdc.trigphaseoffset = 2
+bb.hodotdc.trigphasemultiple = 6
+
 bb.hodotdc.tdc.GoodTimeCut = 0.0
 #bb.hodotdc.tdc.calib = 0.0936 #time res per v1190 channel
 bb.hodotdc.tdc.calib = 0.09376

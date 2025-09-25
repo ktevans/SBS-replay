@@ -56,6 +56,10 @@ sbs.hcal.crate_trigtime = 17
 sbs.hcal.slot_trigtime = 8
 sbs.hcal.chan_trigtime = 35
 
+sbs.hcal.usetrigphasecorr = 0
+sbs.hcal.trigphaseoffset = 2
+sbs.hcal.trigphasemultiple = 6
+
 sbs.hcal.ledmap = 16 30
 
 ## Channel map from channel to logical channel

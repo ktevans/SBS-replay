@@ -125,6 +125,7 @@ bb.hodotdc.trigphasemultiple = 6
 
 bb.hodotdc.tdc.GoodTimeCut = 0.0
 #bb.hodotdc.tdc.calib = 0.0936 #time res per v1190 channel
+
 bb.hodotdc.tdc.calib = 0.09376
 bb.hodotdc.tdc.offset = 
 -963.531 -913.813 -922.126 -926.845 -919.128

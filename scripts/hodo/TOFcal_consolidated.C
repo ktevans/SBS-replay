@@ -27,6 +27,7 @@
 #include "TMinuit.h"
 #include "TClonesArray.h"
 #include "TGraphErrors.h"
+#include "TFitResult.h"
 #include "TF1.h"
 
 const double Mp=0.938272;
@@ -41,6 +42,20 @@ const double Mp=0.938272;
 // void CHI2_FCN( int &npar, double *gin, double &f, double *par, int flag ){
 
 // }
+
+TFitResultPtr FitGaus_FWHM( TH1D *Htest, double thresh=0.4 ){
+  int binmax = Htest->GetMaximumBin();
+  int binlow = binmax-1, binhigh = binmax+1;
+  double max = Htest->GetBinContent(binmax);
+
+  while( binlow > 1 && Htest->GetBinContent(binlow) >= thresh * max ){ binlow--; }
+  while( binhigh < Htest->GetNbinsX() && Htest->GetBinContent(binhigh) >= thresh * max ){ binhigh++; }
+
+  double xlow = Htest->GetBinLowEdge(binlow);
+  double xhigh = Htest->GetBinLowEdge(binhigh+1);
+  
+  return Htest->Fit("gaus","SQ","",xlow,xhigh);
+}
 
 void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="TOFcal_temp.root"){
 
@@ -460,6 +475,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   C->SetBranchStatus("sbs.hcal.x",1);
   C->SetBranchStatus("sbs.hcal.y",1);
   C->SetBranchStatus("sbs.hcal.e",1);
+  C->SetBranchStatus("sbs.hcal.nblk",1);
   C->SetBranchStatus("sbs.hcal.clus_blk.*",1);
   C->SetBranchStatus("sbs.hcal.nclus",1);
   C->SetBranchStatus("sbs.hcal.atimeblk",1);
@@ -471,6 +487,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   C->SetBranchStatus("sbs.tdctrig.*",1);
   C->SetBranchStatus("bb.sh.e",1);
   C->SetBranchStatus("bb.ps.e",1);
+  C->SetBranchStatus("bb.sh.nblk",1);
+  C->SetBranchStatus("bb.ps.nblk",1);
   C->SetBranchStatus("bb.etot_over_p",1);
   C->SetBranchStatus("bb.gem.trigtime",1);
   C->SetBranchStatus("bb.sh.clus_blk.*",1);
@@ -915,7 +933,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       
       xtest = RFoffsets[bar];
     } else {
-      RFoffsets[bar] = RFoffsets[hodorefID];
+      RFoffsets[bar] = xtest;
     }
   }
 
@@ -962,7 +980,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       
       xtest = RFoffsets[bar];
     } else {
-      RFoffsets[bar] = RFoffsets[hodorefID];
+      RFoffsets[bar] = xtest;
       //      RFoffsets[bar] = RFoffsets[hodorefID];
     }
   }
@@ -1365,7 +1383,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     new( (*htdiff_vs_y_by_bar)[i] ) TH2D(histname.Format("htdiff_vs_y_bar%d",i), title.Format("Bar %d: all corrections except propagation delay; y_{hodo} (m); T_{L}-T_{R} (ns)",i), 150,-0.3,0.3,300,-15,15);
   }
   
-  //Really want a large quantity of zero-field LH2 data for this purpose:
+  //We really want a large quantity of zero-field LH2 data for this purpose:
   TH2D *htdiffHCAL_vs_HCALID_new = new TH2D("htdiffHCAL_vs_HCALID_new", "NEW hodo, old HCAL; HCAL ID; t_{HCAL}-t_{HODO,corr} (ns)",289,-0.5,288.5,250,-25,25); 
 
   TH2D *htdiffHCAL_vs_eblk_all = new TH2D("htdiffHCAL_vs_eblk_all", "NEW hodo, old HCAL; energy deposit (GeV); #Deltat(ns)",250,0.0,1.0,250,-25,25);
@@ -1373,7 +1391,16 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   TH2D *hdxdy = new TH2D("hdxdy",";#Deltay (m); #Deltax (m)",250,-1.25,1.25,250,-1.25,1.25);
 
   vector<double> nevent_blk_HCAL(288,0.0);
+  vector<double> nevent_blk_BBSH(189,0.0);
+  vector<double> nevent_blk_BBPS(52,0.0);
 
+  //Let's make several sets of histograms which we will then fit to get e.g., offsets and (if applicable) walk corrections for HCAL and BBCAL FADC times 
+
+  //We'll apply ALL corrections to hodoscope (including RF offset and TOF); then do a simple fit to align SH, PS, and HCAL FADC times to the hodoscope:
+  TH2D *hdt_HCAL_hodo_vs_IDHCAL = new TH2D("hdt_HCAL_hodo_vs_IDHCAL","; HCAL block ID ; t_{HCAL}^{(FADC)}-t_{HODO} (ns)", 288,0.5,288.5,500,-50,50);
+  TH2D *hdt_BBSH_hodo_vs_IDBBSH = new TH2D("hdt_BBSH_hodo_vs_IDBBSH","; BBSH block ID ; t_{BBSH}^{(FADC)}-t_{HODO} (ns)", 189,-0.5,188.5,500,-50,50);
+  TH2D *hdt_BBPS_hodo_vs_IDBBPS = new TH2D("hdt_BBPS_hodo_vs_IDBBPS","; BBPS block ID ; T_{BBPS}^{(FADC)}-t_{HODO} (ns)", 52,-0.5,51.5,500,-50,50); 
+  
   int bar3counter=0;
   
   while( T->GetEntry(nevent) ){
@@ -1454,7 +1481,10 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
 	double Tstart = 0.0;
 	
-	double Tmean_corr = -1000.;
+	double HodoTmean = 0.0;
+	double HodoTOTsum = 0.0;
+
+	double Tmean_corr = -1000.0;
 	
 	for( int ibar=0; ibar<int(T->bb_hodotdc_clus_size[0]); ibar++ ){
 	  double tleft = T->bb_hodotdc_clus_bar_tdc_tleft[ibar];
@@ -1484,6 +1514,12 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  // }
 
 	  //	  RFcorr += RFoffsets[ID];
+
+	  //Increment TOT-weighted cluster mean time (do NOT subtract RF correction here!)
+	  double totmean = 0.5*(totleft + totright);
+
+	  HodoTmean += totmean * 0.5 * (tleft_CORR + tright_CORR);
+	  HodoTOTsum += totmean;
 	  
 	  double tmean_CORR = 0.5*(tleft_CORR+tright_CORR) - RFcorr;
 
@@ -1551,6 +1587,34 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  htdiff_yhodo_new->Fill( yhodo, tdiff_CORR );
 	}
 
+	HodoTmean /= HodoTOTsum;
+
+
+	// Let's loop on BBCAL hits first;
+	// No additional corrections are required here because the trigger phase correction has already been
+	// applied to hodoscope (and shower/preshower are immediately adjacent to hodoscope):
+	for( int ihit=0; ihit<T->bb_sh_nblk; ihit++ ){
+	  double atime = T->bb_sh_clus_blk_atime[ihit];
+	  double eblk = T->bb_sh_clus_blk_e[ihit];
+	  double idblk = T->bb_sh_clus_blk_id[ihit];
+	  //Somewhat arbitrary threshold of 100 MeV:
+	  if( eblk >= 0.1 && (ihit == 0 || fabs( atime - T->bb_sh_atimeblk ) <= 6.0 ) && eblk >= 0.1 * T->bb_sh_eblk ){
+	    hdt_BBSH_hodo_vs_IDBBSH->Fill( idblk, atime - HodoTmean );
+	  }
+	}
+
+	for( int ihit=0; ihit<T->bb_ps_nblk; ihit++ ){
+	  double atime = T->bb_ps_clus_blk_atime[ihit];
+	  double eblk = T->bb_ps_clus_blk_e[ihit];
+	  double idblk = T->bb_ps_clus_blk_id[ihit];
+
+	  if( eblk >= 0.05 && (ihit == 0 || fabs( atime - T->bb_ps_atimeblk ) <= 6.0 ) && eblk >= 0.1 * T->bb_ps_eblk ){ //Use 50 MeV threshold for PS:
+	    hdt_BBPS_hodo_vs_IDBBPS->Fill( idblk, atime - HodoTmean );
+	  }
+	}
+
+	//For HCAL ADC times, we'll fill histogram with a cut on deltax, deltay
+	
 	// HCAL TDC times have already been reference time subtracted;
 	// But for comparison to the "RF-corrected" hodoscope mean time we want to remove the influence of the reference time subtraction from HCAL as well. 
 	
@@ -1572,7 +1636,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  // don't need to add it back in
 	  RFcorr_HCAL = RFtime - TrigTime;
 	}
-	RFcorr_HCAL -= bunch_spacing_ns*(floor(RFcorr_HCAL/bunch_spacing_ns)+0.5);
+	RFcorr_HCAL -= bunch_spacing_ns*(floor(RFcorr_HCAL/bunch_spacing_ns+0.5));
 	
 	double tHCAL = T->sbs_hcal_tdctimeblk - RFcorr_HCAL;
 	double eblkHCAL = T->sbs_hcal_eblk;
@@ -1684,12 +1748,21 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	
 	//if( W2min < W2 && W2 < W2max && sqrt(pow(deltax,2)+pow(deltay,2))<=0.24 && eblkHCAL>0.02 ){
 	if( W2>W2min && W2<W2max && sqrt(pow(deltax,2)+pow(deltay,2))<=0.24 ){
+	  
+	  for( int iblk=0; iblk<T->sbs_hcal_nblk; iblk++ ){
 
-	  for( int iblk=0; iblk<T->Ndata_sbs_hcal_clus_blk_tdctime; iblk++ ){
+	    double eblk = T->sbs_hcal_clus_blk_e[iblk];
+	    double idblk = T->sbs_hcal_clus_blk_id[iblk];
+	    double atimeblk = T->sbs_hcal_clus_blk_atime[iblk];
+
+	    if( eblk >= 0.02 && (iblk == 0 || fabs( atimeblk - T->sbs_hcal_atimeblk) <= 6.0 ) && eblk >= 0.1 * T->sbs_hcal_eblk ){
+	      hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - (TOF_HCAL_expect - ptof_central_temp) - HodoTmean );
+	    }
+	    
 	    if( T->sbs_hcal_clus_blk_tdctime[iblk] != -1000. && T->sbs_hcal_clus_blk_e[iblk] >= 0.025 ){
-	      double eblk = T->sbs_hcal_clus_blk_e[iblk];
+	      //double eblk = T->sbs_hcal_clus_blk_e[iblk];
 	      double tblk = T->sbs_hcal_clus_blk_tdctime[iblk] - RFcorr_HCAL;
-	      double idblk = T->sbs_hcal_clus_blk_id[iblk];
+	      //double idblk = T->sbs_hcal_clus_blk_id[iblk];
 
 	      double tblk_walkcorr = tblk - 1.25/sqrt(eblk) + 0.0285/eblk;
 	      
@@ -1722,6 +1795,9 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	      nevent_blk_HCAL[idblk-1]+=1.0;
 	      
 	    }
+
+	    
+	    
 	  }
 	  //}
 	}
@@ -1993,15 +2069,15 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   TGraph *gHODOwR = new TGraph(90,HODObarID,HODOwR);
   TGraph *gHODOvscint = new TGraph(90,HODObarID,vscint);
 
-  TGraph *gHCALt0 = new TGraph(288,blkIDhcal,t0hcal);
-  TGraph *gHCALw0 = new TGraph(288,blkIDhcal,w0hcal);
+  // TGraph *gHCALt0 = new TGraph(288,blkIDhcal,t0hcal);
+  // TGraph *gHCALw0 = new TGraph(288,blkIDhcal,w0hcal);
   
   gHODOt0->SetMarkerStyle(20);
   gHODOwL->SetMarkerStyle(20);
   gHODOwR->SetMarkerStyle(21);
   gHODOvscint->SetMarkerStyle(20);
-  gHCALt0->SetMarkerStyle(20);
-  gHCALw0->SetMarkerStyle(20);
+  // gHCALt0->SetMarkerStyle(20);
+  // gHCALw0->SetMarkerStyle(20);
   
   c1->Clear();
   c1->Divide(2,2,.001,.001);
@@ -2019,20 +2095,199 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   gHODOwR->Draw("AP");
   gHODOwR->SetTitle("Hodoscope fit results; bar ID; right PMT walk correction slope");
 
+  // c1->Update();
+  // gPad->Modified();
+  // gSystem->ProcessEvents();
+  // c1->Print(pdffilename);
+
+  // c1->Clear();
+  // c1->Divide(2,1,0.001,0.001);
+  // c1->cd(1);
+  // gHCALt0->Draw("AP");
+  // gHCALt0->SetTitle("HCAL fit results; Block ID; time offset (ns)");
+  // c1->cd(2);
+  // gHCALw0->Draw("AP");
+  // gHCALw0->SetTitle("HCAL fit results; Block ID; walk correction (1/sqrt(e)) slope");
+
   c1->Update();
   gPad->Modified();
   gSystem->ProcessEvents();
+  //pdffilename += ")";
+  c1->Print(pdffilename);
+
+  gHODOt0->Write("gHODOt0");
+  gHODOwL->Write("gHODOwL");
+  gHODOwR->Write("gHODOwR");
+  gHODOvscint->Write("gHODOvscint");
+  // gHCALt0->Write("gHCALt0");
+  // gHCALw0->Write("gHCALw0");
+
+  //Do shower, preshower, and HCAL ADC time offset fits:
+
+  c1->Clear();
+  c1->Divide(3,3,.001,.001);
+
+  vector<double> IDSH(189);
+  vector<double> dIDSH(189,0);
+  vector<double> ToffSH(189,0);
+  vector<double> dToffSH(189,1);
+
+  gStyle->SetOptFit();
+  
+  for(int i=0; i<189; i++ ){
+    TH1D *htemp = hdt_BBSH_hodo_vs_IDBBSH->ProjectionY( Form("hdtSHhodo_blk%d",i), i+1, i+1 );
+
+    c1->cd(i%9+1);
+
+    htemp->Draw();
+    
+    IDSH[i] = i;
+    //    dIDSH[i] = 0.0;
+    
+    if( htemp->GetEntries() >= 200 ){
+      FitGaus_FWHM( htemp );
+
+      htemp->Draw();
+      
+      double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
+      double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
+
+      
+      ToffSH[i] = mean;
+      dToffSH[i] = dmean;
+    }
+
+    if( (i+1)%9 == 0 ){
+      c1->Update();
+      gPad->Modified();
+      gSystem->ProcessEvents();
+      //pdffilename += ")";
+      c1->Print(pdffilename);
+    }
+  }
+
+  TGraphErrors *gT0SH = new TGraphErrors( 189, &(IDSH[0]), &(ToffSH[0]), &(dIDSH[0]), &(dToffSH[0]) );
+  gT0SH->SetMarkerStyle(20);
+  gT0SH->SetMarkerColor(1);
+  gT0SH->SetLineColor(1);
+  
+  c1->Clear();
+  hdt_BBSH_hodo_vs_IDBBSH->Draw("colz");
+  gT0SH->Draw("PSAME");
+  c1->Update();
+  gPad->Modified();
+  gSystem->ProcessEvents();
+  //pdffilename += ")";
+  c1->Print(pdffilename);
+
+
+  c1->Clear();
+  c1->Divide(3,3,.001,.001);
+  
+  //Now do PS:
+
+  vector<double> IDPS(52);
+  vector<double> dIDPS(52,0);
+  vector<double> ToffPS(52,0);
+  vector<double> dToffPS(52,1);
+  
+  for(int i=0; i<52; i++ ){
+    TH1D *htemp = hdt_BBPS_hodo_vs_IDBBPS->ProjectionY( Form("hdtPShodo_blk%d",i), i+1, i+1 );
+
+    c1->cd(i%9+1);
+
+    htemp->Draw();
+    gStyle->SetOptFit();
+    
+    IDPS[i] = i;
+    //    dIDPS[i] = 0.0;
+    
+    if( htemp->GetEntries() >= 200 ){
+      FitGaus_FWHM( htemp );
+
+      htemp->Draw();
+      
+      double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
+      double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
+
+      
+      ToffPS[i] = mean;
+      dToffPS[i] = dmean;
+    }
+
+    if( (i+1)%9 == 0 ){
+      c1->Update();
+      gPad->Modified();
+      gSystem->ProcessEvents();
+      //pdffilename += ")";
+      c1->Print(pdffilename);
+    }
+  }
+
+  TGraphErrors *gT0PS = new TGraphErrors( 52, &(IDPS[0]), &(ToffPS[0]), &(dIDPS[0]), &(dToffPS[0]) );
+  gT0PS->SetMarkerStyle(20);
+  gT0PS->SetMarkerColor(1);
+  gT0PS->SetLineColor(1);
+  
+  c1->Clear();
+  hdt_BBPS_hodo_vs_IDBBPS->Draw("colz");
+  gT0PS->Draw("PSAME");
+  c1->Update();
+  gPad->Modified();
+  gSystem->ProcessEvents();
+  //pdffilename += ")";
   c1->Print(pdffilename);
 
   c1->Clear();
-  c1->Divide(2,1,0.001,0.001);
-  c1->cd(1);
-  gHCALt0->Draw("AP");
-  gHCALt0->SetTitle("HCAL fit results; Block ID; time offset (ns)");
-  c1->cd(2);
-  gHCALw0->Draw("AP");
-  gHCALw0->SetTitle("HCAL fit results; Block ID; walk correction (1/sqrt(e)) slope");
+  c1->Divide(3,3,.001,.001);
 
+  //Now do HCAL:
+
+  vector<double> IDHCAL(288);
+  vector<double> dIDHCAL(288,0);
+  vector<double> ToffHCAL(288,0);
+  vector<double> dToffHCAL(288,1);
+  
+  for(int i=1; i<=288; i++ ){
+    TH1D *htemp = hdt_HCAL_hodo_vs_IDHCAL->ProjectionY( Form("hdtHCALhodo_blk%d",i), i, i );
+
+    c1->cd((i-1)%9+1);
+
+    htemp->Draw();
+    
+    IDHCAL[i-1] = i;
+    //    dIDHCAL[i] = 0.0;
+    
+    if( htemp->GetEntries() >= 200 ){
+      FitGaus_FWHM( htemp );
+
+      htemp->Draw();
+      
+      double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
+      double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
+
+      
+      ToffHCAL[i-1] = mean;
+      dToffHCAL[i-1] = dmean;
+    }
+
+    if( (i)%9 == 0 ){
+      c1->Update();
+      gPad->Modified();
+      gSystem->ProcessEvents();
+      //pdffilename += ")";
+      c1->Print(pdffilename);
+    }
+  }
+
+  TGraphErrors *gT0HCAL = new TGraphErrors( 288, &(IDHCAL[0]), &(ToffHCAL[0]), &(dIDHCAL[0]), &(dToffHCAL[0]) );
+  gT0HCAL->SetMarkerStyle(20);
+  gT0HCAL->SetMarkerColor(1);
+  gT0HCAL->SetLineColor(1);
+  
+  c1->Clear();
+  hdt_HCAL_hodo_vs_IDHCAL->Draw("colz");
+  gT0HCAL->Draw("PSAME");
   c1->Update();
   gPad->Modified();
   gSystem->ProcessEvents();
@@ -2042,14 +2297,11 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   
   
   
-
-
-  gHODOt0->Write("gHODOt0");
-  gHODOwL->Write("gHODOwL");
-  gHODOwR->Write("gHODOwR");
-  gHODOvscint->Write("gHODOvscint");
-  gHCALt0->Write("gHCALt0");
-  gHCALw0->Write("gHCALw0");
+  // c1->Update();
+  // gPad->Modified();
+  // gSystem->ProcessEvents();
+  // pdffilename += ")";
+  // c1->Print(pdffilename);
   
   fout->Write();
   

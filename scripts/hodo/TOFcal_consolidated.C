@@ -20,6 +20,7 @@
 #include "TSpectrum.h"
 #include <cmath>
 #include <vector>
+#include <set>
 #include "TCanvas.h"
 #include "TPad.h"
 #include "TSystem.h"
@@ -59,6 +60,10 @@ TFitResultPtr FitGaus_FWHM( TH1D *Htest, double thresh=0.4 ){
 
 void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="TOFcal_temp.root"){
 
+  const int MAXNBLK_HCAL = 50;
+  const int MAXNBLK_BBSH = 25;
+  const int MAXNBLK_BBPS = 10;
+  
   ifstream configfile(inputfilename);
 
   if( !configfile ) return;
@@ -87,8 +92,11 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   //Default reference PMTs for aligning all other PMTs:
   //NOTE: in the current procedure these definitions are meaningless; since we align all the corrected mean times to zero!
   int hodorefID = 44; // reference BAR (not PMT); we'll set the LEFT PMT to the reference by convention
-  int hcalrefID = 199; //row 16 column 6
+  int hcalrefID = 150; //row 16 column 6
 
+  int BBSHrefID = 95;
+  int BBPSrefID = 22;
+  
   double zhodo = 1.854454; //meters
   double Lbar_hodo = 0.6; //meters
   double etof0 = (1.96+3.0)/0.299792458; // "central" TOF value:
@@ -98,6 +106,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   double dSBS = 2.25;
 
   double W2min=0.6, W2max=1.2;
+  bool use_elastic_cut_HCAL = true;
   
   double sbsmaxfield = 1.26;
   double sbsfield_default = 0.0; //default to zero-field assumption for proton TOF calculations
@@ -404,22 +413,26 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
   if( nfieldsettings > 0 ){
     for( int iset=0; iset<nfieldsettings; iset++ ){
-      double BdL = sbsfield[iset]*sbsmaxfield*Dgap;
-      double Radius = pp_ptheta_central / 0.299792458 / (sbsfield[iset]*sbsmaxfield);
-      double x_in = 0.0;
-      double z_in = dSBS;
-      double x_center = x_in - Radius;
-      double z_center = z_in;
-      double z_out = dSBS + Dgap;
-      double A = 1.0;
-      double B = -2.0*x_center;
-      double C = pow(x_center,2) + pow(z_out - z_center,2) - pow(Radius,2);
-      double x_out = (-B + sqrt(pow(B,2)-4.0*A*C))/(2.0*A);
-      double theta_in = 0.0;
-      double theta_out = asin( (z_center-z_out)/Radius );
-      //need to calculate path length:
-      double pathlength = dSBS + Radius * (theta_in - theta_out) + (dHCAL-z_out )/cos(theta_out);
-      ptof_central.push_back( pathlength/(beta_ptheta_central*0.299792458)); //ns 
+      if( sbsfield[iset] > 0. ){
+	double BdL = sbsfield[iset]*sbsmaxfield*Dgap;
+	double Radius = pp_ptheta_central / 0.299792458 / (sbsfield[iset]*sbsmaxfield);
+	double x_in = 0.0;
+	double z_in = dSBS;
+	double x_center = x_in - Radius;
+	double z_center = z_in;
+	double z_out = dSBS + Dgap;
+	double A = 1.0;
+	double B = -2.0*x_center;
+	double C = pow(x_center,2) + pow(z_out - z_center,2) - pow(Radius,2);
+	double x_out = (-B + sqrt(pow(B,2)-4.0*A*C))/(2.0*A);
+	double theta_in = 0.0;
+	double theta_out = asin( (z_center-z_out)/Radius );
+	//need to calculate path length:
+	double pathlength = dSBS + Radius * (theta_in - theta_out) + (dHCAL-z_out )/cos(theta_out);
+	ptof_central.push_back( pathlength/(beta_ptheta_central*0.299792458)); //ns 
+      } else {
+	ptof_central.push_back( ptof_central_default );
+      }
     }
   }
   
@@ -1018,7 +1031,34 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   oldtreenum = -1;
 
   nevent = 0;
-  cout << "Loop 3: Fit walk correction slope and propagation delay" << endl;
+  cout << "Loop 3: Fit hodoscope walk correction slope, propagation delay, and t0 offset, and set up internal alignment of BBCAL and HCAL FADC times" << endl;
+
+  int nchan_BBCAL = 189+52;
+  int nchan_HCAL = 288;
+  
+  //In loop three we'll set up and do internal alignments of SH, PS, and HCAL FADC time:
+  vector<double> nhit_chan_BBCAL(nchan_BBCAL,0.0);
+  vector<double> nhit_chan_HCAL(nchan_HCAL,0.0);
+  TVectorD bint_BBCAL( nchan_BBCAL );
+  TVectorD bint_HCAL( nchan_HCAL );
+  TMatrixD Mint_BBCAL( nchan_BBCAL, nchan_BBCAL );
+  TMatrixD Mint_HCAL( nchan_HCAL, nchan_HCAL );
+
+  for( int i=0; i<nchan_BBCAL; i++ ){
+    for( int j=0; j<nchan_BBCAL; j++ ){
+      Mint_BBCAL(i,j) = 0.0;
+    }
+    bint_BBCAL(i) = 0.0;
+  }
+
+  for( int i=0; i<nchan_HCAL; i++ ){
+    for( int j=0; j<nchan_HCAL; j++ ){
+      Mint_HCAL(i,j) = 0.0;
+    }
+    bint_HCAL(i) = 0.0;
+  }
+    
+  
   while( T->GetEntry(nevent) ){
 
     if( nevent % 10000 == 0 ){
@@ -1294,7 +1334,84 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  }
 	}
       }
+
+      //Some of the time cuts here should probably NOT be hard-coded;
+      //It assumes the initial alignment is already reasonable.
       
+      //Make temporary arrays to hold relevant sh and ps info:
+      vector<double> bbcal_idtemp, bbcal_etemp, bbcal_atimetemp;
+
+      int nblkSH = std::min(MAXNBLK_BBSH,int(T->bb_sh_nblk));
+      int nblkPS = std::min(MAXNBLK_BBPS,int(T->bb_ps_nblk));
+      int nblkHCAL = std::min(MAXNBLK_HCAL,int(T->sbs_hcal_nblk));
+
+      // cout << "event " << nevent << ", (nblkSH, nblkPS, nblkHCAL)=("
+      // 	   << nblkSH << ", " << nblkPS << ", " << nblkHCAL << ")" << endl;
+      
+      for( int ihit=0; ihit<nblkSH; ihit++ ){
+	double ehit = T->bb_sh_clus_blk_e[ihit];
+	double atimehit = T->bb_sh_clus_blk_atime[ihit];
+	//Only use hits above threshold in both GeV and fraction of seed energy:
+	if( ehit >= 0.1 && ehit/T->bb_sh_eblk >= 0.05 &&
+	    fabs( atimehit - T->bb_sh_atimeblk ) <= 10.0 ){
+	  bbcal_idtemp.push_back( int( T->bb_sh_clus_blk_id[ihit] ) );
+	  bbcal_etemp.push_back( T->bb_sh_clus_blk_e[ihit] );
+	  bbcal_atimetemp.push_back( T->bb_sh_clus_blk_atime[ihit] );
+	}
+      }
+      for( int ihit=0; ihit<nblkPS; ihit++ ){
+	double ehit = T->bb_ps_clus_blk_e[ihit];
+	double atimehit = T->bb_ps_clus_blk_atime[ihit];
+	if( ehit >= 0.05 && ehit/T->bb_ps_eblk >= 0.1 &&
+	    fabs( atimehit - T->bb_ps_atimeblk ) <= 10.0 ){
+	  bbcal_idtemp.push_back( int(T->bb_ps_clus_blk_id[ihit]) + 189 );
+	  bbcal_etemp.push_back( T->bb_ps_clus_blk_e[ihit] );
+	  bbcal_atimetemp.push_back( T->bb_ps_clus_blk_atime[ihit] );
+	}
+      }
+
+      //Now increment internal alignment matrices for BBCAL:
+      
+      for( int ihit=0; ihit<bbcal_idtemp.size(); ihit++ ){
+	for( int jhit=ihit+1; jhit<bbcal_idtemp.size(); jhit++ ){
+	  nhit_chan_BBCAL[bbcal_idtemp[ihit]] += 1.0;
+	  nhit_chan_BBCAL[bbcal_idtemp[jhit]] += 1.0;
+
+	  Mint_BBCAL(bbcal_idtemp[ihit],bbcal_idtemp[ihit]) += 1.0;
+	  Mint_BBCAL(bbcal_idtemp[ihit],bbcal_idtemp[jhit]) += -1.0;
+	  Mint_BBCAL(bbcal_idtemp[jhit],bbcal_idtemp[ihit]) += -1.0;
+	  Mint_BBCAL(bbcal_idtemp[jhit],bbcal_idtemp[jhit]) += 1.0;
+	  bint_BBCAL(bbcal_idtemp[ihit]) += bbcal_atimetemp[ihit]-bbcal_atimetemp[jhit];
+	  bint_BBCAL(bbcal_idtemp[jhit]) += bbcal_atimetemp[jhit]-bbcal_atimetemp[ihit];
+	}
+      }
+
+      for( int ihit=0; ihit<nblkHCAL; ihit++ ){
+	int id_i = int( T->sbs_hcal_clus_blk_id[ihit] )-1;
+	double e_i = T->sbs_hcal_clus_blk_e[ihit];
+	double t_i = T->sbs_hcal_clus_blk_atime[ihit];
+	for( int jhit=ihit+1; jhit<nblkHCAL; jhit++ ){
+	  int id_j = int( T->sbs_hcal_clus_blk_id[jhit] )-1;
+	  double e_j = T->sbs_hcal_clus_blk_e[jhit];
+	  double t_j = T->sbs_hcal_clus_blk_atime[jhit];
+
+	  if( e_i >= 0.025 && e_i > 0.1 * T->sbs_hcal_eblk && T->sbs_hcal_e >= 0.05 &&
+	      fabs( t_i - T->sbs_hcal_atimeblk ) <= 10.0 &&
+	      e_j >= 0.025 && e_j > 0.1 * T->sbs_hcal_eblk && T->sbs_hcal_e >= 0.05 &&
+	      fabs( t_j - T->sbs_hcal_atimeblk ) <= 10.0 ){
+	    nhit_chan_HCAL[id_i] += 1.0;
+	    nhit_chan_HCAL[id_j] += 1.0;
+	    
+	    Mint_HCAL(id_i, id_i) += 1.0;
+	    Mint_HCAL(id_i, id_j) += -1.0;
+	    Mint_HCAL(id_j, id_i) += -1.0;
+	    Mint_HCAL(id_j, id_j) += 1.0;
+	    bint_HCAL(id_i) += t_i - t_j;
+	    bint_HCAL(id_j) += t_j - t_i;
+	  }
+	  
+	}
+      }
     }
     nevent++;
   }
@@ -1351,11 +1468,62 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     vscint[i] = 1.0/bhodo[i+90];
   }
 
+  for( int chan=0; chan<nchan_BBCAL; chan++ ){
+    if( nhit_chan_BBCAL[chan] < 100. ){
+      bint_BBCAL(chan) = 0.0;
+      Mint_BBCAL(chan,chan) = 1.0;
+      for( int j=0; j<nchan_BBCAL; j++ ){
+	if( j != chan ){
+	  Mint_BBCAL(chan,j) = 0.0;
+	  Mint_BBCAL(j,chan) = 0.0;
+	}
+      }
+    }
+  }
+  
+  TDecompSVD ABBCAL(Mint_BBCAL);
+  ABBCAL.Solve(bint_BBCAL);
+
+  corr = -bint_BBCAL(BBSHrefID);
+  for( int i=0; i<nchan_BBCAL; i++ ){
+    bint_BBCAL(i) += corr;
+  }
+  
+  for( int chan=0; chan<nchan_HCAL; chan++ ){
+    if( nhit_chan_HCAL[chan] < 100. ){
+      bint_HCAL(chan) = 0.0;
+      Mint_HCAL(chan,chan) = 1.0;
+      for( int j=0; j<nchan_HCAL; j++ ){
+	if( j != chan ){
+	  Mint_HCAL(chan,j) = 0.0;
+	  Mint_HCAL(j,chan) = 0.0;
+	}
+      }
+    }
+  }
+  
+  TDecompSVD AHCAL(Mint_HCAL);
+  AHCAL.Solve(bint_HCAL);
+
+  corr = -bint_HCAL(hcalrefID);
+  for( int i=0; i<nchan_HCAL; i++ ){
+    bint_HCAL(i) += corr;
+  }
+  
+  vector<double> BBCAL_t0ADC(nchan_BBCAL,0.0);
+  for( int i=0; i<nchan_BBCAL; i++ ){
+    BBCAL_t0ADC[i] = bint_BBCAL(i);
+  }
+  vector<double> HCAL_t0ADC(nchan_HCAL,0.0);
+  for( int i=0; i<nchan_HCAL; i++ ){
+    HCAL_t0ADC[i] = bint_HCAL(i);
+  }
+  
   nevent = 0;
 
   treenum=-1,oldtreenum=-1;
 
-  cout << "Loop 4, testing new hodoscope calibrations..." << endl;
+  cout << "Loop 4, testing new hodoscope calibrations and setting up BBCAL/HCAL FADC --> hodo alignments" << endl;
 
   fout->cd();
   
@@ -1590,26 +1758,30 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	HodoTmean /= HodoTOTsum;
 
 
+	int nblkSH = std::min(MAXNBLK_BBSH,int(T->bb_sh_nblk));
+	int nblkPS = std::min(MAXNBLK_BBPS,int(T->bb_ps_nblk));
+	int nblkHCAL = std::min(MAXNBLK_HCAL,int(T->sbs_hcal_nblk));
+	
 	// Let's loop on BBCAL hits first;
 	// No additional corrections are required here because the trigger phase correction has already been
 	// applied to hodoscope (and shower/preshower are immediately adjacent to hodoscope):
-	for( int ihit=0; ihit<T->bb_sh_nblk; ihit++ ){
+	for( int ihit=0; ihit<nblkSH; ihit++ ){
 	  double atime = T->bb_sh_clus_blk_atime[ihit];
 	  double eblk = T->bb_sh_clus_blk_e[ihit];
 	  double idblk = T->bb_sh_clus_blk_id[ihit];
 	  //Somewhat arbitrary threshold of 100 MeV:
 	  if( eblk >= 0.1 && (ihit == 0 || fabs( atime - T->bb_sh_atimeblk ) <= 6.0 ) && eblk >= 0.1 * T->bb_sh_eblk ){
-	    hdt_BBSH_hodo_vs_IDBBSH->Fill( idblk, atime - HodoTmean );
+	    hdt_BBSH_hodo_vs_IDBBSH->Fill( idblk, atime - BBCAL_t0ADC[idblk] - HodoTmean );
 	  }
 	}
 
-	for( int ihit=0; ihit<T->bb_ps_nblk; ihit++ ){
+	for( int ihit=0; ihit<nblkPS; ihit++ ){
 	  double atime = T->bb_ps_clus_blk_atime[ihit];
 	  double eblk = T->bb_ps_clus_blk_e[ihit];
 	  double idblk = T->bb_ps_clus_blk_id[ihit];
 
 	  if( eblk >= 0.05 && (ihit == 0 || fabs( atime - T->bb_ps_atimeblk ) <= 6.0 ) && eblk >= 0.1 * T->bb_ps_eblk ){ //Use 50 MeV threshold for PS:
-	    hdt_BBPS_hodo_vs_IDBBPS->Fill( idblk, atime - HodoTmean );
+	    hdt_BBPS_hodo_vs_IDBBPS->Fill( idblk, atime - BBCAL_t0ADC[idblk+189] - HodoTmean );
 	  }
 	}
 
@@ -1726,6 +1898,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  protondeflection = xHCAL_expect - xproj_HCAL;
 	}
 
+	
+	
 	//	cout << "proton deflection = " << protondeflection << endl;
 	
 	double W2 = T->e_kine_W2;
@@ -1747,16 +1921,22 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	}
 	
 	//if( W2min < W2 && W2 < W2max && sqrt(pow(deltax,2)+pow(deltay,2))<=0.24 && eblkHCAL>0.02 ){
-	if( W2>W2min && W2<W2max && sqrt(pow(deltax,2)+pow(deltay,2))<=0.24 ){
+	if( (W2>W2min && W2<W2max && sqrt(pow(deltax,2)+pow(deltay,2))<=0.24) ||
+	    !use_elastic_cut_HCAL ){
+
+	  // cout << "Elastic event found: (pTOF expect, pTOF central, diff)=("
+	  //      << TOF_HCAL_expect << ", " << ptof_central_temp << ", "
+	  //      << TOF_HCAL_expect - ptof_central_temp << ")" << endl;
 	  
-	  for( int iblk=0; iblk<T->sbs_hcal_nblk; iblk++ ){
+	  for( int iblk=0; iblk<nblkHCAL; iblk++ ){
 
 	    double eblk = T->sbs_hcal_clus_blk_e[iblk];
 	    double idblk = T->sbs_hcal_clus_blk_id[iblk];
 	    double atimeblk = T->sbs_hcal_clus_blk_atime[iblk];
-
+	    double t0 = HCAL_t0ADC[idblk-1];
+	    
 	    if( eblk >= 0.02 && (iblk == 0 || fabs( atimeblk - T->sbs_hcal_atimeblk) <= 6.0 ) && eblk >= 0.1 * T->sbs_hcal_eblk ){
-	      hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - (TOF_HCAL_expect - ptof_central_temp) - HodoTmean );
+	      hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - t0 - (TOF_HCAL_expect - ptof_central_temp) - HodoTmean );
 	    }
 	    
 	    if( T->sbs_hcal_clus_blk_tdctime[iblk] != -1000. && T->sbs_hcal_clus_blk_e[iblk] >= 0.025 ){
@@ -1766,14 +1946,14 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
 	      double tblk_walkcorr = tblk - 1.25/sqrt(eblk) + 0.0285/eblk;
 	      
-	      htdiffHCAL_vs_eblk_all->Fill( eblk, tblk-Tmean_corr-(TOF_HCAL_expect - ptof_central_temp));
+	      htdiffHCAL_vs_eblk_all->Fill( eblk, tblk-HodoTmean-(TOF_HCAL_expect - ptof_central_temp));
 	  
-	      htdiffHCAL_vs_HCALID_new->Fill( idblk, tblk_walkcorr-Tmean_corr-(TOF_HCAL_expect - ptof_central_temp));
+	      htdiffHCAL_vs_HCALID_new->Fill( idblk, tblk_walkcorr-HodoTmean-(TOF_HCAL_expect - ptof_central_temp));
 	      int ipar_hcalt0 = idblk-1;
 	      int ipar_hcalw0 = idblk+288-1;
 	      //	      int ipar_hcalw1 = idblk+2*288-1;
 
-	      double tblk_corr = tblk-Tmean_corr-(TOF_HCAL_expect-ptof_central_temp);
+	      double tblk_corr = tblk-HodoTmean-(TOF_HCAL_expect-ptof_central_temp);
 	      
 	      // tHCAL = tstart + t0 + w0/sqrt(E)
 	      Mhcal(ipar_hcalt0,ipar_hcalt0) += 1.0;
@@ -2002,7 +2182,6 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     }
   }
 
-  //Do we now want to solve HCAL and do a THIRD loop over the data?
 
   for( int i=0; i<288; i++ ){
     if( nevent_blk_HCAL[i] < 100. ){
@@ -2127,6 +2306,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   c1->Clear();
   c1->Divide(3,3,.001,.001);
 
+  set<int> listbadSH;
+  set<int> listbadPS;
   vector<double> IDSH(189);
   vector<double> dIDSH(189,0);
   vector<double> ToffSH(189,0);
@@ -2135,6 +2316,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   gStyle->SetOptFit();
   
   for(int i=0; i<189; i++ ){
+    //ToffSH[i] = -BBCAL_t0ADC[i];
+    
     TH1D *htemp = hdt_BBSH_hodo_vs_IDBBSH->ProjectionY( Form("hdtSHhodo_blk%d",i), i+1, i+1 );
 
     c1->cd(i%9+1);
@@ -2144,7 +2327,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     IDSH[i] = i;
     //    dIDSH[i] = 0.0;
     
-    if( htemp->GetEntries() >= 200 ){
+    if( htemp->GetEntries() >= 300 ){
       FitGaus_FWHM( htemp );
 
       htemp->Draw();
@@ -2155,6 +2338,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       
       ToffSH[i] = mean;
       dToffSH[i] = dmean;
+    } else {
+      listbadSH.insert( i );
     }
 
     if( (i+1)%9 == 0 ){
@@ -2166,6 +2351,109 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     }
   }
 
+  for( auto ibad : listbadSH ){
+    // Find the closest successfully-calibrated channel to the current one; channels run from right to left within
+    // each row and from bottom to top overall:
+    int rowbad = ibad/7;
+    int colbad = ibad%7;
+    
+    // look for nearest neighbors up/down/left/right:
+    double T0avg_neighbors = 0.0;
+    double nnear = 0.0;
+
+    int testrow, testcol, testid;
+
+    //while( nnear == 0.0 ){ //first test nearest neighbors up, down, left, right
+    testrow = rowbad;
+    testcol = colbad-1;
+    if( testcol >= 0 ){
+      testid = testcol + 7*testrow;
+      if( listbadSH.find(testid) == listbadSH.end() ){
+	T0avg_neighbors += ToffSH[testid];
+	nnear += 1.0;
+      }
+    }
+    
+    testcol = colbad+1;
+    if( testcol < 7 ){
+      testid = testcol + 7*testrow;
+      if( listbadSH.find(testid) == listbadSH.end() ){
+	T0avg_neighbors += ToffSH[testid];
+	nnear += 1.0;
+      }
+    }
+	  
+    testrow = rowbad-1;
+    testcol = colbad;
+    if( testrow >= 0 ){
+      testid = testcol + 7*testrow;
+      if( listbadSH.find(testid) == listbadSH.end() ){
+	T0avg_neighbors += ToffSH[testid];
+	nnear += 1.0;
+      }
+    }
+
+    testrow = rowbad + 1;
+    testcol = colbad;
+    if( testrow < 27 ){
+      testid = testcol + testrow*7;
+      if( listbadSH.find(testid) == listbadSH.end() ){
+	T0avg_neighbors += ToffSH[testid];
+	nnear+=1.0;
+      }
+    }
+
+    // Note here that ToffSH[id] = tSH - t0SHinternal - thodo;
+    // therefore if we set ToffSH for the uncalibrated channels to the average of its nearest neighbors,
+    // this should also be a reasonable proxy for tSH-t0SHinternal (for that channel) - thodo
+    // When we write out the DB file, we will need to ADD t0SHinternal to this offset to get the TOTAL offset
+    // that needs to be applied (relative to the database one)
+    
+    if( nnear > 0.0 ){ //if any immediate neighbors were calibrated, take the simple average of nearest neighbors.
+      ToffSH[ibad] = T0avg_neighbors/nnear;
+    } else { //take a brute-force approach, loop on all calibrated channels and then take the offset from the nearest one to the channel in question:
+      double inear = -1;
+      double mindiff = 1000.0;
+      for( int j=0; j<189; j++ ){
+	if( listbadSH.find(j) == listbadSH.end() ){
+	  testcol = j%7;
+	  testrow = j/7;
+	  double diff = pow( testcol-colbad, 2 ) + pow( testrow - rowbad, 2 );
+	  if( inear < 0 || diff < mindiff ){
+	    mindiff = diff;
+	    inear = j;
+	  }
+	  
+	}
+      }
+
+      if( inear >= 0 ){
+	ToffSH[ibad] = ToffSH[inear];
+      }
+    }
+  }
+
+  ofstream dbSH("bbSHt0temp.dat");
+  ofstream dbPS("bbPSt0temp.dat");
+  ofstream dbHCAL("hcalt0temp.dat");
+  // In SBSGenericDetector, the time offset for FADC waveforms is
+  // ADDED to the result. Our t0 gets subtracted.
+  // ToffSH above is equivalent to the mean value of
+  // OLD ADC time - t0internal - thodo
+  // OLD ADC time - t0internal - thodo = ToffSH
+  // But OLD ADC time = OLD RAW ADC time + OLD OFFSET
+  // We want OLD RAW ADC time + NEW OFFSET - thodo = 0
+  // We have OLD RAW ADC time + OLD OFFSET - t0internal - thodo - ToffSH = 0
+  // Therefore NEW OFFSET = OLD OFFSET - t0internal - ToffSH
+  // Adding back the OLD OFFSET will be done separately,
+  // But this script should write out (minus) the sum of ToffSH and t0internal:
+  
+  dbSH << "bb.sh.adc.timeoffset = " << endl;
+  for( int i=0; i<189; i++ ){
+    if( i%7 == 0 && i > 0 ) dbSH << endl;
+    dbSH << Form("%12.7g ", -(BBCAL_t0ADC[i]+ToffSH[i]));
+  }
+  
   TGraphErrors *gT0SH = new TGraphErrors( 189, &(IDSH[0]), &(ToffSH[0]), &(dIDSH[0]), &(dToffSH[0]) );
   gT0SH->SetMarkerStyle(20);
   gT0SH->SetMarkerColor(1);
@@ -2177,6 +2465,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   c1->Update();
   gPad->Modified();
   gSystem->ProcessEvents();
+
+  gT0SH->Write("gT0_BBshower");
   //pdffilename += ")";
   c1->Print(pdffilename);
 
@@ -2190,8 +2480,13 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   vector<double> dIDPS(52,0);
   vector<double> ToffPS(52,0);
   vector<double> dToffPS(52,1);
+
+  
   
   for(int i=0; i<52; i++ ){
+
+    //ToffPS[i] = -BBCAL_t0ADC[i+189];
+    
     TH1D *htemp = hdt_BBPS_hodo_vs_IDBBPS->ProjectionY( Form("hdtPShodo_blk%d",i), i+1, i+1 );
 
     c1->cd(i%9+1);
@@ -2202,7 +2497,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     IDPS[i] = i;
     //    dIDPS[i] = 0.0;
     
-    if( htemp->GetEntries() >= 200 ){
+    if( htemp->GetEntries() >= 300 ){
       FitGaus_FWHM( htemp );
 
       htemp->Draw();
@@ -2213,6 +2508,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       
       ToffPS[i] = mean;
       dToffPS[i] = dmean;
+    } else {
+      listbadPS.insert( i );
     }
 
     if( (i+1)%9 == 0 ){
@@ -2224,6 +2521,96 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     }
   }
 
+
+  for( auto ibad : listbadPS ){
+    // Find the closest successfully-calibrated channel to the current one; channels run from right to left within
+    // each row and from bottom to top overall:
+    int rowbad = ibad/2;
+    int colbad = ibad%2;
+    
+    // look for nearest neighbors up/down/left/right:
+    double T0avg_neighbors = 0.0;
+    double nnear = 0.0;
+
+    int testrow, testcol, testid;
+
+    //while( nnear == 0.0 ){ //first test nearest neighbors up, down, left, right
+    testrow = rowbad;
+    testcol = colbad-1;
+    if( testcol >= 0 ){
+      testid = testcol + 2*testrow;
+      if( listbadPS.find(testid) == listbadPS.end() ){
+	T0avg_neighbors += ToffPS[testid];
+	nnear += 1.0;
+      }
+    }
+    
+    testcol = colbad+1;
+    if( testcol < 2 ){
+      testid = testcol + 2*testrow;
+      if( listbadPS.find(testid) == listbadPS.end() ){
+	T0avg_neighbors += ToffPS[testid];
+	nnear += 1.0;
+      }
+    }
+	  
+    testrow = rowbad-1;
+    testcol = colbad;
+    if( testrow >= 0 ){
+      testid = testcol + 2*testrow;
+      if( listbadPS.find(testid) == listbadPS.end() ){
+	T0avg_neighbors += ToffPS[testid];
+	nnear += 1.0;
+      }
+    }
+
+    testrow = rowbad + 1;
+    testcol = colbad;
+    if( testrow < 26 ){
+      testid = testcol + testrow*2;
+      if( listbadPS.find(testid) == listbadPS.end() ){
+	T0avg_neighbors += ToffPS[testid];
+	nnear+=1.0;
+      }
+    }
+
+    // Note here that ToffSH[id] = tSH - t0SHinternal - thodo;
+    // therefore if we set ToffSH for the uncalibrated channels to the average of its nearest neighbors,
+    // this should also be a reasonable proxy for tSH-t0SHinternal (for that channel) - thodo
+    // When we write out the DB file, we will need to ADD t0SHinternal to this offset to get the TOTAL offset
+    // that needs to be applied (relative to the database one)
+    
+    if( nnear > 0.0 ){ //if any immediate neighbors were calibrated, take the simple average of nearest neighbors.
+      ToffPS[ibad] = T0avg_neighbors/nnear;
+    } else { //take a brute-force approach, loop on all calibrated channels and then take the offset from the nearest one to the channel in question:
+      double inear = -1;
+      double mindiff = 1000.0;
+      for( int j=0; j<52; j++ ){
+	if( listbadPS.find(j) == listbadPS.end() ){
+	  testcol = j%2;
+	  testrow = j/2;
+	  double diff = pow( testcol-colbad, 2 ) + pow( testrow - rowbad, 2 );
+	  if( inear < 0 || diff < mindiff ){
+	    mindiff = diff;
+	    inear = j;
+	  }
+	  
+	}
+      }
+
+      if( inear >= 0 ){
+	ToffPS[ibad] = ToffPS[inear];
+      }
+    }
+  }
+
+  dbPS << "bb.ps.adc.timeoffset = " << endl;
+  for( int i=0; i<52; i++ ){
+    if( i%2 == 0 && i > 0 ) dbPS << endl;
+    dbPS << Form("%12.7g ", -(BBCAL_t0ADC[i+189]+ToffPS[i]));
+  }
+  
+  
   TGraphErrors *gT0PS = new TGraphErrors( 52, &(IDPS[0]), &(ToffPS[0]), &(dIDPS[0]), &(dToffPS[0]) );
   gT0PS->SetMarkerStyle(20);
   gT0PS->SetMarkerColor(1);
@@ -2238,7 +2625,11 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   //pdffilename += ")";
   c1->Print(pdffilename);
 
+  gT0PS->Write("gT0_BBpreshower");
+  
   c1->Clear();
+
+  
   c1->Divide(3,3,.001,.001);
 
   //Now do HCAL:
@@ -2247,8 +2638,17 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   vector<double> dIDHCAL(288,0);
   vector<double> ToffHCAL(288,0);
   vector<double> dToffHCAL(288,1);
+
+  set<int> listbadHCAL;
+  
+  //The "dt" histogram has been filled with HCAL atime - t0 from internal alignment, - TOF corr -
+  // Thodo. The resulting mean from the fit is the remaining offset:
+  // T(hcal) - tinternal - TOF corr - Thodo = toff
+  // So then the offset to be subtracted from 
   
   for(int i=1; i<=288; i++ ){
+    //ToffHCAL[i-1] = -HCAL_t0ADC[i-1];
+    
     TH1D *htemp = hdt_HCAL_hodo_vs_IDHCAL->ProjectionY( Form("hdtHCALhodo_blk%d",i), i, i );
 
     c1->cd((i-1)%9+1);
@@ -2258,7 +2658,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     IDHCAL[i-1] = i;
     //    dIDHCAL[i] = 0.0;
     
-    if( htemp->GetEntries() >= 200 ){
+    if( htemp->GetEntries() >= 300 ){
       FitGaus_FWHM( htemp );
 
       htemp->Draw();
@@ -2269,6 +2669,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       
       ToffHCAL[i-1] = mean;
       dToffHCAL[i-1] = dmean;
+    } else {
+      listbadHCAL.insert( i );
     }
 
     if( (i)%9 == 0 ){
@@ -2280,6 +2682,95 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     }
   }
 
+  
+  for( auto ibad : listbadHCAL ){
+    // Find the closest successfully-calibrated channel to the current one; channels run from right to left within
+    // each row and from bottom to top overall:
+    int rowbad = (ibad-1)/12;
+    int colbad = (ibad-1)%12;
+    
+    // look for nearest neighbors up/down/left/right:
+    double T0avg_neighbors = 0.0;
+    double nnear = 0.0;
+
+    int testrow, testcol, testid;
+
+    //while( nnear == 0.0 ){ //first test nearest neighbors up, down, left, right
+    testrow = rowbad;
+    testcol = colbad-1;
+    if( testcol >= 0 ){
+      testid = testcol + 12*testrow + 1;
+      if( listbadHCAL.find(testid) == listbadHCAL.end() ){
+	T0avg_neighbors += ToffHCAL[testid-1];
+	nnear += 1.0;
+      }
+    }
+    
+    testcol = colbad+1;
+    if( testcol < 12 ){
+      testid = testcol + 12*testrow + 1;
+      if( listbadHCAL.find(testid) == listbadHCAL.end() ){
+	T0avg_neighbors += ToffHCAL[testid-1];
+	nnear += 1.0;
+      }
+    }
+	  
+    testrow = rowbad-1;
+    testcol = colbad;
+    if( testrow >= 0 ){
+      testid = testcol + 12*testrow + 1;
+      if( listbadHCAL.find(testid) == listbadHCAL.end() ){
+	T0avg_neighbors += ToffHCAL[testid-1];
+	nnear += 1.0;
+      }
+    }
+
+    testrow = rowbad + 1;
+    testcol = colbad;
+    if( testrow < 24 ){
+      testid = testcol + testrow*12 + 1;
+      if( listbadHCAL.find(testid) == listbadHCAL.end() ){
+	T0avg_neighbors += ToffSH[testid-1];
+	nnear+=1.0;
+      }
+    }
+
+    // Note here that ToffSH[id] = tSH - t0SHinternal - thodo;
+    // therefore if we set ToffSH for the uncalibrated channels to the average of its nearest neighbors,
+    // this should also be a reasonable proxy for tSH-t0SHinternal (for that channel) - thodo
+    // When we write out the DB file, we will need to ADD t0SHinternal to this offset to get the TOTAL offset
+    // that needs to be applied (relative to the database one)
+    
+    if( nnear > 0.0 ){ //if any immediate neighbors were calibrated, take the simple average of nearest neighbors.
+      ToffHCAL[ibad-1] = T0avg_neighbors/nnear;
+    } else { //take a brute-force approach, loop on all calibrated channels and then take the offset from the nearest one to the channel in question:
+      double inear = -1;
+      double mindiff = 1000.0;
+      for( int j=1; j<=288; j++ ){
+	if( listbadHCAL.find(j) == listbadHCAL.end() ){
+	  testcol = (j-1)%12;
+	  testrow = (j-1)/12;
+	  double diff = pow( testcol-colbad, 2 ) + pow( testrow - rowbad, 2 );
+	  if( inear < 0 || diff < mindiff ){
+	    mindiff = diff;
+	    inear = j-1;
+	  }
+	  
+	}
+      }
+
+      if( inear >= 0 ){
+	ToffHCAL[ibad-1] = ToffHCAL[inear];
+      }
+    }
+  }
+
+  dbHCAL << "sbs.hcal.adc.timeoffset = " << endl;
+  for( int i=0; i<288; i++ ){
+    if( i%12 == 0 && i > 0 ) dbHCAL << endl;
+    dbHCAL << Form("%12.7g ", -(HCAL_t0ADC[i]+ToffHCAL[i]));
+  }
+  
   TGraphErrors *gT0HCAL = new TGraphErrors( 288, &(IDHCAL[0]), &(ToffHCAL[0]), &(dIDHCAL[0]), &(dToffHCAL[0]) );
   gT0HCAL->SetMarkerStyle(20);
   gT0HCAL->SetMarkerColor(1);
@@ -2294,7 +2785,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   pdffilename += ")";
   c1->Print(pdffilename);
 
-  
+  gT0HCAL->Write("gT0_HCAL");
   
   
   // c1->Update();

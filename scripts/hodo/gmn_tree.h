@@ -728,25 +728,25 @@ public :
    Int_t           Ndata_sbs_hcal_clus_y;
    Double_t        sbs_hcal_clus_y[10];   //[Ndata.sbs.hcal.clus.y]
    Int_t           Ndata_sbs_hcal_clus_blk_again;
-   Double_t        sbs_hcal_clus_blk_again[25];   //[Ndata.sbs.hcal.clus_blk.again]
+   Double_t        sbs_hcal_clus_blk_again[50];   //[Ndata.sbs.hcal.clus_blk.again]
    Int_t           Ndata_sbs_hcal_clus_blk_atime;
-   Double_t        sbs_hcal_clus_blk_atime[25];   //[Ndata.sbs.hcal.clus_blk.atime]
+   Double_t        sbs_hcal_clus_blk_atime[50];   //[Ndata.sbs.hcal.clus_blk.atime]
    Int_t           Ndata_sbs_hcal_clus_blk_col;
-   Double_t        sbs_hcal_clus_blk_col[25];   //[Ndata.sbs.hcal.clus_blk.col]
+   Double_t        sbs_hcal_clus_blk_col[50];   //[Ndata.sbs.hcal.clus_blk.col]
    Int_t           Ndata_sbs_hcal_clus_blk_e;
-   Double_t        sbs_hcal_clus_blk_e[25];   //[Ndata.sbs.hcal.clus_blk.e]
+   Double_t        sbs_hcal_clus_blk_e[50];   //[Ndata.sbs.hcal.clus_blk.e]
    Int_t           Ndata_sbs_hcal_clus_blk_id;
-   Double_t        sbs_hcal_clus_blk_id[25];   //[Ndata.sbs.hcal.clus_blk.id]
+   Double_t        sbs_hcal_clus_blk_id[50];   //[Ndata.sbs.hcal.clus_blk.id]
    Int_t           Ndata_sbs_hcal_clus_blk_row;
-   Double_t        sbs_hcal_clus_blk_row[25];   //[Ndata.sbs.hcal.clus_blk.row]
+   Double_t        sbs_hcal_clus_blk_row[50];   //[Ndata.sbs.hcal.clus_blk.row]
    Int_t           Ndata_sbs_hcal_clus_blk_tdctime;
-   Double_t        sbs_hcal_clus_blk_tdctime[25];   //[Ndata.sbs.hcal.clus_blk.tdctime]
+   Double_t        sbs_hcal_clus_blk_tdctime[50];   //[Ndata.sbs.hcal.clus_blk.tdctime]
    Int_t           Ndata_sbs_hcal_clus_blk_tdctime_tw;
-   Double_t        sbs_hcal_clus_blk_tdctime_tw[25];   //[Ndata.sbs.hcal.clus_blk.tdctime_tw]
+   Double_t        sbs_hcal_clus_blk_tdctime_tw[50];   //[Ndata.sbs.hcal.clus_blk.tdctime_tw]
    Int_t           Ndata_sbs_hcal_clus_blk_x;
-   Double_t        sbs_hcal_clus_blk_x[25];   //[Ndata.sbs.hcal.clus_blk.x]
+   Double_t        sbs_hcal_clus_blk_x[50];   //[Ndata.sbs.hcal.clus_blk.x]
    Int_t           Ndata_sbs_hcal_clus_blk_y;
-   Double_t        sbs_hcal_clus_blk_y[25];   //[Ndata.sbs.hcal.clus_blk.y]
+   Double_t        sbs_hcal_clus_blk_y[50];   //[Ndata.sbs.hcal.clus_blk.y]
    Int_t           Ndata_sbs_hcal_goodblock_again;
    Double_t        sbs_hcal_goodblock_again[69];   //[Ndata.sbs.hcal.goodblock.again]
    Int_t           Ndata_sbs_hcal_goodblock_atime;

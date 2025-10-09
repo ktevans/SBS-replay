@@ -2771,7 +2771,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     dbHCAL << Form("%12.7g ", -(HCAL_t0ADC[i]+ToffHCAL[i]));
   }
   
-  TGraphErrors *gT0HCAL = new TGraphErrors( 288, &(IDHCAL[0]), &(ToffHCAL[0]), &(dIDHCAL[0]), &(dToffHCAL[0]) );
+  TGraphErrors *gT0HCAL = new TGraphErrors( 288, &(IDHCAL[0]), &(ToffHCAL[0])d, &(dIDHCAL[0]), &(dToffHCAL[0]) );
   gT0HCAL->SetMarkerStyle(20);
   gT0HCAL->SetMarkerColor(1);
   gT0HCAL->SetLineColor(1);

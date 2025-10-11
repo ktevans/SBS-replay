@@ -2437,16 +2437,14 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   ofstream dbPS("bbPSt0temp.dat");
   ofstream dbHCAL("hcalt0temp.dat");
   // In SBSGenericDetector, the time offset for FADC waveforms is
-  // ADDED to the result. Our t0 gets subtracted.
+  // ADDED to the result. Our t0 needs to be subtracted.
   // ToffSH above is equivalent to the mean value of
-  // OLD ADC time - t0internal - thodo
-  // OLD ADC time - t0internal - thodo = ToffSH
-  // But OLD ADC time = OLD RAW ADC time + OLD OFFSET
-  // We want OLD RAW ADC time + NEW OFFSET - thodo = 0
-  // We have OLD RAW ADC time + OLD OFFSET - t0internal - thodo - ToffSH = 0
-  // Therefore NEW OFFSET = OLD OFFSET - t0internal - ToffSH
-  // Adding back the OLD OFFSET will be done separately,
-  // But this script should write out (minus) the sum of ToffSH and t0internal:
+  // ToffSH = OLD ADC time - t0internal - thodo - tofcorr
+  // OLD ADC time = RAW ADC time + OLD OFFSET
+  // RAW ADC time + OLD OFFSET - t0internal - thodo - tofcorr = ToffSH
+  // RAW ADC time + OLD OFFSET - t0internal - ToffSH - thodo - tofcorr = 0
+  // RAW ADC time + NEW OFFSET - thodo - tofcorr = 0
+  // NEW OFFSET = OLD OFFSET - t0internal - ToffSH
   
   dbSH << "bb.sh.adc.timeoffset = " << endl;
   for( int i=0; i<189; i++ ){

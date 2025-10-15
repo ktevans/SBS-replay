@@ -100,7 +100,7 @@ bb.hodotdc.horizposbarcut = 0.3
 #bb.hodotdc.timebarcut = 30.0 
 
 bb.hodotdc.maxclussize = 5
-bb.hodotdc.maxyposdiff_clus = 0.25
+bb.hodotdc.maxyposdiff_clus = 0.3
 bb.hodotdc.maxtimediff_clus = 10.0
 
 bb.hodotdc.trackmatchcutX = 0.1

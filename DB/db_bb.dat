@@ -492,6 +492,8 @@ bb.forwardoptics_parameters =
 
 --------[ 2021-10-21 00:00:00 ] # start of SBS-4 kinematics: 
 
+
+
 # Average TOF to hodoscope based on BigBite magnet distance
 bb.etof_avg =          15.996
 
@@ -545,7 +547,11 @@ bb.gemorigin_xyz = -0.210082 0.0422169 2.95157
 bb.gemtheta = 8.7746 # degrees
 bb.gemphi = 179.351  # degrees
 
-# note: ZSIEVE = 1.4261 m in this analysis
+# NOTE: if we use this new alignment result below, we'll need to redo all the optics:
+#bb.gemorigin_xyz = -0.203747 0.039047 2.979716
+#bb.gemangles_xyz = -0.027234 -8.638782 0.00369
+
+# note: ZSIEVE = 1.42962 m in this analysis
 
 #bb.magdist = 
 

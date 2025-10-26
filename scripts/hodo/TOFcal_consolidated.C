@@ -146,6 +146,12 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   TString fname_walkcorr_old="";
 
   TString fname_etof_old="";
+
+  TString fname_HCAL_ADCtime_offsets="";
+  TString fname_BBSH_ADCtime_offsets="";
+  TString fname_BBPS_ADCtime_offsets="";
+
+  bool fixhodoparams = false;
   
   bool useRFcorr = false;
   bool fixoffsets = false;
@@ -157,6 +163,12 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   double wR_default = 0.21;
 
   double BBtrig_t0 = 371.5;
+
+  double dx0 = 0.0;
+  double dy0 = 0.0;
+  double dxsigma = 0.05;
+  double dysigma = 0.05;
+  double dxdy_nsigma_cut = 3.5;
   
   while( currentline.ReadLine(configfile) && !currentline.BeginsWith("endconfig") ){
     if( !currentline.BeginsWith("#") ){
@@ -269,9 +281,44 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	if( skey.BeginsWith("etofparams_old") ){
 	  fname_etof_old = sval;
 	}
+	
 	if( skey.BeginsWith("useelasticcut_HCAL") ){
 	  use_elastic_cut_HCAL = (sval.Atoi() > 0);
 	}
+
+	if( skey.BeginsWith("HCAL_ADCtime_offsets") ){
+	  fname_HCAL_ADCtime_offsets = sval;
+	}
+	if( skey.BeginsWith("BBSH_ADCtime_offsets") ){
+	  fname_BBSH_ADCtime_offsets = sval;
+	}
+	if( skey.BeginsWith("BBPS_ADCtime_offsets") ){
+	  fname_BBPS_ADCtime_offsets = sval;
+	}
+
+	if( skey.BeginsWith("fixhodoparams") ){
+	  fixhodoparams = ( sval.Atoi() != 0 );
+	}
+
+	if( skey.BeginsWith("dx0") ){
+	  dx0 = sval.Atof();
+	}
+	if( skey.BeginsWith("dy0") ){
+	  dy0 = sval.Atof();
+	}
+
+	if( skey.BeginsWith("dxsigma") ){
+	  dxsigma = sval.Atof();
+	}
+
+	if( skey.BeginsWith("dysigma") ){
+	  dysigma = sval.Atof();
+	}
+
+	if( skey.BeginsWith("dxdy_nsigma_cut") ){
+	  dxdy_nsigma_cut = sval.Atof();
+	}
+	
       }
     }
   }
@@ -398,6 +445,69 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       exit(-1);
     }
   }
+
+  int nchan_HCAL = 288;
+  int nchan_BBSH = 189;
+  int nchan_BBPS = 52;
+  
+  vector<double> oldHCALoffsets( nchan_HCAL );
+  ifstream oldHCALoffsetsfile(fname_HCAL_ADCtime_offsets.Data());
+
+  if( oldHCALoffsetsfile ){
+    int npar=0;
+    double par=0.0;
+    while( oldHCALoffsetsfile >> par ){
+      if( npar<nchan_HCAL ){
+	oldHCALoffsets[npar] = par;
+      }
+      npar++;
+    }
+
+    if( npar != nchan_HCAL ){
+      cout << "Error: old HCAL offsets file contains incorrect number of entries; abort" << endl;
+      exit(-1);
+    }
+  }
+
+  vector<double> oldBBSHoffsets( nchan_BBSH );
+  ifstream oldBBSHoffsetsfile(fname_BBSH_ADCtime_offsets.Data());
+
+  if( oldBBSHoffsetsfile ){
+    int npar=0;
+    double par=0.0;
+    while( oldBBSHoffsetsfile >> par ){
+      if( npar<nchan_BBSH ){
+	oldBBSHoffsets[npar] = par;
+      }
+      npar++;
+    }
+
+    if( npar != nchan_BBSH ){
+      cout << "Error: old BBSH offsets file contains incorrect number of entries; abort" << endl;
+      exit(-1);
+    }
+  }
+
+  vector<double> oldBBPSoffsets( nchan_BBPS );
+  ifstream oldBBPSoffsetsfile(fname_BBPS_ADCtime_offsets.Data());
+
+  if( oldBBPSoffsetsfile ){
+    int npar=0;
+    double par=0.0;
+    while( oldBBPSoffsetsfile >> par ){
+      if( npar<nchan_BBPS ){
+	oldBBPSoffsets[npar] = par;
+      }
+      npar++;
+    }
+
+    if( npar != nchan_BBPS ){
+      cout << "Error: old BBPS offsets file contains incorrect number of entries; abort" << endl;
+      exit(-1);
+    }
+  }
+
+  
   
   thetaHCAL *= TMath::Pi()/180.0;
   
@@ -1037,7 +1147,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   cout << "Loop 3: Fit hodoscope walk correction slope, propagation delay, and t0 offset, and set up internal alignment of BBCAL and HCAL FADC times" << endl;
 
   int nchan_BBCAL = 189+52;
-  int nchan_HCAL = 288;
+  
   
   //In loop three we'll set up and do internal alignments of SH, PS, and HCAL FADC time:
   vector<double> nhit_chan_BBCAL(nchan_BBCAL,0.0);

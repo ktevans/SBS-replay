@@ -2338,8 +2338,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
       
       double mean = ftemp->GetParameter("Mean");
-      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
-
+      //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+      double dmean = ftemp->GetParameter("Sigma");
       
       ToffSH[i] = mean;
       dToffSH[i] = dmean;
@@ -2508,7 +2508,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
       
       double mean = ftemp->GetParameter("Mean");
-      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+      //double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+      double dmean = ftemp->GetParameter("Sigma");
 
       //These lines won't compile under older ROOT versions:
       // double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
@@ -2675,8 +2676,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
       
       double mean = ftemp->GetParameter("Mean");
-      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
-
+      //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+      double dmean = ftemp->GetParError(ftemp->GetParameter("Sigma"));
       //These lines won't compile under older ROOT versions:
       // double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
       // double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");

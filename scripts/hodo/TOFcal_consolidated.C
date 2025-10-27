@@ -117,7 +117,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   double totmin = 6.0, totmax = 35.0;
   double totdiff_max = 10.0;
   double tdiff_max = 10.0; //max time difference with respect to cluster maximum
-  double ydiff_max = 0.15; // 0.15 m/ (0.18 m/ns) 
+  double ydiff_max = 0.25; // 0.15 m/ (0.18 m/ns) 
   double xdiff_max = 0.06; // vertical position difference of 0.06 m max wrt track projection 
   
   
@@ -449,8 +449,10 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   int nchan_HCAL = 288;
   int nchan_BBSH = 189;
   int nchan_BBPS = 52;
-  
-  vector<double> oldHCALoffsets( nchan_HCAL );
+
+  // For the moment, we only add the old offsets to the new ones after the analysis is over
+  // for ADC times:
+  vector<double> oldHCALoffsets( nchan_HCAL, 0.0 );
   ifstream oldHCALoffsetsfile(fname_HCAL_ADCtime_offsets.Data());
 
   if( oldHCALoffsetsfile ){
@@ -469,7 +471,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     }
   }
 
-  vector<double> oldBBSHoffsets( nchan_BBSH );
+  vector<double> oldBBSHoffsets( nchan_BBSH, 0.0 );
   ifstream oldBBSHoffsetsfile(fname_BBSH_ADCtime_offsets.Data());
 
   if( oldBBSHoffsetsfile ){
@@ -488,7 +490,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     }
   }
 
-  vector<double> oldBBPSoffsets( nchan_BBPS );
+  vector<double> oldBBPSoffsets( nchan_BBPS, 0.0 );
   ifstream oldBBPSoffsetsfile(fname_BBPS_ADCtime_offsets.Data());
 
   if( oldBBPSoffsetsfile ){
@@ -639,6 +641,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   }
   
   // Loop 1: get meantime offsets to align hodoscope internally:
+  //if( !fixhodoparams ){ //We skip loops 1 and 2 and simply use "tfinal" if "fixhodoparams" is set:
   cout << "Loop 1: Internal alignment of meantime offsets" << endl;
   while( T->GetEntry(nevent) ){
     if( nevent % 10000 == 0 ){
@@ -937,7 +940,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	      double IDHODO_j = T->bb_hodotdc_clus_bar_tdc_id[jbar];
 
 	      double tleft_corr_j = tleft_j - etof + wL_OLD[IDHODO_j]*totleft_j - MeanTimeOffsets[IDHODO_j] - dLEFT/VSCINT_OLD[IDHODO_j]+tref;
-	      double tright_corr_j = tright_j - etof + wR_OLD[IDHODO_j]*totright_j - MeanTimeOffsets[IDHODO_j] - dLEFT/VSCINT_OLD[IDHODO_j]+tref;
+	      double tright_corr_j = tright_j - etof + wR_OLD[IDHODO_j]*totright_j - MeanTimeOffsets[IDHODO_j] - dRIGHT/VSCINT_OLD[IDHODO_j]+tref;
 	      double tHODO_j = 0.5*(tleft_corr_j + tright_corr_j);
 	      double tdiff_j = tleft_corr_j - tright_corr_j;
 	      double ypos_j = -0.5*VSCINT_OLD[IDHODO_j]*tdiff_j;
@@ -961,10 +964,11 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     }
     nevent++;
   }
-
+    
   TCanvas *c1 = new TCanvas("c1","c1",1200,900);
   TCanvas *c2 = new TCanvas("c2","c2",1200,900);
 
+  //if( !fixhodoparams ){
   c1->cd();
   hdT_hodo_ID->Draw("colz");
 
@@ -1139,7 +1143,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   gRFoffsets->Write("gRFoffsets");
   
   c1->Print(tempname.Data());
-
+  
   treenum = -1;
   oldtreenum = -1;
 
@@ -1870,6 +1874,9 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
 	HodoTmean /= HodoTOTsum;
 
+	//If "fix hodo params is set, use the OLD hodo params for
+	//ADC time alignments, as represented by the "tfinal" variable
+	if( fixhodoparams ) HodoTmean = T->bb_hodotdc_clus_tfinal[0]; 
 
 	int nblkSH = std::min(MAXNBLK_BBSH,int(T->bb_sh_nblk));
 	int nblkPS = std::min(MAXNBLK_BBPS,int(T->bb_ps_nblk));
@@ -2034,7 +2041,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	}
 	
 	//if( W2min < W2 && W2 < W2max && sqrt(pow(deltax,2)+pow(deltay,2))<=0.24 && eblkHCAL>0.02 ){
-	if( (W2>W2min && W2<W2max && sqrt(pow(deltax,2)+pow(deltay,2))<=0.24) ||
+	if( (W2>W2min && W2<W2max && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut) ||
 	    !use_elastic_cut_HCAL ){
 
 	  // cout << "Elastic event found: (pTOF expect, pTOF central, diff)=("
@@ -2548,9 +2555,24 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     }
   }
 
-  ofstream dbSH("bbSHt0temp.dat");
-  ofstream dbPS("bbPSt0temp.dat");
-  ofstream dbHCAL("hcalt0temp.dat");
+  TString BBSHdbfilename = outputfilename;
+
+  BBSHdbfilename.ReplaceAll(".root",".dat");
+  BBSHdbfilename.Prepend("BBSHt0_");
+
+  TString BBPSdbfilename = outputfilename;
+
+  BBPSdbfilename.ReplaceAll(".root",".dat");
+  BBPSdbfilename.Prepend("BBPSt0_");
+
+  TString HCALdbfilename = outputfilename;
+    
+  HCALdbfilename.ReplaceAll(".root",".dat");
+  HCALdbfilename.Prepend("HCALt0_");
+  
+  ofstream dbSH(BBSHdbfilename.Data());
+  ofstream dbPS(BBPSdbfilename.Data());
+  ofstream dbHCAL(HCALdbfilename.Data());
   // In SBSGenericDetector, the time offset for FADC waveforms is
   // ADDED to the result. Our t0 needs to be subtracted.
   // ToffSH above is equivalent to the mean value of
@@ -2564,7 +2586,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   dbSH << "bb.sh.adc.timeoffset = " << endl;
   for( int i=0; i<189; i++ ){
     if( i%7 == 0 && i > 0 ) dbSH << endl;
-    dbSH << Form("%12.7g ", -(BBCAL_t0ADC[i]+ToffSH[i]));
+    dbSH << Form("%12.7g ", -(BBCAL_t0ADC[i]+ToffSH[i])+oldBBSHoffsets[i]);
   }
   
   TGraphErrors *gT0SH = new TGraphErrors( 189, &(IDSH[0]), &(ToffSH[0]), &(dIDSH[0]), &(dToffSH[0]) );
@@ -2726,7 +2748,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   dbPS << "bb.ps.adc.timeoffset = " << endl;
   for( int i=0; i<52; i++ ){
     if( i%2 == 0 && i > 0 ) dbPS << endl;
-    dbPS << Form("%12.7g ", -(BBCAL_t0ADC[i+189]+ToffPS[i]));
+    dbPS << Form("%12.7g ", -(BBCAL_t0ADC[i+189]+ToffPS[i]) + oldBBPSoffsets[i] );
   }
   
   
@@ -2893,7 +2915,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   dbHCAL << "sbs.hcal.adc.timeoffset = " << endl;
   for( int i=0; i<288; i++ ){
     if( i%12 == 0 && i > 0 ) dbHCAL << endl;
-    dbHCAL << Form("%12.7g ", -(HCAL_t0ADC[i]+ToffHCAL[i]));
+    dbHCAL << Form("%12.7g ", -(HCAL_t0ADC[i]+ToffHCAL[i]) + oldHCALoffsets[i] );
   }
   
   TGraphErrors *gT0HCAL = new TGraphErrors( 288, &(IDHCAL[0]), &(ToffHCAL[0]), &(dIDHCAL[0]), &(dToffHCAL[0]) );

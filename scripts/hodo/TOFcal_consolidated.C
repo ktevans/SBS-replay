@@ -269,6 +269,9 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	if( skey.BeginsWith("etofparams_old") ){
 	  fname_etof_old = sval;
 	}
+	if( skey.BeginsWith("useelasticcut_HCAL") ){
+	  use_elastic_cut_HCAL = (sval.Atoi() > 0);
+	}
       }
     }
   }
@@ -2331,9 +2334,11 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       FitGaus_FWHM( htemp );
 
       htemp->Draw();
+
+      TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
       
-      double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
-      double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
+      double mean = ftemp->GetParameter("Mean");
+      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
 
       
       ToffSH[i] = mean;
@@ -2499,9 +2504,15 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       FitGaus_FWHM( htemp );
 
       htemp->Draw();
+
+      TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
       
-      double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
-      double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
+      double mean = ftemp->GetParameter("Mean");
+      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+
+      //These lines won't compile under older ROOT versions:
+      // double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
+      // double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
 
       
       ToffPS[i] = mean;
@@ -2660,9 +2671,15 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       FitGaus_FWHM( htemp );
 
       htemp->Draw();
+
+      TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
       
-      double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
-      double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
+      double mean = ftemp->GetParameter("Mean");
+      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+
+      //These lines won't compile under older ROOT versions:
+      // double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
+      // double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
 
       
       ToffHCAL[i-1] = mean;

@@ -1900,7 +1900,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  double eblk = T->bb_ps_clus_blk_e[ihit];
 	  double idblk = T->bb_ps_clus_blk_id[ihit];
 
-	  if( eblk >= 0.05 && (ihit == 0 || fabs( atime - T->bb_ps_atimeblk ) <= 6.0 ) && eblk >= 0.1 * T->bb_ps_eblk ){ //Use 50 MeV threshold for PS:
+	  if( eblk >= 0.1 && (ihit == 0 || fabs( atime - T->bb_ps_atimeblk ) <= 6.0 ) && eblk >= 0.1 * T->bb_ps_eblk ){ //Use 50 MeV threshold for PS:
 	    hdt_BBPS_hodo_vs_IDBBPS->Fill( idblk, atime - BBCAL_t0ADC[idblk+189] - HodoTmean );
 	  }
 	}

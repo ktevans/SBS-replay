@@ -1040,28 +1040,28 @@ public :
    Double_t        bb_gem_m1_strip_nstrips_keep_lmaxU;
    Double_t        bb_gem_m1_strip_nstrips_keep_lmaxV;
    Double_t        bb_gem_m1_strip_nstripsfired;
-   Double_t        bb_gem_m10_clust_nclustu;
-   Double_t        bb_gem_m10_clust_nclustu_tot;
-   Double_t        bb_gem_m10_clust_nclustv;
-   Double_t        bb_gem_m10_clust_nclustv_tot;
-   Double_t        bb_gem_m10_strip_nstrips_keep;
-   Double_t        bb_gem_m10_strip_nstrips_keepU;
-   Double_t        bb_gem_m10_strip_nstrips_keepV;
-   Double_t        bb_gem_m10_strip_nstrips_keep_lmax;
-   Double_t        bb_gem_m10_strip_nstrips_keep_lmaxU;
-   Double_t        bb_gem_m10_strip_nstrips_keep_lmaxV;
-   Double_t        bb_gem_m10_strip_nstripsfired;
-   Double_t        bb_gem_m11_clust_nclustu;
-   Double_t        bb_gem_m11_clust_nclustu_tot;
-   Double_t        bb_gem_m11_clust_nclustv;
-   Double_t        bb_gem_m11_clust_nclustv_tot;
-   Double_t        bb_gem_m11_strip_nstrips_keep;
-   Double_t        bb_gem_m11_strip_nstrips_keepU;
-   Double_t        bb_gem_m11_strip_nstrips_keepV;
-   Double_t        bb_gem_m11_strip_nstrips_keep_lmax;
-   Double_t        bb_gem_m11_strip_nstrips_keep_lmaxU;
-   Double_t        bb_gem_m11_strip_nstrips_keep_lmaxV;
-   Double_t        bb_gem_m11_strip_nstripsfired;
+   /* Double_t        bb_gem_m10_clust_nclustu; */
+   /* Double_t        bb_gem_m10_clust_nclustu_tot; */
+   /* Double_t        bb_gem_m10_clust_nclustv; */
+   /* Double_t        bb_gem_m10_clust_nclustv_tot; */
+   /* Double_t        bb_gem_m10_strip_nstrips_keep; */
+   /* Double_t        bb_gem_m10_strip_nstrips_keepU; */
+   /* Double_t        bb_gem_m10_strip_nstrips_keepV; */
+   /* Double_t        bb_gem_m10_strip_nstrips_keep_lmax; */
+   /* Double_t        bb_gem_m10_strip_nstrips_keep_lmaxU; */
+   /* Double_t        bb_gem_m10_strip_nstrips_keep_lmaxV; */
+   /* Double_t        bb_gem_m10_strip_nstripsfired; */
+   /* Double_t        bb_gem_m11_clust_nclustu; */
+   /* Double_t        bb_gem_m11_clust_nclustu_tot; */
+   /* Double_t        bb_gem_m11_clust_nclustv; */
+   /* Double_t        bb_gem_m11_clust_nclustv_tot; */
+   /* Double_t        bb_gem_m11_strip_nstrips_keep; */
+   /* Double_t        bb_gem_m11_strip_nstrips_keepU; */
+   /* Double_t        bb_gem_m11_strip_nstrips_keepV; */
+   /* Double_t        bb_gem_m11_strip_nstrips_keep_lmax; */
+   /* Double_t        bb_gem_m11_strip_nstrips_keep_lmaxU; */
+   /* Double_t        bb_gem_m11_strip_nstrips_keep_lmaxV; */
+   /* Double_t        bb_gem_m11_strip_nstripsfired; */
    Double_t        bb_gem_m2_clust_nclustu;
    Double_t        bb_gem_m2_clust_nclustu_tot;
    Double_t        bb_gem_m2_clust_nclustv;
@@ -1128,28 +1128,28 @@ public :
    Double_t        bb_gem_m7_strip_nstrips_keep_lmaxU;
    Double_t        bb_gem_m7_strip_nstrips_keep_lmaxV;
    Double_t        bb_gem_m7_strip_nstripsfired;
-   Double_t        bb_gem_m8_clust_nclustu;
-   Double_t        bb_gem_m8_clust_nclustu_tot;
-   Double_t        bb_gem_m8_clust_nclustv;
-   Double_t        bb_gem_m8_clust_nclustv_tot;
-   Double_t        bb_gem_m8_strip_nstrips_keep;
-   Double_t        bb_gem_m8_strip_nstrips_keepU;
-   Double_t        bb_gem_m8_strip_nstrips_keepV;
-   Double_t        bb_gem_m8_strip_nstrips_keep_lmax;
-   Double_t        bb_gem_m8_strip_nstrips_keep_lmaxU;
-   Double_t        bb_gem_m8_strip_nstrips_keep_lmaxV;
-   Double_t        bb_gem_m8_strip_nstripsfired;
-   Double_t        bb_gem_m9_clust_nclustu;
-   Double_t        bb_gem_m9_clust_nclustu_tot;
-   Double_t        bb_gem_m9_clust_nclustv;
-   Double_t        bb_gem_m9_clust_nclustv_tot;
-   Double_t        bb_gem_m9_strip_nstrips_keep;
-   Double_t        bb_gem_m9_strip_nstrips_keepU;
-   Double_t        bb_gem_m9_strip_nstrips_keepV;
-   Double_t        bb_gem_m9_strip_nstrips_keep_lmax;
-   Double_t        bb_gem_m9_strip_nstrips_keep_lmaxU;
-   Double_t        bb_gem_m9_strip_nstrips_keep_lmaxV;
-   Double_t        bb_gem_m9_strip_nstripsfired;
+   /* Double_t        bb_gem_m8_clust_nclustu; */
+   /* Double_t        bb_gem_m8_clust_nclustu_tot; */
+   /* Double_t        bb_gem_m8_clust_nclustv; */
+   /* Double_t        bb_gem_m8_clust_nclustv_tot; */
+   /* Double_t        bb_gem_m8_strip_nstrips_keep; */
+   /* Double_t        bb_gem_m8_strip_nstrips_keepU; */
+   /* Double_t        bb_gem_m8_strip_nstrips_keepV; */
+   /* Double_t        bb_gem_m8_strip_nstrips_keep_lmax; */
+   /* Double_t        bb_gem_m8_strip_nstrips_keep_lmaxU; */
+   /* Double_t        bb_gem_m8_strip_nstrips_keep_lmaxV; */
+   /* Double_t        bb_gem_m8_strip_nstripsfired; */
+   /* Double_t        bb_gem_m9_clust_nclustu; */
+   /* Double_t        bb_gem_m9_clust_nclustu_tot; */
+   /* Double_t        bb_gem_m9_clust_nclustv; */
+   /* Double_t        bb_gem_m9_clust_nclustv_tot; */
+   /* Double_t        bb_gem_m9_strip_nstrips_keep; */
+   /* Double_t        bb_gem_m9_strip_nstrips_keepU; */
+   /* Double_t        bb_gem_m9_strip_nstrips_keepV; */
+   /* Double_t        bb_gem_m9_strip_nstrips_keep_lmax; */
+   /* Double_t        bb_gem_m9_strip_nstrips_keep_lmaxU; */
+   /* Double_t        bb_gem_m9_strip_nstrips_keep_lmaxV; */
+   /* Double_t        bb_gem_m9_strip_nstripsfired; */
    Double_t        bb_gem_nlayershit;
    Double_t        bb_gem_nlayershitu;
    Double_t        bb_gem_nlayershituv;
@@ -2299,28 +2299,28 @@ public :
    TBranch        *b_bb_gem_m1_strip_nstrips_keep_lmaxU;   //!
    TBranch        *b_bb_gem_m1_strip_nstrips_keep_lmaxV;   //!
    TBranch        *b_bb_gem_m1_strip_nstripsfired;   //!
-   TBranch        *b_bb_gem_m10_clust_nclustu;   //!
-   TBranch        *b_bb_gem_m10_clust_nclustu_tot;   //!
-   TBranch        *b_bb_gem_m10_clust_nclustv;   //!
-   TBranch        *b_bb_gem_m10_clust_nclustv_tot;   //!
-   TBranch        *b_bb_gem_m10_strip_nstrips_keep;   //!
-   TBranch        *b_bb_gem_m10_strip_nstrips_keepU;   //!
-   TBranch        *b_bb_gem_m10_strip_nstrips_keepV;   //!
-   TBranch        *b_bb_gem_m10_strip_nstrips_keep_lmax;   //!
-   TBranch        *b_bb_gem_m10_strip_nstrips_keep_lmaxU;   //!
-   TBranch        *b_bb_gem_m10_strip_nstrips_keep_lmaxV;   //!
-   TBranch        *b_bb_gem_m10_strip_nstripsfired;   //!
-   TBranch        *b_bb_gem_m11_clust_nclustu;   //!
-   TBranch        *b_bb_gem_m11_clust_nclustu_tot;   //!
-   TBranch        *b_bb_gem_m11_clust_nclustv;   //!
-   TBranch        *b_bb_gem_m11_clust_nclustv_tot;   //!
-   TBranch        *b_bb_gem_m11_strip_nstrips_keep;   //!
-   TBranch        *b_bb_gem_m11_strip_nstrips_keepU;   //!
-   TBranch        *b_bb_gem_m11_strip_nstrips_keepV;   //!
-   TBranch        *b_bb_gem_m11_strip_nstrips_keep_lmax;   //!
-   TBranch        *b_bb_gem_m11_strip_nstrips_keep_lmaxU;   //!
-   TBranch        *b_bb_gem_m11_strip_nstrips_keep_lmaxV;   //!
-   TBranch        *b_bb_gem_m11_strip_nstripsfired;   //!
+   /* TBranch        *b_bb_gem_m10_clust_nclustu;   //! */
+   /* TBranch        *b_bb_gem_m10_clust_nclustu_tot;   //! */
+   /* TBranch        *b_bb_gem_m10_clust_nclustv;   //! */
+   /* TBranch        *b_bb_gem_m10_clust_nclustv_tot;   //! */
+   /* TBranch        *b_bb_gem_m10_strip_nstrips_keep;   //! */
+   /* TBranch        *b_bb_gem_m10_strip_nstrips_keepU;   //! */
+   /* TBranch        *b_bb_gem_m10_strip_nstrips_keepV;   //! */
+   /* TBranch        *b_bb_gem_m10_strip_nstrips_keep_lmax;   //! */
+   /* TBranch        *b_bb_gem_m10_strip_nstrips_keep_lmaxU;   //! */
+   /* TBranch        *b_bb_gem_m10_strip_nstrips_keep_lmaxV;   //! */
+   /* TBranch        *b_bb_gem_m10_strip_nstripsfired;   //! */
+   /* TBranch        *b_bb_gem_m11_clust_nclustu;   //! */
+   /* TBranch        *b_bb_gem_m11_clust_nclustu_tot;   //! */
+   /* TBranch        *b_bb_gem_m11_clust_nclustv;   //! */
+   /* TBranch        *b_bb_gem_m11_clust_nclustv_tot;   //! */
+   /* TBranch        *b_bb_gem_m11_strip_nstrips_keep;   //! */
+   /* TBranch        *b_bb_gem_m11_strip_nstrips_keepU;   //! */
+   /* TBranch        *b_bb_gem_m11_strip_nstrips_keepV;   //! */
+   /* TBranch        *b_bb_gem_m11_strip_nstrips_keep_lmax;   //! */
+   /* TBranch        *b_bb_gem_m11_strip_nstrips_keep_lmaxU;   //! */
+   /* TBranch        *b_bb_gem_m11_strip_nstrips_keep_lmaxV;   //! */
+   /* TBranch        *b_bb_gem_m11_strip_nstripsfired;   //! */
    TBranch        *b_bb_gem_m2_clust_nclustu;   //!
    TBranch        *b_bb_gem_m2_clust_nclustu_tot;   //!
    TBranch        *b_bb_gem_m2_clust_nclustv;   //!
@@ -2387,28 +2387,28 @@ public :
    TBranch        *b_bb_gem_m7_strip_nstrips_keep_lmaxU;   //!
    TBranch        *b_bb_gem_m7_strip_nstrips_keep_lmaxV;   //!
    TBranch        *b_bb_gem_m7_strip_nstripsfired;   //!
-   TBranch        *b_bb_gem_m8_clust_nclustu;   //!
-   TBranch        *b_bb_gem_m8_clust_nclustu_tot;   //!
-   TBranch        *b_bb_gem_m8_clust_nclustv;   //!
-   TBranch        *b_bb_gem_m8_clust_nclustv_tot;   //!
-   TBranch        *b_bb_gem_m8_strip_nstrips_keep;   //!
-   TBranch        *b_bb_gem_m8_strip_nstrips_keepU;   //!
-   TBranch        *b_bb_gem_m8_strip_nstrips_keepV;   //!
-   TBranch        *b_bb_gem_m8_strip_nstrips_keep_lmax;   //!
-   TBranch        *b_bb_gem_m8_strip_nstrips_keep_lmaxU;   //!
-   TBranch        *b_bb_gem_m8_strip_nstrips_keep_lmaxV;   //!
-   TBranch        *b_bb_gem_m8_strip_nstripsfired;   //!
-   TBranch        *b_bb_gem_m9_clust_nclustu;   //!
-   TBranch        *b_bb_gem_m9_clust_nclustu_tot;   //!
-   TBranch        *b_bb_gem_m9_clust_nclustv;   //!
-   TBranch        *b_bb_gem_m9_clust_nclustv_tot;   //!
-   TBranch        *b_bb_gem_m9_strip_nstrips_keep;   //!
-   TBranch        *b_bb_gem_m9_strip_nstrips_keepU;   //!
-   TBranch        *b_bb_gem_m9_strip_nstrips_keepV;   //!
-   TBranch        *b_bb_gem_m9_strip_nstrips_keep_lmax;   //!
-   TBranch        *b_bb_gem_m9_strip_nstrips_keep_lmaxU;   //!
-   TBranch        *b_bb_gem_m9_strip_nstrips_keep_lmaxV;   //!
-   TBranch        *b_bb_gem_m9_strip_nstripsfired;   //!
+   /* TBranch        *b_bb_gem_m8_clust_nclustu;   //! */
+   /* TBranch        *b_bb_gem_m8_clust_nclustu_tot;   //! */
+   /* TBranch        *b_bb_gem_m8_clust_nclustv;   //! */
+   /* TBranch        *b_bb_gem_m8_clust_nclustv_tot;   //! */
+   /* TBranch        *b_bb_gem_m8_strip_nstrips_keep;   //! */
+   /* TBranch        *b_bb_gem_m8_strip_nstrips_keepU;   //! */
+   /* TBranch        *b_bb_gem_m8_strip_nstrips_keepV;   //! */
+   /* TBranch        *b_bb_gem_m8_strip_nstrips_keep_lmax;   //! */
+   /* TBranch        *b_bb_gem_m8_strip_nstrips_keep_lmaxU;   //! */
+   /* TBranch        *b_bb_gem_m8_strip_nstrips_keep_lmaxV;   //! */
+   /* TBranch        *b_bb_gem_m8_strip_nstripsfired;   //! */
+   /* TBranch        *b_bb_gem_m9_clust_nclustu;   //! */
+   /* TBranch        *b_bb_gem_m9_clust_nclustu_tot;   //! */
+   /* TBranch        *b_bb_gem_m9_clust_nclustv;   //! */
+   /* TBranch        *b_bb_gem_m9_clust_nclustv_tot;   //! */
+   /* TBranch        *b_bb_gem_m9_strip_nstrips_keep;   //! */
+   /* TBranch        *b_bb_gem_m9_strip_nstrips_keepU;   //! */
+   /* TBranch        *b_bb_gem_m9_strip_nstrips_keepV;   //! */
+   /* TBranch        *b_bb_gem_m9_strip_nstrips_keep_lmax;   //! */
+   /* TBranch        *b_bb_gem_m9_strip_nstrips_keep_lmaxU;   //! */
+   /* TBranch        *b_bb_gem_m9_strip_nstrips_keep_lmaxV;   //! */
+   /* TBranch        *b_bb_gem_m9_strip_nstripsfired;   //! */
    TBranch        *b_bb_gem_nlayershit;   //!
    TBranch        *b_bb_gem_nlayershitu;   //!
    TBranch        *b_bb_gem_nlayershituv;   //!
@@ -4291,28 +4291,28 @@ void gmn_tree::Init(TTree *tree)
    fChain->SetBranchAddress("bb.gem.m1.strip.nstrips_keep_lmaxU", &bb_gem_m1_strip_nstrips_keep_lmaxU, &b_bb_gem_m1_strip_nstrips_keep_lmaxU);
    fChain->SetBranchAddress("bb.gem.m1.strip.nstrips_keep_lmaxV", &bb_gem_m1_strip_nstrips_keep_lmaxV, &b_bb_gem_m1_strip_nstrips_keep_lmaxV);
    fChain->SetBranchAddress("bb.gem.m1.strip.nstripsfired", &bb_gem_m1_strip_nstripsfired, &b_bb_gem_m1_strip_nstripsfired);
-   fChain->SetBranchAddress("bb.gem.m10.clust.nclustu", &bb_gem_m10_clust_nclustu, &b_bb_gem_m10_clust_nclustu);
-   fChain->SetBranchAddress("bb.gem.m10.clust.nclustu_tot", &bb_gem_m10_clust_nclustu_tot, &b_bb_gem_m10_clust_nclustu_tot);
-   fChain->SetBranchAddress("bb.gem.m10.clust.nclustv", &bb_gem_m10_clust_nclustv, &b_bb_gem_m10_clust_nclustv);
-   fChain->SetBranchAddress("bb.gem.m10.clust.nclustv_tot", &bb_gem_m10_clust_nclustv_tot, &b_bb_gem_m10_clust_nclustv_tot);
-   fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keep", &bb_gem_m10_strip_nstrips_keep, &b_bb_gem_m10_strip_nstrips_keep);
-   fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keepU", &bb_gem_m10_strip_nstrips_keepU, &b_bb_gem_m10_strip_nstrips_keepU);
-   fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keepV", &bb_gem_m10_strip_nstrips_keepV, &b_bb_gem_m10_strip_nstrips_keepV);
-   fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keep_lmax", &bb_gem_m10_strip_nstrips_keep_lmax, &b_bb_gem_m10_strip_nstrips_keep_lmax);
-   fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keep_lmaxU", &bb_gem_m10_strip_nstrips_keep_lmaxU, &b_bb_gem_m10_strip_nstrips_keep_lmaxU);
-   fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keep_lmaxV", &bb_gem_m10_strip_nstrips_keep_lmaxV, &b_bb_gem_m10_strip_nstrips_keep_lmaxV);
-   fChain->SetBranchAddress("bb.gem.m10.strip.nstripsfired", &bb_gem_m10_strip_nstripsfired, &b_bb_gem_m10_strip_nstripsfired);
-   fChain->SetBranchAddress("bb.gem.m11.clust.nclustu", &bb_gem_m11_clust_nclustu, &b_bb_gem_m11_clust_nclustu);
-   fChain->SetBranchAddress("bb.gem.m11.clust.nclustu_tot", &bb_gem_m11_clust_nclustu_tot, &b_bb_gem_m11_clust_nclustu_tot);
-   fChain->SetBranchAddress("bb.gem.m11.clust.nclustv", &bb_gem_m11_clust_nclustv, &b_bb_gem_m11_clust_nclustv);
-   fChain->SetBranchAddress("bb.gem.m11.clust.nclustv_tot", &bb_gem_m11_clust_nclustv_tot, &b_bb_gem_m11_clust_nclustv_tot);
-   fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keep", &bb_gem_m11_strip_nstrips_keep, &b_bb_gem_m11_strip_nstrips_keep);
-   fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keepU", &bb_gem_m11_strip_nstrips_keepU, &b_bb_gem_m11_strip_nstrips_keepU);
-   fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keepV", &bb_gem_m11_strip_nstrips_keepV, &b_bb_gem_m11_strip_nstrips_keepV);
-   fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keep_lmax", &bb_gem_m11_strip_nstrips_keep_lmax, &b_bb_gem_m11_strip_nstrips_keep_lmax);
-   fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keep_lmaxU", &bb_gem_m11_strip_nstrips_keep_lmaxU, &b_bb_gem_m11_strip_nstrips_keep_lmaxU);
-   fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keep_lmaxV", &bb_gem_m11_strip_nstrips_keep_lmaxV, &b_bb_gem_m11_strip_nstrips_keep_lmaxV);
-   fChain->SetBranchAddress("bb.gem.m11.strip.nstripsfired", &bb_gem_m11_strip_nstripsfired, &b_bb_gem_m11_strip_nstripsfired);
+   /* fChain->SetBranchAddress("bb.gem.m10.clust.nclustu", &bb_gem_m10_clust_nclustu, &b_bb_gem_m10_clust_nclustu); */
+   /* fChain->SetBranchAddress("bb.gem.m10.clust.nclustu_tot", &bb_gem_m10_clust_nclustu_tot, &b_bb_gem_m10_clust_nclustu_tot); */
+   /* fChain->SetBranchAddress("bb.gem.m10.clust.nclustv", &bb_gem_m10_clust_nclustv, &b_bb_gem_m10_clust_nclustv); */
+   /* fChain->SetBranchAddress("bb.gem.m10.clust.nclustv_tot", &bb_gem_m10_clust_nclustv_tot, &b_bb_gem_m10_clust_nclustv_tot); */
+   /* fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keep", &bb_gem_m10_strip_nstrips_keep, &b_bb_gem_m10_strip_nstrips_keep); */
+   /* fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keepU", &bb_gem_m10_strip_nstrips_keepU, &b_bb_gem_m10_strip_nstrips_keepU); */
+   /* fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keepV", &bb_gem_m10_strip_nstrips_keepV, &b_bb_gem_m10_strip_nstrips_keepV); */
+   /* fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keep_lmax", &bb_gem_m10_strip_nstrips_keep_lmax, &b_bb_gem_m10_strip_nstrips_keep_lmax); */
+   /* fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keep_lmaxU", &bb_gem_m10_strip_nstrips_keep_lmaxU, &b_bb_gem_m10_strip_nstrips_keep_lmaxU); */
+   /* fChain->SetBranchAddress("bb.gem.m10.strip.nstrips_keep_lmaxV", &bb_gem_m10_strip_nstrips_keep_lmaxV, &b_bb_gem_m10_strip_nstrips_keep_lmaxV); */
+   /* fChain->SetBranchAddress("bb.gem.m10.strip.nstripsfired", &bb_gem_m10_strip_nstripsfired, &b_bb_gem_m10_strip_nstripsfired); */
+   /* fChain->SetBranchAddress("bb.gem.m11.clust.nclustu", &bb_gem_m11_clust_nclustu, &b_bb_gem_m11_clust_nclustu); */
+   /* fChain->SetBranchAddress("bb.gem.m11.clust.nclustu_tot", &bb_gem_m11_clust_nclustu_tot, &b_bb_gem_m11_clust_nclustu_tot); */
+   /* fChain->SetBranchAddress("bb.gem.m11.clust.nclustv", &bb_gem_m11_clust_nclustv, &b_bb_gem_m11_clust_nclustv); */
+   /* fChain->SetBranchAddress("bb.gem.m11.clust.nclustv_tot", &bb_gem_m11_clust_nclustv_tot, &b_bb_gem_m11_clust_nclustv_tot); */
+   /* fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keep", &bb_gem_m11_strip_nstrips_keep, &b_bb_gem_m11_strip_nstrips_keep); */
+   /* fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keepU", &bb_gem_m11_strip_nstrips_keepU, &b_bb_gem_m11_strip_nstrips_keepU); */
+   /* fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keepV", &bb_gem_m11_strip_nstrips_keepV, &b_bb_gem_m11_strip_nstrips_keepV); */
+   /* fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keep_lmax", &bb_gem_m11_strip_nstrips_keep_lmax, &b_bb_gem_m11_strip_nstrips_keep_lmax); */
+   /* fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keep_lmaxU", &bb_gem_m11_strip_nstrips_keep_lmaxU, &b_bb_gem_m11_strip_nstrips_keep_lmaxU); */
+   /* fChain->SetBranchAddress("bb.gem.m11.strip.nstrips_keep_lmaxV", &bb_gem_m11_strip_nstrips_keep_lmaxV, &b_bb_gem_m11_strip_nstrips_keep_lmaxV); */
+   /* fChain->SetBranchAddress("bb.gem.m11.strip.nstripsfired", &bb_gem_m11_strip_nstripsfired, &b_bb_gem_m11_strip_nstripsfired); */
    fChain->SetBranchAddress("bb.gem.m2.clust.nclustu", &bb_gem_m2_clust_nclustu, &b_bb_gem_m2_clust_nclustu);
    fChain->SetBranchAddress("bb.gem.m2.clust.nclustu_tot", &bb_gem_m2_clust_nclustu_tot, &b_bb_gem_m2_clust_nclustu_tot);
    fChain->SetBranchAddress("bb.gem.m2.clust.nclustv", &bb_gem_m2_clust_nclustv, &b_bb_gem_m2_clust_nclustv);
@@ -4379,28 +4379,28 @@ void gmn_tree::Init(TTree *tree)
    fChain->SetBranchAddress("bb.gem.m7.strip.nstrips_keep_lmaxU", &bb_gem_m7_strip_nstrips_keep_lmaxU, &b_bb_gem_m7_strip_nstrips_keep_lmaxU);
    fChain->SetBranchAddress("bb.gem.m7.strip.nstrips_keep_lmaxV", &bb_gem_m7_strip_nstrips_keep_lmaxV, &b_bb_gem_m7_strip_nstrips_keep_lmaxV);
    fChain->SetBranchAddress("bb.gem.m7.strip.nstripsfired", &bb_gem_m7_strip_nstripsfired, &b_bb_gem_m7_strip_nstripsfired);
-   fChain->SetBranchAddress("bb.gem.m8.clust.nclustu", &bb_gem_m8_clust_nclustu, &b_bb_gem_m8_clust_nclustu);
-   fChain->SetBranchAddress("bb.gem.m8.clust.nclustu_tot", &bb_gem_m8_clust_nclustu_tot, &b_bb_gem_m8_clust_nclustu_tot);
-   fChain->SetBranchAddress("bb.gem.m8.clust.nclustv", &bb_gem_m8_clust_nclustv, &b_bb_gem_m8_clust_nclustv);
-   fChain->SetBranchAddress("bb.gem.m8.clust.nclustv_tot", &bb_gem_m8_clust_nclustv_tot, &b_bb_gem_m8_clust_nclustv_tot);
-   fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keep", &bb_gem_m8_strip_nstrips_keep, &b_bb_gem_m8_strip_nstrips_keep);
-   fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keepU", &bb_gem_m8_strip_nstrips_keepU, &b_bb_gem_m8_strip_nstrips_keepU);
-   fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keepV", &bb_gem_m8_strip_nstrips_keepV, &b_bb_gem_m8_strip_nstrips_keepV);
-   fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keep_lmax", &bb_gem_m8_strip_nstrips_keep_lmax, &b_bb_gem_m8_strip_nstrips_keep_lmax);
-   fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keep_lmaxU", &bb_gem_m8_strip_nstrips_keep_lmaxU, &b_bb_gem_m8_strip_nstrips_keep_lmaxU);
-   fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keep_lmaxV", &bb_gem_m8_strip_nstrips_keep_lmaxV, &b_bb_gem_m8_strip_nstrips_keep_lmaxV);
-   fChain->SetBranchAddress("bb.gem.m8.strip.nstripsfired", &bb_gem_m8_strip_nstripsfired, &b_bb_gem_m8_strip_nstripsfired);
-   fChain->SetBranchAddress("bb.gem.m9.clust.nclustu", &bb_gem_m9_clust_nclustu, &b_bb_gem_m9_clust_nclustu);
-   fChain->SetBranchAddress("bb.gem.m9.clust.nclustu_tot", &bb_gem_m9_clust_nclustu_tot, &b_bb_gem_m9_clust_nclustu_tot);
-   fChain->SetBranchAddress("bb.gem.m9.clust.nclustv", &bb_gem_m9_clust_nclustv, &b_bb_gem_m9_clust_nclustv);
-   fChain->SetBranchAddress("bb.gem.m9.clust.nclustv_tot", &bb_gem_m9_clust_nclustv_tot, &b_bb_gem_m9_clust_nclustv_tot);
-   fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keep", &bb_gem_m9_strip_nstrips_keep, &b_bb_gem_m9_strip_nstrips_keep);
-   fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keepU", &bb_gem_m9_strip_nstrips_keepU, &b_bb_gem_m9_strip_nstrips_keepU);
-   fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keepV", &bb_gem_m9_strip_nstrips_keepV, &b_bb_gem_m9_strip_nstrips_keepV);
-   fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keep_lmax", &bb_gem_m9_strip_nstrips_keep_lmax, &b_bb_gem_m9_strip_nstrips_keep_lmax);
-   fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keep_lmaxU", &bb_gem_m9_strip_nstrips_keep_lmaxU, &b_bb_gem_m9_strip_nstrips_keep_lmaxU);
-   fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keep_lmaxV", &bb_gem_m9_strip_nstrips_keep_lmaxV, &b_bb_gem_m9_strip_nstrips_keep_lmaxV);
-   fChain->SetBranchAddress("bb.gem.m9.strip.nstripsfired", &bb_gem_m9_strip_nstripsfired, &b_bb_gem_m9_strip_nstripsfired);
+   /* fChain->SetBranchAddress("bb.gem.m8.clust.nclustu", &bb_gem_m8_clust_nclustu, &b_bb_gem_m8_clust_nclustu); */
+   /* fChain->SetBranchAddress("bb.gem.m8.clust.nclustu_tot", &bb_gem_m8_clust_nclustu_tot, &b_bb_gem_m8_clust_nclustu_tot); */
+   /* fChain->SetBranchAddress("bb.gem.m8.clust.nclustv", &bb_gem_m8_clust_nclustv, &b_bb_gem_m8_clust_nclustv); */
+   /* fChain->SetBranchAddress("bb.gem.m8.clust.nclustv_tot", &bb_gem_m8_clust_nclustv_tot, &b_bb_gem_m8_clust_nclustv_tot); */
+   /* fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keep", &bb_gem_m8_strip_nstrips_keep, &b_bb_gem_m8_strip_nstrips_keep); */
+   /* fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keepU", &bb_gem_m8_strip_nstrips_keepU, &b_bb_gem_m8_strip_nstrips_keepU); */
+   /* fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keepV", &bb_gem_m8_strip_nstrips_keepV, &b_bb_gem_m8_strip_nstrips_keepV); */
+   /* fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keep_lmax", &bb_gem_m8_strip_nstrips_keep_lmax, &b_bb_gem_m8_strip_nstrips_keep_lmax); */
+   /* fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keep_lmaxU", &bb_gem_m8_strip_nstrips_keep_lmaxU, &b_bb_gem_m8_strip_nstrips_keep_lmaxU); */
+   /* fChain->SetBranchAddress("bb.gem.m8.strip.nstrips_keep_lmaxV", &bb_gem_m8_strip_nstrips_keep_lmaxV, &b_bb_gem_m8_strip_nstrips_keep_lmaxV); */
+   /* fChain->SetBranchAddress("bb.gem.m8.strip.nstripsfired", &bb_gem_m8_strip_nstripsfired, &b_bb_gem_m8_strip_nstripsfired); */
+   /* fChain->SetBranchAddress("bb.gem.m9.clust.nclustu", &bb_gem_m9_clust_nclustu, &b_bb_gem_m9_clust_nclustu); */
+   /* fChain->SetBranchAddress("bb.gem.m9.clust.nclustu_tot", &bb_gem_m9_clust_nclustu_tot, &b_bb_gem_m9_clust_nclustu_tot); */
+   /* fChain->SetBranchAddress("bb.gem.m9.clust.nclustv", &bb_gem_m9_clust_nclustv, &b_bb_gem_m9_clust_nclustv); */
+   /* fChain->SetBranchAddress("bb.gem.m9.clust.nclustv_tot", &bb_gem_m9_clust_nclustv_tot, &b_bb_gem_m9_clust_nclustv_tot); */
+   /* fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keep", &bb_gem_m9_strip_nstrips_keep, &b_bb_gem_m9_strip_nstrips_keep); */
+   /* fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keepU", &bb_gem_m9_strip_nstrips_keepU, &b_bb_gem_m9_strip_nstrips_keepU); */
+   /* fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keepV", &bb_gem_m9_strip_nstrips_keepV, &b_bb_gem_m9_strip_nstrips_keepV); */
+   /* fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keep_lmax", &bb_gem_m9_strip_nstrips_keep_lmax, &b_bb_gem_m9_strip_nstrips_keep_lmax); */
+   /* fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keep_lmaxU", &bb_gem_m9_strip_nstrips_keep_lmaxU, &b_bb_gem_m9_strip_nstrips_keep_lmaxU); */
+   /* fChain->SetBranchAddress("bb.gem.m9.strip.nstrips_keep_lmaxV", &bb_gem_m9_strip_nstrips_keep_lmaxV, &b_bb_gem_m9_strip_nstrips_keep_lmaxV); */
+   /* fChain->SetBranchAddress("bb.gem.m9.strip.nstripsfired", &bb_gem_m9_strip_nstripsfired, &b_bb_gem_m9_strip_nstripsfired); */
    fChain->SetBranchAddress("bb.gem.nlayershit", &bb_gem_nlayershit, &b_bb_gem_nlayershit);
    fChain->SetBranchAddress("bb.gem.nlayershitu", &bb_gem_nlayershitu, &b_bb_gem_nlayershitu);
    fChain->SetBranchAddress("bb.gem.nlayershituv", &bb_gem_nlayershituv, &b_bb_gem_nlayershituv);

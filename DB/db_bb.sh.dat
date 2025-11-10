@@ -3660,7 +3660,7 @@ bb.sh.tmax = 50.0
 
 ## ADCtime offsets using cosmic data (Target ADC time = 40 ns)
 ## Used cosmic run 1462
-#bb.sh.adc.timeoffset =
+bb.sh.adc.timeoffset =
 -3.01243 -2.75369 -2.88749 0.842004 -0.893275 0.242366 -5.44985
 -0.737429 -3.15094 -4.66251 -4.06358 -2.0572 -2.36377 -1.0596
 -0.228508 -4.37466 0.313585 -0.0831489 -0.294379 0.104916 -1.53813

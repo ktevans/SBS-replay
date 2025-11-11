@@ -3022,7 +3022,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     if( testrow < 24 ){
       testid = testcol + testrow*12 + 1;
       if( listbadHCAL.find(testid) == listbadHCAL.end() ){
-	T0avg_neighbors += ToffSH[testid-1];
+	T0avg_neighbors += ToffHCAL[testid-1];
 	nnear+=1.0;
       }
     }

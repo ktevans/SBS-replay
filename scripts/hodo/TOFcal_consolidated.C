@@ -572,8 +572,12 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
   double beta_ptheta_central = pp_ptheta_central/(Tp_ptheta_central+Mp);
 
+  double pn_ptheta_central = 2.0*Mn*Ebeam*(Mn+Ebeam)*cos(thetaHCAL)/(pow(Mn,2)+2.0*Mn*Ebeam + pow(Ebeam*sin(thetaHCAL),2));
+  double beta_ntheta_central = pn_ptheta_central/sqrt(pow(pn_ptheta_central,2)+pow(Mn,2));
+  
   double ptof_central_default = dHCAL/(beta_ptheta_central*0.299792458);
-
+  double ntof_central_default = dHCAL/(beta_ntheta_central*0.299792458);
+  
   if( nfieldsettings > 0 ){
     for( int iset=0; iset<nfieldsettings; iset++ ){
       if( sbsfield[iset] > 0. ){
@@ -2127,11 +2131,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	double deltax_n4vect = xHCAL-(xHCAL_expect_4vect);
 	double deltay_4vect = yHCAL - yHCAL_expect_4vect;
 	
-	if( eblkHCAL > 0.02 && W2>W2min && W2<W2max ){
-	  hdxdy->Fill( deltay,deltax );
-	  hdxdy_p->Fill( deltay_4vect, deltax_p4vect );
-	  hdxdy_n->Fill( deltay_4vect, deltax_n4vect );
-	}
+
 
 	bool elcut_p_LH2 = W2>W2min && W2<W2max && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut;
 	
@@ -2147,13 +2147,26 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	
 	//default proton LH2:
 	bool elcut = elcut_p_LH2 || !use_elastic_cut_HCAL;
+
+	int targtemp = 0;
+	
 	if( ntargsettings > 0 ){
 	  for( int i=0; i<ntargsettings; i++ ){
 	    if( T->g_runnum >= rmin_tgt[i] && T->g_runnum <= rmax_tgt[i] ){
 	      if( targnum[i] == 1 ){ //LD2; switch to 4-vector:
 		elcut = elcut_p_LD2 || elcut_n_LD2 || !use_elastic_cut_HCAL;
+		targtemp = 1;
 	      }
 	    }
+	  }
+	}
+	
+	if( eblkHCAL > 0.02 && W2>W2min && W2<W2max ){
+	  if( targtemp == 0 ){
+	    hdxdy->Fill( deltay,deltax );
+	  } else {
+	    hdxdy_p->Fill( deltay_4vect, deltax_p4vect );
+	    hdxdy_n->Fill( deltay_4vect, deltax_n4vect );
 	  }
 	}
 	
@@ -2164,6 +2177,20 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  // cout << "Elastic event found: (pTOF expect, pTOF central, diff)=("
 	  //      << TOF_HCAL_expect << ", " << ptof_central_temp << ", "
 	  //      << TOF_HCAL_expect - ptof_central_temp << ")" << endl;
+
+	  double TOFcorr = 0.0;
+	  if( use_elastic_cut_HCAL ){
+	    if( elcut_p_LH2 ){ //LH2 protons:
+	      TOFcorr = TOF_HCAL_expect - ptof_central_temp;
+	    } else if( targtemp == 1 ){ //LD2:
+	      if( elcut_p_LD2 ){ //LD2 protons:
+		TOFcorr = TOF_HCAL_expect_p4vect - ptof_central_temp;
+	      } else { //LD2 neutrons:
+		TOFcorr = TOF_HCAL_expect_n4vect - ntof_central_default;
+	      }
+	    }
+	  }
+	     
 	  
 	  for( int iblk=0; iblk<nblkHCAL; iblk++ ){
 

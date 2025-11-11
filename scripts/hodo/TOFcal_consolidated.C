@@ -1728,7 +1728,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   TH2D *hdxdy = new TH2D("hdxdy",";#Deltay (m); #Deltax (m)",250,-1.25,1.25,250,-1.25,1.25);
 
   TH2D *hdxdy_p = new TH2D("hdxdy_p", "Proton hypothesis (4-vector); #Deltay (m); #Deltax (m)", 250,-2.5,2.5,500,-5,4);
-  TH2D *hdxdy_n = new TH2D("hdxdy_n", "Neutron hypothesis (4-vector); #Deltay (m); #Deltax (m)", 250,-1.25,1.25,500,-3,2);
+  TH2D *hdxdy_n = new TH2D("hdxdy_n", "Neutron hypothesis (4-vector); #Deltay (m); #Deltax (m)", 250,-2.5,2.5,500,-3,2);
   
   vector<double> nevent_blk_HCAL(288,0.0);
   vector<double> nevent_blk_BBSH(189,0.0);
@@ -2200,7 +2200,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	    double t0 = HCAL_t0ADC[idblk-1];
 	    
 	    if( eblk >= 0.02 && (iblk == 0 || fabs( atimeblk - T->sbs_hcal_atimeblk) <= 6.0 ) && eblk >= 0.1 * T->sbs_hcal_eblk ){
-	      hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - t0 - (TOF_HCAL_expect - ptof_central_temp) - HodoTmean );
+	      //hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - t0 - (TOF_HCAL_expect - ptof_central_temp) - HodoTmean );
+	      hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - t0 - TOFcorr - HodoTmean );
 	    }
 	    
 	    if( T->sbs_hcal_clus_blk_tdctime[iblk] != -1000. && T->sbs_hcal_clus_blk_e[iblk] >= 0.025 ){

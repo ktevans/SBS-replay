@@ -32,6 +32,7 @@
 #include "TF1.h"
 
 const double Mp=0.938272;
+const double Mn = 0.939565;
 
 // long NEVENTSFIT;
 // vector<int> NHITS_EVENT;
@@ -169,6 +170,11 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   double dxsigma = 0.05;
   double dysigma = 0.05;
   double dxdy_nsigma_cut = 3.5;
+
+  double dx04vect = 0.0;
+  double dy04vect = 0.0;
+  double dxsigma4vect = 0.1;
+  double dysigma4vect = 0.1;
   
   while( currentline.ReadLine(configfile) && !currentline.BeginsWith("endconfig") ){
     if( !currentline.BeginsWith("#") ){
@@ -318,6 +324,22 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	if( skey.BeginsWith("dxdy_nsigma_cut") ){
 	  dxdy_nsigma_cut = sval.Atof();
 	}
+
+	if( skey.BeginsWith("dxsigma4vect") ){
+	  dxsigma4vect = sval.Atof();
+	}
+
+	if( skey.BeginsWith("dysigma4vect") ){
+	  dysigma4vect = sval.Atof();
+	}
+
+	if( skey.BeginsWith("dx04vect") ){
+	  dx04vect = sval.Atof();
+	}
+
+	if( skey.BeginsWith("dy04vect") ){
+	  dy04vect = sval.Atof();
+	}
 	
       }
     }
@@ -343,6 +365,32 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     }
   }
 
+  int ntargsettings=0;
+  
+  vector<int> rmin_tgt, rmax_tgt, targnum; //0 = LH2, 1 = LD2, default = LH2
+  
+  while( currentline.ReadLine(configfile) && !currentline.BeginsWith("endtargetconfig") ){
+    if( !currentline.BeginsWith("#") ){
+      TObjArray *tokens = currentline.Tokenize(" ");
+      //Here we expect three values per line, rmin, rmax, field (as fraction of maximum):
+      if( tokens->GetEntries() >= 3 ){
+	TString srmin = ( (TObjString*) (*tokens)[0] )->GetString();
+	TString srmax = ( (TObjString*) (*tokens)[1] )->GetString();
+	TString stargnum = ( (TObjString*) (*tokens)[2] )->GetString();
+
+	ntargsettings++;
+	rmin_tgt.push_back( srmin.Atoi() );
+	rmax_tgt.push_back( srmax.Atoi() );
+	int targtemp = stargnum.Atoi();
+	if( targtemp >=0 && targtemp <2 ){
+	  targnum.push_back( stargnum.Atoi() );
+	} else {
+	  targnum.push_back( 0 );
+	}
+      }
+    }
+  }
+  
   std::cout << "Number of field settings = " << nfieldsettings << endl;
 
   vector<double> cetof;
@@ -524,8 +572,12 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
   double beta_ptheta_central = pp_ptheta_central/(Tp_ptheta_central+Mp);
 
+  double pn_ptheta_central = 2.0*Mn*Ebeam*(Mn+Ebeam)*cos(thetaHCAL)/(pow(Mn,2)+2.0*Mn*Ebeam + pow(Ebeam*sin(thetaHCAL),2));
+  double beta_ntheta_central = pn_ptheta_central/sqrt(pow(pn_ptheta_central,2)+pow(Mn,2));
+  
   double ptof_central_default = dHCAL/(beta_ptheta_central*0.299792458);
-
+  double ntof_central_default = dHCAL/(beta_ntheta_central*0.299792458);
+  
   if( nfieldsettings > 0 ){
     for( int iset=0; iset<nfieldsettings; iset++ ){
       if( sbsfield[iset] > 0. ){
@@ -1675,6 +1727,9 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   
   TH2D *hdxdy = new TH2D("hdxdy",";#Deltay (m); #Deltax (m)",250,-1.25,1.25,250,-1.25,1.25);
 
+  TH2D *hdxdy_p = new TH2D("hdxdy_p", "Proton hypothesis (4-vector); #Deltay (m); #Deltax (m)", 250,-2.5,2.5,500,-5,4);
+  TH2D *hdxdy_n = new TH2D("hdxdy_n", "Neutron hypothesis (4-vector); #Deltay (m); #Deltax (m)", 250,-2.5,2.5,500,-3,2);
+  
   vector<double> nevent_blk_HCAL(288,0.0);
   vector<double> nevent_blk_BBSH(189,0.0);
   vector<double> nevent_blk_BBPS(52,0.0);
@@ -1971,29 +2026,47 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	
 	double ptheta_4vect = q.Vect().Theta();
 	double pphi_4vect = q.Vect().Phi();
+	double pp_e4vect = q.Vect().Mag();
 	
 	TVector3 pnhat_expect( sin(ptheta_etheta)*cos(pphi_ephi),
 			       sin(ptheta_etheta)*sin(pphi_ephi),
 			       cos(ptheta_etheta) );
+
+	TVector3 pnhat_expect_4vect( sin(ptheta_4vect)*cos(pphi_4vect),
+				     sin(ptheta_4vect)*sin(pphi_4vect),
+				     cos(ptheta_4vect) );
 	
 	TVector3 vertex(0,0,vz);
 	
 	double sintersect = (HCALorigin-vertex).Dot(zaxis_HCAL)/(pnhat_expect.Dot(zaxis_HCAL));
+	double sint_4vect = (HCALorigin-vertex).Dot(zaxis_HCAL)/(pnhat_expect_4vect.Dot(zaxis_HCAL));
 	
 	TVector3 HCAL_intersect = vertex + sintersect * pnhat_expect;
+	TVector3 HCALint_4vect = vertex + sint_4vect * pnhat_expect_4vect;
 	
 	double xHCAL_expect = (HCAL_intersect - HCALorigin).Dot( xaxis_HCAL );
 	double yHCAL_expect = (HCAL_intersect - HCALorigin).Dot( yaxis_HCAL );
+
+	double xHCAL_expect_4vect = (HCALint_4vect - HCALorigin).Dot( xaxis_HCAL );
+	double yHCAL_expect_4vect = (HCALint_4vect - HCALorigin).Dot( yaxis_HCAL );
 	
 	double Lpath_HCAL_expect = (HCAL_intersect - vertex).Mag();
+	double Lpath_HCAL_expect_4vect = (HCALint_4vect - vertex).Mag();
 	
 	double beta_proton = pp_etheta/sqrt(pow(pp_etheta,2)+pow(Mp,2));
-	
-	double TOF_HCAL_expect = Lpath_HCAL_expect/(beta_proton*0.299792458);
 
-	double protondeflection = 0.0;
+	double betap_4vect = pp_e4vect/sqrt(pow(pp_e4vect,2)+pow(Mp,2));
+	double betan_4vect = pp_e4vect/sqrt(pow(pp_e4vect,2)+pow(Mn,2));
+
+	//expected PROTON TOF
+	double TOF_HCAL_expect = Lpath_HCAL_expect/(beta_proton*0.299792458);
+	double TOF_HCAL_expect_p4vect = Lpath_HCAL_expect_4vect/(betap_4vect*0.299792458);
+	double TOF_HCAL_expect_n4vect = Lpath_HCAL_expect_4vect/(betan_4vect*0.299792458);
 	
-	if( sbsfield_temp != 0. ){ //Calculated expected TOF with correction for magnetic deflection:
+	double protondeflection = 0.0;
+	double protondeflection_4vect = 0.0;
+	
+	if( sbsfield_temp != 0. ){ //Calculated expected proton TOF with correction for magnetic deflection:
 	  double BdL = sbsfield_temp * Dgap;
 	  double Radius = pp_etheta/0.299792458/sbsfield_temp;
 	  double thtar_expect = atan( pnhat_expect.Dot( xaxis_HCAL ) / pnhat_expect.Dot( zaxis_HCAL ) );
@@ -2016,6 +2089,24 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
 	  double xproj_HCAL = x_out + tan(theta_out) * (dHCAL-z_out);
 	  protondeflection = xHCAL_expect - xproj_HCAL;
+
+
+	  //Now do 4-vector calculation:
+	  thtar_expect = atan( pnhat_expect_4vect.Dot(xaxis_HCAL)/pnhat_expect_4vect.Dot(zaxis_HCAL) );
+	  x_in = (dSBS - vertex.Dot(zaxis_HCAL))*tan(thtar_expect);
+	  Radius = pp_e4vect / 0.299792458 / sbsfield_temp;
+	  x_center = x_in - Radius * cos(thtar_expect);
+	  z_center = z_in + Radius * sin(thtar_expect);
+	  B = -2.0*x_center;
+	  C = pow(x_center,2)+pow( z_out - z_center, 2 ) - pow(Radius,2);
+	  x_out = (-B + sqrt(pow(B,2)-4.*A*C))/(2.0*A);
+	  theta_out = asin( (z_center-z_out)/Radius );
+	  phtar_expect = atan( pnhat_expect_4vect.Dot( yaxis_HCAL ) / pnhat_expect_4vect.Dot( zaxis_HCAL ) );
+	  pathL = (dSBS-vertex.Dot(zaxis_HCAL))*sqrt(1.0+pow(tan(thtar_expect),2)+pow(tan(phtar_expect),2)) + Radius * (thtar_expect - theta_out) + (dHCAL-z_out)*sqrt(1.0+pow(tan(theta_out),2)+pow(tan(phtar_expect),2));
+	  TOF_HCAL_expect_p4vect = pathL/(betap_4vect*0.299792458);
+	  
+	  xproj_HCAL = x_out + tan(theta_out) * (dHCAL - z_out);
+	  protondeflection_4vect = xHCAL_expect_4vect - xproj_HCAL;
 	}
 
 	
@@ -2036,17 +2127,70 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	double deltax = xHCAL-(xHCAL_expect-protondeflection);
 	double deltay = yHCAL-(yHCAL_expect);
 
+	double deltax_p4vect = xHCAL-(xHCAL_expect_4vect-protondeflection_4vect);
+	double deltax_n4vect = xHCAL-(xHCAL_expect_4vect);
+	double deltay_4vect = yHCAL - yHCAL_expect_4vect;
+	
+
+
+	bool elcut_p_LH2 = W2>W2min && W2<W2max && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut;
+	
+	bool elcut_p_LD2 = W2>W2min && W2<W2max && sqrt(pow((deltax_p4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut;
+	bool elcut_n_LD2 = W2>W2min && W2<W2max && sqrt(pow((deltax_n4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut;
+
+	// if( elcut_n_LD2 ){
+	//   cout << "Proton deflection (m), (angles-only, 4-vector)=(" << protondeflection << ", " << protondeflection_4vect << ")" << endl;
+	//   cout << "expected proton momentum (GeV), (angles-only, 4-vector)=(" << pp_etheta << ", " << pp_e4vect << ")" << endl;
+	//   cout << "Expected nucleon three-vector, angles-only = "; pnhat_expect.Print();
+	//   cout << endl << "Expected nucleon three-vector, 4-vector method = "; pnhat_expect_4vect.Print();
+	// }
+	
+	//default proton LH2:
+	bool elcut = elcut_p_LH2 || !use_elastic_cut_HCAL;
+
+	int targtemp = 0;
+	
+	if( ntargsettings > 0 ){
+	  for( int i=0; i<ntargsettings; i++ ){
+	    if( T->g_runnum >= rmin_tgt[i] && T->g_runnum <= rmax_tgt[i] ){
+	      if( targnum[i] == 1 ){ //LD2; switch to 4-vector:
+		elcut = elcut_p_LD2 || elcut_n_LD2 || !use_elastic_cut_HCAL;
+		targtemp = 1;
+	      }
+	    }
+	  }
+	}
+	
 	if( eblkHCAL > 0.02 && W2>W2min && W2<W2max ){
-	  hdxdy->Fill( deltay,deltax );
+	  if( targtemp == 0 ){
+	    hdxdy->Fill( deltay,deltax );
+	  } else {
+	    hdxdy_p->Fill( deltay_4vect, deltax_p4vect );
+	    hdxdy_n->Fill( deltay_4vect, deltax_n4vect );
+	  }
 	}
 	
 	//if( W2min < W2 && W2 < W2max && sqrt(pow(deltax,2)+pow(deltay,2))<=0.24 && eblkHCAL>0.02 ){
-	if( (W2>W2min && W2<W2max && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut) ||
-	    !use_elastic_cut_HCAL ){
-
+	// if( (W2>W2min && W2<W2max && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut) ||
+	//     !use_elastic_cut_HCAL ){
+	if( elcut ){
 	  // cout << "Elastic event found: (pTOF expect, pTOF central, diff)=("
 	  //      << TOF_HCAL_expect << ", " << ptof_central_temp << ", "
 	  //      << TOF_HCAL_expect - ptof_central_temp << ")" << endl;
+
+	  double TOFcorr = 0.0;
+	  if( use_elastic_cut_HCAL ){
+	    if( elcut_p_LH2 ){ //LH2 protons:
+	      TOFcorr = TOF_HCAL_expect - ptof_central_temp;
+	    } else if( targtemp == 1 ){ //LD2:
+	      if( elcut_p_LD2 ){ //LD2 protons:
+		TOFcorr = TOF_HCAL_expect_p4vect - ptof_central_temp;
+	      } else { //LD2 neutrons:
+		TOFcorr = TOF_HCAL_expect_n4vect - ntof_central_default;
+	      }
+	    }
+	  }
+	     
 	  
 	  for( int iblk=0; iblk<nblkHCAL; iblk++ ){
 
@@ -2056,7 +2200,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	    double t0 = HCAL_t0ADC[idblk-1];
 	    
 	    if( eblk >= 0.02 && (iblk == 0 || fabs( atimeblk - T->sbs_hcal_atimeblk) <= 6.0 ) && eblk >= 0.1 * T->sbs_hcal_eblk ){
-	      hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - t0 - (TOF_HCAL_expect - ptof_central_temp) - HodoTmean );
+	      //hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - t0 - (TOF_HCAL_expect - ptof_central_temp) - HodoTmean );
+	      hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - t0 - TOFcorr - HodoTmean );
 	    }
 	    
 	    if( T->sbs_hcal_clus_blk_tdctime[iblk] != -1000. && T->sbs_hcal_clus_blk_e[iblk] >= 0.025 ){
@@ -2878,7 +3023,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     if( testrow < 24 ){
       testid = testcol + testrow*12 + 1;
       if( listbadHCAL.find(testid) == listbadHCAL.end() ){
-	T0avg_neighbors += ToffSH[testid-1];
+	T0avg_neighbors += ToffHCAL[testid-1];
 	nnear+=1.0;
       }
     }

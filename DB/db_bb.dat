@@ -2008,13 +2008,14 @@ bb.optics_order = 2
 
 bb.preconflag = 1
 
-bb.use_beampos = 0
+bb.use_beampos = 1
 
-bb.A_pth1 =       0.2775655
-bb.B_pth1 =        0.974132
-bb.C_pth1 = 0.0
-bb.A_pvy = 0
-bb.B_pvy = 0
+#these parameters are based on the GEN4b H2 elastics, no H2 elastics for GEN4
+bb.A_pth1 = 0.28640     #0.2775655
+bb.B_pth1 = 0.87122905  #0.974132
+bb.C_pth1 = 0.0         #0.0
+bb.A_pvy = -0.005704    #0
+bb.B_pvy = -16.054032   #0
 
 bb.optics_parameters = 
     -0.0190133122  -0.00237508732   0.00119967349  0  0 0 0 0 0
@@ -2105,24 +2106,19 @@ bb.etof_parameters =
 
 #bb.frontconstraint_x0 = -0.0656
 bb.frontconstraintwidth_x = 0.75
-bb.frontconstraintwidth_y = 0.25	
-
-#-------[ 2023-02-27 XX:07:00 ] # back to full-field running:-Holly to update tonight
-
-#bb.frontconstraint_x0 = 0.0443
-#bb.frontconstraintwidth_x = 0.15
-#bb.frontconstraintwidth_y = 0.11	
-
---------[ 2023-03-01 23:23:00 ] # start zero-field running
-
-bb.frontconstraintwidth_x = 0.75
 bb.frontconstraintwidth_y = 0.25
 
 -------[ 2023-03-02 02:47:00 ] # back to full-field running
 
-#bb.frontconstraint_x0 = 0.0523
+bb.frontconstraint_x0 = 0.0523
+bb.frontconstraint_y0 = -0.009
+bb.backconstraint_x0 = 0.003
+bb.backconstraint_y0 = 0.002
 
-
+bb.frontconstraintwidth_x = 0.15
+bb.frontconstraintwidth_y = 0.11
+bb.backconstraintwidth_x = 0.05
+bb.backconstraintwidth_y = 0.06
 
 
 -------[ 2023-09-01 00:00:00 ] # GEN-4b start
@@ -2139,13 +2135,13 @@ bb.optics_order = 2
 
 bb.preconflag = 1
 
-bb.use_beampos = 0
+bb.use_beampos = 1
 
-bb.A_pth1 = 0.287186374
-bb.B_pth1 = 0.798543608
-bb.C_pth1 = 0.0
-bb.A_pvy = 0
-bb.B_pvy = 0
+bb.A_pth1 = 0.28640     #0.287186374
+bb.B_pth1 = 0.87122905  #0.798543608
+bb.C_pth1 = 0.0         #0.0
+bb.A_pvy = -0.005704    #0
+bb.B_pvy = -16.054032   #0
 
 bb.optics_parameters = 
     -0.0176531785  -0.00510513983   0.00263487381               0  0 0 0 0 0
@@ -2196,20 +2192,13 @@ bb.forwardoptics_parameters =
         -0.50279      0.014872153      0.054740526      0.036410311  0 0 0 1 1
      0.016348603     -0.091233182      -0.12301598     -0.033432539  0 0 0 0 2
 
-
-
 bb.frontconstraint_x0 = 0.05766
-
-bb.frontconstraintwidth_x = 0.15
-bb.frontconstraintwidth_y = 0.11	
-
-bb.frontconstraint_x0 = -0.004
 bb.frontconstraint_y0 = 0.012
 bb.backconstraint_x0 = 0.00
 bb.backconstraint_y0 = 0.00
 
-bb.frontconstraintwidth_x = 0.06
-bb.frontconstraintwidth_y = 0.14
+bb.frontconstraintwidth_x = 0.15
+bb.frontconstraintwidth_y = 0.11
 bb.backconstraintwidth_x = 0.05
 bb.backconstraintwidth_y = 0.07
 
@@ -2222,17 +2211,16 @@ bb.frontconstraintwidth_y = 0.15
 
 --------[ 2023-10-19 15:38:00 ] # back to full field
 
-bb.frontconstraint_x0 = -0.004
-bb.frontconstraintwidth_x = 0.06
-bb.frontconstraintwidth_y = 0.14
-
 bb.frontconstraint_x0 = 0.05766
-
-#bb.backconstraintwidth_x = 0.12
-#bb.backconstraintwidth_y = 0.06
+bb.frontconstraint_y0 = 0.012
+bb.backconstraint_x0 = 0.00
+bb.backconstraint_y0 = 0.00
 
 bb.frontconstraintwidth_x = 0.15
-bb.frontconstraintwidth_y = 0.11	
+bb.frontconstraintwidth_y = 0.11
+bb.backconstraintwidth_x = 0.05
+bb.backconstraintwidth_y = 0.07
+
 
 --------[ 2023-11-01 00:00:00 ] # Start pion-ALL
 

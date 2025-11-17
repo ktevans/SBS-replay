@@ -578,7 +578,7 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
   //Variables for all HCAL clusters:
   C->SetBranchStatus("Ndata.sbs.hcal.clus.e",1);
   C->SetBranchStatus("sbs.hcal.nclus",1);
-  C->SetBranchStatus("sbs.hcal.clus.atime",1);
+  C->SetBranchStatus("sbs.hcal.clus.adctime",1);
   C->SetBranchStatus("sbs.hcal.clus.e",1);
   C->SetBranchStatus("sbs.hcal.clus.eblk",1);
   C->SetBranchStatus("sbs.hcal.clus.nblk",1);
@@ -686,7 +686,7 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
   C->SetBranchAddress("sbs.hcal.clus.x",xHCAL);
   C->SetBranchAddress("sbs.hcal.clus.y",yHCAL);
   C->SetBranchAddress("sbs.hcal.clus.e",EHCAL);
-  C->SetBranchAddress("sbs.hcal.clus.atime",ADCTIMEHCAL);
+  C->SetBranchAddress("sbs.hcal.clus.adctime",ADCTIMEHCAL);
   C->SetBranchAddress("sbs.hcal.clus.tdctime",TDCTIMEHCAL);
   C->SetBranchAddress("sbs.hcal.clus.eblk",EMAXHCAL);
   C->SetBranchAddress("sbs.hcal.clus.nblk",NBLKHCAL);

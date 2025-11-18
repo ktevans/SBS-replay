@@ -341,6 +341,15 @@ bb.hodotdc.tdiffoffset =
               0               0               0               0               0               0               0               0               0 
 
 
+--------[ 2021-11-08 17:00:00 ] # GMN SBS-7 EPAF 2025/11/18
+
+
+--------[ 2022-01-10 22:30:00 ] # GMN SBS-14 part 1 EPAF 2025/11/18
+
+
+--------[ 2022-01-12 16:00:00 ] # GMN SBS-14 part 2 EPAF 2025/11/18
+
+
 --------[ 2022-01-21 17:00:00 ] # GMN SBS-8
 
 bb.hodotdc.trigtime_central = 371.5 # this is the BBtrig_t0 value that was used in my calibrations for SBS-8

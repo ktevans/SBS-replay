@@ -882,6 +882,8 @@ bb.ps.adc.timeoffset =
 -39.9325794	-40.2585188
 -39.7581188	-43.5668188
 
+# New PS time calibration SBS-7 EPAF 2025/11/18
+
 ## Gain factor for energy calibration using cosmic: GeV/pC (Id: 7001)
 ## Asuming trigger amplitudes are aligned to 25mV (Run used : 11870 (cosmic))
 bb.ps.adc.gain =
@@ -1322,6 +1324,8 @@ bb.ps.adc.gain =
 #-40 -40
 #-40 -40
 #-40 -40
+
+# New PS time calibration SBS-14 EPAF 2025/11/18
 
 # New PS time calibration SBS-9 AJRP 10/9/2025, using as baseline/default for recalibration of other GMN kinematics:
 bb.ps.adc.timeoffset = 

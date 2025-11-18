@@ -972,6 +972,8 @@ bb.sh.adc.timeoffset =
 -47.311081	-48.113913	-46.652275	-47.834579	-47.61515	-46.402751	-47.141544
 -45.027792	-43.108384	-44.363284	-45.527113	-46.029313	-33.851113	-52.111313
 
+# New SH time calibration SBS-7 EPAF 2025/11/18
+
 ## Gain factor for energy calibration using cosmic: GeV/pC (Id: 7001)
 ## Asuming trigger amplitudes are aligned to 25mV (Run used : 11870 (cosmic))
 bb.sh.adc.gain =
@@ -1463,6 +1465,9 @@ bb.sh.adc.timeoffset =
 -47.311081	-48.113913	-46.652275	-47.834579	-47.61515	-46.402751	-47.141544
 -45.027792	-43.108384	-44.363284	-45.527113	-46.029313	-33.851113	-52.111313
 
+# New SH time calibration SBS-14 EPAF 2025/11/18
+
+
 -------[ 2022-01-12 16:00:00 ]
 ## SBS14 - Set 1. See https://logbooks.jlab.org/entry/4170774
 #bb.sh.adc.timeoffset =
@@ -1523,6 +1528,9 @@ bb.sh.adc.timeoffset =
 -48.897497	-51.160985	-49.582807	-50.599245	-49.493398	-48.635878	-45.359397
 -47.311081	-48.113913	-46.652275	-47.834579	-47.61515	-46.402751	-47.141544
 -45.027792	-43.108384	-44.363284	-45.527113	-46.029313	-33.851113	-52.111313
+
+# New SH time calibration SBS-14 EPAF 2025/11/18
+
 
 -------[ 2022-01-10 22:30:00 ]
 ## Gain factor for energy calibration using cosmic: GeV/pC

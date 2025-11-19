@@ -106,7 +106,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   double dHCAL = 11.0;
   double dSBS = 2.25;
 
-  double W2min=0.6, W2max=1.2;
+  double W2min=0.5, W2max=1.1;
+  double W2min_LD2 = 0.1, W2max_LD2 = 1.2;
   bool use_elastic_cut_HCAL = true;
   
   double sbsmaxfield = 1.26;
@@ -272,6 +273,14 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  W2max = sval.Atof();
 	}
 
+	if( skey.BeginsWith("W2min_LD2") ){
+	  W2min_LD2 = sval.Atof();
+	}
+
+	if( skey.BeginsWith("W2max_LD2") ){
+	  W2max_LD2 = sval.Atof();
+	}
+	
 	if( skey.BeginsWith("meantime_offsets_old") ){
 	  fname_meantime_offsets = sval;
 	}
@@ -1724,11 +1733,17 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   TH2D *htdiffHCAL_vs_HCALID_new = new TH2D("htdiffHCAL_vs_HCALID_new", "NEW hodo, old HCAL; HCAL ID; t_{HCAL}-t_{HODO,corr} (ns)",289,-0.5,288.5,250,-25,25); 
 
   TH2D *htdiffHCAL_vs_eblk_all = new TH2D("htdiffHCAL_vs_eblk_all", "NEW hodo, old HCAL; energy deposit (GeV); #Deltat(ns)",250,0.0,1.0,250,-25,25);
+
+  TH1D *hW2_xycut = new TH1D("hW2_xycut", "LH2 proton spot cut; W^{2} (GeV^{2});",250,-1,4);
+  TH1D *hW2_xycut_p = new TH1D("hW2_xycut_p", "LD2 proton spot cut; W^{2} (GeV^{2});",250,-1,4);
+  TH1D *hW2_xycut_n = new TH1D("hW2_xycut_n", "LD2 neutron spot cut; W^{2} (GeV^{2});",250,-1,4);
   
   TH2D *hdxdy = new TH2D("hdxdy",";#Deltay (m); #Deltax (m)",250,-1.25,1.25,250,-1.25,1.25);
-
+  
   TH2D *hdxdy_p = new TH2D("hdxdy_p", "Proton hypothesis (4-vector); #Deltay (m); #Deltax (m)", 250,-2.5,2.5,500,-5,4);
   TH2D *hdxdy_n = new TH2D("hdxdy_n", "Neutron hypothesis (4-vector); #Deltay (m); #Deltax (m)", 250,-2.5,2.5,500,-3,2);
+
+  TH2D *hdxdy_nodeflect_LH2 = new TH2D("hdxdy_nodeflect_LH2", "LH2 (no deflection correction); #Deltay (m); #Deltax (m)", 250,-2.5,2.5,250,-3,2);
   
   vector<double> nevent_blk_HCAL(288,0.0);
   vector<double> nevent_blk_BBSH(189,0.0);
@@ -2123,7 +2138,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	//	double protondeflection = tan(thetabend)*(dHCAL-(dSBS+Dgap/2.0)); 
 	
 	//int idblkHCAL = T->sbs_hcal_idblk;
-	
+
+	double deltax_nodeflect = xHCAL - xHCAL_expect;
 	double deltax = xHCAL-(xHCAL_expect-protondeflection);
 	double deltay = yHCAL-(yHCAL_expect);
 
@@ -2131,12 +2147,13 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	double deltax_n4vect = xHCAL-(xHCAL_expect_4vect);
 	double deltay_4vect = yHCAL - yHCAL_expect_4vect;
 	
-
+	
+	
 
 	bool elcut_p_LH2 = W2>W2min && W2<W2max && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut;
 	
-	bool elcut_p_LD2 = W2>W2min && W2<W2max && sqrt(pow((deltax_p4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut;
-	bool elcut_n_LD2 = W2>W2min && W2<W2max && sqrt(pow((deltax_n4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut;
+	bool elcut_p_LD2 = W2>W2min_LD2 && W2<W2max_LD2 && sqrt(pow((deltax_p4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut;
+	bool elcut_n_LD2 = W2>W2min_LD2 && W2<W2max_LD2 && sqrt(pow((deltax_n4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut;
 
 	// if( elcut_n_LD2 ){
 	//   cout << "Proton deflection (m), (angles-only, 4-vector)=(" << protondeflection << ", " << protondeflection_4vect << ")" << endl;
@@ -2160,10 +2177,23 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	    }
 	  }
 	}
+
+	if( targtemp == 0 && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut ){
+	  hW2_xycut->Fill( W2 );
+	}
+
+	if( targtemp == 1 && sqrt(pow((deltax_p4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut ){
+	  hW2_xycut_p->Fill( W2 );
+	}
+
+	if( targtemp == 1 && sqrt(pow((deltax_n4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut ){
+	  hW2_xycut_n->Fill( W2 );
+	}
 	
 	if( eblkHCAL > 0.02 && W2>W2min && W2<W2max ){
 	  if( targtemp == 0 ){
 	    hdxdy->Fill( deltay,deltax );
+	    hdxdy_nodeflect_LH2->Fill( deltay, deltax_nodeflect );
 	  } else {
 	    hdxdy_p->Fill( deltay_4vect, deltax_p4vect );
 	    hdxdy_n->Fill( deltay_4vect, deltax_n4vect );

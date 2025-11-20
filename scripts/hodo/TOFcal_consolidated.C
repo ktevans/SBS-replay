@@ -185,168 +185,168 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
 	TString sval = ( (TObjString*) (*currentline_tokens)[1] )->GetString();
 
-	if( skey.BeginsWith("BBtrig_t0") ){
+	if( skey.EqualTo("BBtrig_t0") ){
 	  BBtrig_t0 = sval.Atof();
 	}
 	
-	if( skey.BeginsWith("totmin") ){
+	if( skey.EqualTo("totmin") ){
 	  totmin = sval.Atof();
 	}
 
-	if( skey.BeginsWith("totmax") ){
+	if( skey.EqualTo("totmax") ){
 	  totmax = sval.Atof();
 	}
 
-	if( skey.BeginsWith("tdiff_max") ){
+	if( skey.EqualTo("tdiff_max") ){
 	  tdiff_max = sval.Atof();
 	}
 
-	if( skey.BeginsWith("ydiff_max") ){
+	if( skey.EqualTo("ydiff_max") ){
 	  ydiff_max = sval.Atof();
 	}
 
-	if( skey.BeginsWith("xdiff_max") ){
+	if( skey.EqualTo("xdiff_max") ){
 	  xdiff_max = sval.Atof();
 	}
 
-	if( skey.BeginsWith("totdiff_max") ){
+	if( skey.EqualTo("totdiff_max") ){
 	  totdiff_max = sval.Atof();
 	}
 	
-	if( skey.BeginsWith("mineventsperbar") ){
+	if( skey.EqualTo("mineventsperbar") ){
 	  mineventsperbar = sval.Atoi();
 	}
 	
-	if( skey.BeginsWith("hodorefID") ){
+	if( skey.EqualTo("hodorefID") ){
 	  hodorefID = sval.Atoi();
 	}
 
-	if( skey.BeginsWith("hcalrefID") ){
+	if( skey.EqualTo("hcalrefID") ){
 	  hcalrefID = sval.Atoi();
 	}
 
-	if( skey.BeginsWith("zhodo") ){
+	if( skey.EqualTo("zhodo") ){
 	  zhodo = sval.Atof();
 	}
 
-	if( skey.BeginsWith("Lbar_hodo") ){
+	if( skey.EqualTo("Lbar_hodo") ){
 	  Lbar_hodo = sval.Atof();
 	}
 
-	if( skey.BeginsWith("etof0") ){
+	if( skey.EqualTo("etof0") ){
 	  etof0 = sval.Atof();
 	}
 
-	if( skey.BeginsWith("bunch_spacing_ns") ){
+	if( skey.EqualTo("bunch_spacing_ns") ){
 	  bunch_spacing_ns = sval.Atof();
 	}
 
-	if( skey.BeginsWith( "RFoffsets" ) ){
+	if( skey.EqualTo( "RFoffsets" ) ){
 	  fname_RFoffsets = sval;
 	}
 
-	if( skey.BeginsWith( "userfcorr" ) ){
+	if( skey.EqualTo( "userfcorr" ) ){
 	  int val = sval.Atoi();
 	  useRFcorr = val > 0;
 	}
 
-	if( skey.BeginsWith("ebeam") ){
+	if( skey.EqualTo("ebeam") ){
 	  Ebeam = sval.Atof();
 	}
 
-	if( skey.BeginsWith("sbsmaxfield") ){
+	if( skey.EqualTo("sbsmaxfield") ){
 	  sbsmaxfield = sval.Atof();
 	}
-	if( skey.BeginsWith("sbsdist") ){
+	if( skey.EqualTo("sbsdist") || skey.EqualTo("dSBS")){
 	  dSBS = sval.Atof();
 	}
-	if( skey.BeginsWith("hcaldist") ){
+	if( skey.EqualTo("hcaldist") || skey.EqualTo("dHCAL") ){
 	  dHCAL = sval.Atof();
 	}
-	if( skey.BeginsWith("thetaHCAL") ){
+	if( skey.EqualTo("thetaHCAL") ){
 	  thetaHCAL = sval.Atof();
 	}
-	if( skey.BeginsWith("W2min") ){
+	if( skey.EqualTo("W2min") ){
 	  W2min = sval.Atof();
 	}
-	if( skey.BeginsWith("W2max") ){
+	if( skey.EqualTo("W2max") ){
 	  W2max = sval.Atof();
 	}
 
-	if( skey.BeginsWith("W2min_LD2") ){
+	if( skey.EqualTo("W2min_LD2") ){
 	  W2min_LD2 = sval.Atof();
 	}
 
-	if( skey.BeginsWith("W2max_LD2") ){
+	if( skey.EqualTo("W2max_LD2") ){
 	  W2max_LD2 = sval.Atof();
 	}
 	
-	if( skey.BeginsWith("meantime_offsets_old") ){
+	if( skey.EqualTo("meantime_offsets_old") ){
 	  fname_meantime_offsets = sval;
 	}
 
-	if( skey.BeginsWith("vscint_old") ){
+	if( skey.EqualTo("vscint_old") ){
 	  fname_vscint_old = sval;
 	}
 
-	if( skey.BeginsWith("walkcorr_old") ){ //walk correction slopes
+	if( skey.EqualTo("walkcorr_old") ){ //walk correction slopes
 	  fname_walkcorr_old = sval;
 	}
 
-	if( skey.BeginsWith("etofparams_old") ){
+	if( skey.EqualTo("etofparams_old") ){
 	  fname_etof_old = sval;
 	}
 	
-	if( skey.BeginsWith("useelasticcut_HCAL") ){
+	if( skey.EqualTo("useelasticcut_HCAL") ){
 	  use_elastic_cut_HCAL = (sval.Atoi() > 0);
 	}
 
-	if( skey.BeginsWith("HCAL_ADCtime_offsets") ){
+	if( skey.EqualTo("HCAL_ADCtime_offsets") ){
 	  fname_HCAL_ADCtime_offsets = sval;
 	}
-	if( skey.BeginsWith("BBSH_ADCtime_offsets") ){
+	if( skey.EqualTo("BBSH_ADCtime_offsets") ){
 	  fname_BBSH_ADCtime_offsets = sval;
 	}
-	if( skey.BeginsWith("BBPS_ADCtime_offsets") ){
+	if( skey.EqualTo("BBPS_ADCtime_offsets") ){
 	  fname_BBPS_ADCtime_offsets = sval;
 	}
 
-	if( skey.BeginsWith("fixhodoparams") ){
+	if( skey.EqualTo("fixhodoparams") ){
 	  fixhodoparams = ( sval.Atoi() != 0 );
 	}
 
-	if( skey.BeginsWith("dx0") ){
+	if( skey.EqualTo("dx0") ){
 	  dx0 = sval.Atof();
 	}
-	if( skey.BeginsWith("dy0") ){
+	if( skey.EqualTo("dy0") ){
 	  dy0 = sval.Atof();
 	}
 
-	if( skey.BeginsWith("dxsigma") ){
+	if( skey.EqualTo("dxsigma") ){
 	  dxsigma = sval.Atof();
 	}
 
-	if( skey.BeginsWith("dysigma") ){
+	if( skey.EqualTo("dysigma") ){
 	  dysigma = sval.Atof();
 	}
 
-	if( skey.BeginsWith("dxdy_nsigma_cut") ){
+	if( skey.EqualTo("dxdy_nsigma_cut") ){
 	  dxdy_nsigma_cut = sval.Atof();
 	}
 
-	if( skey.BeginsWith("dxsigma4vect") ){
+	if( skey.EqualTo("dxsigma4vect") ){
 	  dxsigma4vect = sval.Atof();
 	}
 
-	if( skey.BeginsWith("dysigma4vect") ){
+	if( skey.EqualTo("dysigma4vect") ){
 	  dysigma4vect = sval.Atof();
 	}
 
-	if( skey.BeginsWith("dx04vect") ){
+	if( skey.EqualTo("dx04vect") ){
 	  dx04vect = sval.Atof();
 	}
 
-	if( skey.BeginsWith("dy04vect") ){
+	if( skey.EqualTo("dy04vect") ){
 	  dy04vect = sval.Atof();
 	}
 	

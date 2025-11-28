@@ -485,6 +485,7 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
   
   double hodotmean[maxhodoclusters];
   double hodotdiff[maxhodoclusters];
+  double hodotfinal[maxhodoclusters];
 
   int nhodoclust; //number of TRACK-MATCHED hodo clusters:
 
@@ -574,6 +575,7 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
   C->SetBranchStatus("Ndata.bb.hodotdc.clus.tmean",1);
   C->SetBranchStatus("bb.hodotdc.clus.tmean",1);
   C->SetBranchStatus("bb.hodotdc.clus.tdiff",1);
+  C->SetBranchStatus("bb.hodotdc.clus.tfinal",1);
   
   //Variables for all HCAL clusters:
   C->SetBranchStatus("Ndata.sbs.hcal.clus.e",1);
@@ -701,6 +703,7 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
 
   C->SetBranchAddress("bb.hodotdc.clus.tmean",hodotmean);
   C->SetBranchAddress("bb.hodotdc.clus.tdiff",hodotdiff);
+  C->SetBranchAddress("bb.hodotdc.clus.tfinal",hodotfinal);
   C->SetBranchAddress("Ndata.bb.hodotdc.clus.tmean",&nhodoclust);
   
 
@@ -779,6 +782,8 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
   double T_dx_4vect, T_dy_4vect; //Here we want to use the 4-vector momentum transfer to calculate dx/dy
   double T_dt;
   double T_dta;
+  double T_Thodo;
+  
   double T_protondeflect, T_protondeflect_4vect, T_protondeflect_exact, T_protondeflect_exact_4vect;
   int T_grinch_tridx;
   int T_grinch_clustersize;
@@ -897,6 +902,8 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
   Tout->Branch( "protondeflection_exact_4vect", &T_protondeflect_exact, "protondeflection_exact_4vect/D");
   Tout->Branch( "ibest_HCAL", &bestHCALcluster, "ibest_HCAL/I" );
 
+  Tout->Branch( "THODO", &T_Thodo, "THODO/D" );
+  
   int T_HCALnblk;
   //Write out all the blocks in the best HCAL cluster:
   Tout->Branch( "nblkHCAL", &T_HCALnblk, "nblkHCAL/I" );
@@ -993,7 +1000,8 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
       T_thfp0 = thfp0[0];
       T_phfp0 = phfp0[0];
       
-
+      T_Thodo = hodotfinal[0];
+      
       T_ebeam = Ebeam_corrected;
       
       double etheta = acos(pz[0]/p[0]);

@@ -162,7 +162,7 @@ sbs.gem.max2Dhits = 25000 # per-module
 ############### Parameters searched by SBSGEMSpectrometerTracker::ReadDatabase() ######################
 
 # parameters controlling tracking:
-sbs.gem.minhitsontrack = 3 #4
+sbs.gem.minhitsontrack = 4 #4
 
 sbs.gem.maxhitcombos = 10000 #25000 for final &  50000 for first alignments
 sbs.gem.maxhitcombos_inner = 25000 #25000 for final & 50000 for first alignments
@@ -2153,7 +2153,7 @@ sbs.gem.m28.modulegain = 1
 sbs.gem.m29.modulegain = 0.813536
 
 -------[ 2023-01-15 00:00:00 ]
-sbs.gem.minhitsontrack = 3 #4
+sbs.gem.minhitsontrack = 4 #4
 
 # ###################### TIME-DEPENDENT PEDESTAL FILES ##########################
 

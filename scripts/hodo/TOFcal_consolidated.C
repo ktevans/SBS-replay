@@ -2309,11 +2309,14 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   }
   
   //bhodo.Print();
+  TString THdbfilename = outputfilename;
+  THdbfilename.ReplaceAll(".root",".dat");  
 
-  ofstream wLfile("hodowL_temp.dat");
-  ofstream wRfile("hodowR_temp.dat");
-  ofstream vscintfile("hodovscint_temp.dat");
-  ofstream t0file("hodot0_temp.dat");
+  ofstream wLfile(Form("hodowL_%s",THdbfilename.Data()));
+  ofstream wRfile(Form("hodowR_%s",THdbfilename.Data()));
+  ofstream vscintfile(Form("hodovscint_%s",THdbfilename.Data()));
+  ofstream t0file(Form("hodot0_%s",THdbfilename.Data()));
+  ofstream RFfile(Form("hodoRF_%s",THdbfilename.Data()));
   
   TString dbfilename(outputfilename);
   dbfilename.ReplaceAll(".root",".dat");
@@ -2382,9 +2385,11 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   for( int i=0; i<90; i++ ){
     if( i>0 && i%9 == 0 ){
       dbfile << endl;
+      RFfile << endl;
     }
     TString entry;
     dbfile << entry.Format("%15.6g", RFoffsets[i]) << " ";
+    RFfile << entry.Format("%15.6g", RFoffsets[i]) << " ";
   }
   dbfile << endl << endl;
 

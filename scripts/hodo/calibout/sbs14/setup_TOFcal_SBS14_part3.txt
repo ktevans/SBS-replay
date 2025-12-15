@@ -5,8 +5,6 @@
 endlist
 sbs.hcal.nclus>0&&bb.ps.e>0.2&&abs(bb.etot_over_p[0]-1.)<0.3&&abs(bb.tr.vz[0])<0.08&&abs(sbs.hcal.atimeblk-bb.hodotdc.clus.tfinal[0]-8)<10&&sbs.hcal.e>0.02
 endcut
-#BBtrig_t0 371.5
-#BBtrig_t0 361.2
 BBtrig_t0 370.9
 mineventsperbar 100
 etof0 16.1595667

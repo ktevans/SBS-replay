@@ -934,6 +934,9 @@ bb.hodotdc.tdiffoffset =
               0               0               0               0               0               0               0               0               0 
 
 -------[ 2022-01-18 19:00:00 ]  SBS-14 part-3 (SBS 0%) EPAF updated 2025/12/09
+
+bb.hodotdc.trigtime_central = 370.9 # this is the BBtrig_t0 value that was used in my calibrations for SBS-14 part-2
+
 bb.hodotdc.timewalk0map = 
       -0.276024       -0.266583       -0.271431       -0.254447       -0.253884       -0.229186        -0.25134       -0.259915       -0.252923 
       -0.226092        -0.22348       -0.241084       -0.275652       -0.281817       -0.248061       -0.261952        -0.25867       -0.249036 
@@ -1028,6 +1031,9 @@ bb.hodotdc.tdiffoffset =
 
 
 -------[ 2022-01-18 23:20:00 ]  SBS-14 part-2' (SBS 70%) EPAF updated 2025/12/09
+
+bb.hodotdc.trigtime_central = 370.9 # this is the BBtrig_t0 value that was used in my calibrations for SBS-14 part-2
+
 bb.hodotdc.timewalk0map = 
       -0.312673       -0.248535       -0.258586       -0.272574       -0.246782       -0.236766       -0.251632        -0.25321       -0.253505 
       -0.235427       -0.227224       -0.253865       -0.277151       -0.264559       -0.256632       -0.259838       -0.257113        -0.25764 

@@ -45,8 +45,37 @@ const double Mn = 0.939565;
 
 // }
 
+// TFitResultPtr FitGaus_FWHM( TH1D *Htest, double thresh=0.4 ){
+//   int binmax = Htest->GetMaximumBin();
+//   int binlow = binmax-1, binhigh = binmax+1;
+//   double max = Htest->GetBinContent(binmax);
+
+//   while( binlow > 1 && Htest->GetBinContent(binlow) >= thresh * max ){ binlow--; }
+//   while( binhigh < Htest->GetNbinsX() && Htest->GetBinContent(binhigh) >= thresh * max ){ binhigh++; }
+
+//   double xlow = Htest->GetBinLowEdge(binlow);
+//   double xhigh = Htest->GetBinLowEdge(binhigh+1);
+  
+//   return Htest->Fit("gaus","SQ","",xlow,xhigh);
+// }
+
 TFitResultPtr FitGaus_FWHM( TH1D *Htest, double thresh=0.4 ){
-  int binmax = Htest->GetMaximumBin();
+  //Let's do a 3-neighbor bin content sum to more accurately find the true peak bin from possible noisy neighbors.
+  int binmax = 1;
+  double highest_sum = 0.;
+
+  for ( int i = 2; i < Htest->GetNbinsX(); i++ ){
+    double sum = Htest->GetBinContent(i-1) +
+                 Htest->GetBinContent(i)   +
+                 Htest->GetBinContent(i+1);
+
+    if ( sum > highest_sum ) {
+      highest_sum = sum;
+      binmax = i;
+    }
+  }
+
+  //int binmax = Htest->GetMaximumBin();
   int binlow = binmax-1, binhigh = binmax+1;
   double max = Htest->GetBinContent(binmax);
 
@@ -58,6 +87,7 @@ TFitResultPtr FitGaus_FWHM( TH1D *Htest, double thresh=0.4 ){
   
   return Htest->Fit("gaus","SQ","",xlow,xhigh);
 }
+
 
 void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="TOFcal_temp.root"){
 
@@ -2309,11 +2339,14 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   }
   
   //bhodo.Print();
+  TString THdbfilename = outputfilename;
+  THdbfilename.ReplaceAll(".root",".dat");  
 
-  ofstream wLfile("hodowL_temp.dat");
-  ofstream wRfile("hodowR_temp.dat");
-  ofstream vscintfile("hodovscint_temp.dat");
-  ofstream t0file("hodot0_temp.dat");
+  ofstream wLfile(Form("hodowL_%s",THdbfilename.Data()));
+  ofstream wRfile(Form("hodowR_%s",THdbfilename.Data()));
+  ofstream vscintfile(Form("hodovscint_%s",THdbfilename.Data()));
+  ofstream t0file(Form("hodot0_%s",THdbfilename.Data()));
+  ofstream RFfile(Form("hodoRF_%s",THdbfilename.Data()));
   
   TString dbfilename(outputfilename);
   dbfilename.ReplaceAll(".root",".dat");
@@ -2382,9 +2415,11 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   for( int i=0; i<90; i++ ){
     if( i>0 && i%9 == 0 ){
       dbfile << endl;
+      RFfile << endl;
     }
     TString entry;
     dbfile << entry.Format("%15.6g", RFoffsets[i]) << " ";
+    RFfile << entry.Format("%15.6g", RFoffsets[i]) << " ";
   }
   dbfile << endl << endl;
 
@@ -2984,7 +3019,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       
       double mean = ftemp->GetParameter("Mean");
       //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
-      double dmean = ftemp->GetParError(ftemp->GetParameter("Sigma"));
+      //double dmean = ftemp->GetParError(ftemp->GetParameter("Sigma"));
+      double dmean = ftemp->GetParameter("Sigma");
       //These lines won't compile under older ROOT versions:
       // double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
       // double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
@@ -2993,7 +3029,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       ToffHCAL[i-1] = mean;
       dToffHCAL[i-1] = dmean;
     } else {
-      listbadHCAL.insert( i );
+      listbadHCAL.insert( i );      
     }
 
     if( (i)%9 == 0 ){

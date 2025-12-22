@@ -970,7 +970,7 @@ bb.ps.adc.gain =
 #-39.9325794	-40.2585188
 #-39.7581188	-43.5668188
 
-# New PS time calibration SBS-7 EPAF 2025/11/18
+# New PS time calibration SBS-7: updated 2025/12/19 (EPAF)
 bb.ps.adc.timeoffset = 
    -40.39276    -48.96823 
    -40.90535    -40.11844 
@@ -1382,7 +1382,7 @@ bb.ps.adc.gain =
 #-39.9325794	-40.2585188
 #-39.7581188	-43.5668188
 
-# New PS time calibration SBS-14 part-1 EPAF 2025/11/18
+# New PS time calibration SBS-14 part-1: updated 2025/12/19 (EPAF)
 bb.ps.adc.timeoffset = 
    -40.32524    -44.38801 
    -38.21896    -36.74686 
@@ -1470,7 +1470,7 @@ bb.ps.adc.timeoffset =
 #-39.9325794	-40.2585188
 #-39.7581188	-43.5668188
 
-# New PS time calibration SBS-14 part-2 EPAF updated 2025/12/06
+# New PS time calibration SBS-14 part-2: updated 2025/12/19 (EPAF)
 bb.ps.adc.timeoffset = 
    -46.50885    -51.68473 
    -47.78996    -46.15163 
@@ -1500,7 +1500,7 @@ bb.ps.adc.timeoffset =
    -40.71896    -45.58689 
 
 -------[ 2022-01-18 19:00:00 ]
-## SBS-14 - Part 3: SBS field 0%. EPAF 2025/12/06
+## SBS-14 - Part 3 (SBS field 0%): updated 2025/12/19 (EPAF)
 bb.ps.adc.timeoffset = 
    -48.16759    -51.18133 
     -46.7447    -44.06743 
@@ -1530,7 +1530,7 @@ bb.ps.adc.timeoffset =
    -41.34908    -45.15778 
  
 -------[ 2022-01-18 23:20:00 ]
-## SBS-14 - Part 2': SBS field 70%. EPAF 2025/12/06
+## SBS-14 - Part 2' (SBS field 70%): updated 2025/12/19 (EPAF)
 bb.ps.adc.timeoffset = 
    -46.50885    -51.68473 
    -47.78996    -46.15163 

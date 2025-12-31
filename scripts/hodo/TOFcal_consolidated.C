@@ -2658,18 +2658,53 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     //    dIDSH[i] = 0.0;
     
     if( htemp->GetEntries() >= 300 ){
-      FitGaus_FWHM( htemp );
+      TFitResultPtr fr = FitGaus_FWHM( htemp );
 
       htemp->Draw();
 
-      TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+      if( fr->IsValid() ){
       
-      double mean = ftemp->GetParameter("Mean");
-      //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
-      double dmean = ftemp->GetParameter("Sigma");
-      
-      ToffSH[i] = mean;
-      dToffSH[i] = dmean;
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+
+	double mean = ftemp->GetParameter("Mean");
+	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	double dmean = ftemp->GetParameter("Sigma");
+	
+	ToffSH[i] = mean;
+	dToffSH[i] = dmean;
+      } else { //try a simpler fit method; Gaussian with mean +/- 10 ns
+	fr = htemp->Fit("gaus","SQ", "", htemp->GetMean()-10.0, htemp->GetMean() + 10.0 );
+
+	if( fr->IsValid() ){
+	  TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	  
+	  double mean = ftemp->GetParameter("Mean");
+	  //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	  double dmean = ftemp->GetParameter("Sigma");
+	  
+	  ToffSH[i] = mean;
+	  dToffSH[i] = dmean;
+	} else {
+	  ToffSH[i] = htemp->GetMean();
+	  dToffSH[i] = htemp->GetRMS();
+	}
+      }
+    } else if( htemp->GetEntries() >= 100 ){
+      TFitResultPtr fr = htemp->Fit("gaus","SQ","",htemp->GetMean()-10.0, htemp->GetMean()+10.0);
+
+      if( fr->IsValid() ){
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+	double mean = ftemp->GetParameter("Mean");
+	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	double dmean = ftemp->GetParameter("Sigma");
+
+	ToffSH[i] = mean;
+	dToffSH[i] = dmean;
+      } else {
+	ToffSH[i] = htemp->GetMean();
+	dToffSH[i] = htemp->GetRMS();
+      }
     } else {
       listbadSH.insert( i );
     }
@@ -2761,7 +2796,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
       if( inear >= 0 ){
 	ToffSH[ibad] = ToffSH[inear];
-      }
+      } 
     }
   }
 
@@ -2843,23 +2878,56 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     //    dIDPS[i] = 0.0;
     
     if( htemp->GetEntries() >= 300 ){
-      FitGaus_FWHM( htemp );
+      TFitResultPtr fr = FitGaus_FWHM( htemp );
 
       htemp->Draw();
 
-      TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
-      
-      double mean = ftemp->GetParameter("Mean");
-      //double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
-      double dmean = ftemp->GetParameter("Sigma");
+      if( fr->IsValid() ){
+	
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+	double mean = ftemp->GetParameter("Mean");
+	//double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	double dmean = ftemp->GetParameter("Sigma");
+	
+	//These lines won't compile under older ROOT versions:
+	// double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
+	// double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
+	
+	ToffPS[i] = mean;
+	dToffPS[i] = dmean;
+      } else { //try a simpler fit method:
+	fr = htemp->Fit("gaus","SQ", "", htemp->GetMean()-10.0, htemp->GetMean() + 10.0 );
+	
+	if( fr->IsValid() ){
+	  TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	  
+	  double mean = ftemp->GetParameter("Mean");
+	  //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	  double dmean = ftemp->GetParameter("Sigma");
+	  
+	  ToffPS[i] = mean;
+	  dToffPS[i] = dmean;
+	} else {
+	  ToffPS[i] = htemp->GetMean();
+	  dToffPS[i] = htemp->GetRMS();
+	}
+      }
+    } else if( htemp->GetEntries() >= 100 ){
+      TFitResultPtr fr = htemp->Fit("gaus","SQ","",htemp->GetMean()-10.0, htemp->GetMean()+10.0);
+      if( fr->IsValid() ){
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+	double mean = ftemp->GetParameter("Mean");
+	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	double dmean = ftemp->GetParameter("Sigma");
 
-      //These lines won't compile under older ROOT versions:
-      // double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
-      // double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
-
-      
-      ToffPS[i] = mean;
-      dToffPS[i] = dmean;
+	ToffPS[i] = mean;
+	dToffPS[i] = dmean;
+      } else {
+	ToffPS[i] = htemp->GetMean();
+	dToffPS[i] = htemp->GetRMS();
+      }
     } else {
       listbadPS.insert( i );
     }
@@ -3011,23 +3079,57 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     //    dIDHCAL[i] = 0.0;
     
     if( htemp->GetEntries() >= 300 ){
-      FitGaus_FWHM( htemp );
+      TFitResultPtr fr = FitGaus_FWHM( htemp );
 
       htemp->Draw();
 
-      TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+      if( fr->IsValid() ){
       
-      double mean = ftemp->GetParameter("Mean");
-      //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
-      //double dmean = ftemp->GetParError(ftemp->GetParameter("Sigma"));
-      double dmean = ftemp->GetParameter("Sigma");
-      //These lines won't compile under older ROOT versions:
-      // double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
-      // double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+	double mean = ftemp->GetParameter("Mean");
+	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	//double dmean = ftemp->GetParError(ftemp->GetParameter("Sigma"));
+	double dmean = ftemp->GetParameter("Sigma");
+	//These lines won't compile under older ROOT versions:
+	// double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
+	// double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
 
+	ToffHCAL[i-1] = mean;
+	dToffHCAL[i-1] = dmean;
+      } else { //try a simpler fit method:
+	fr = htemp->Fit("gaus","SQ", "", htemp->GetMean()-10.0, htemp->GetMean() + 10.0 );
+	if( fr->IsValid() ){
+	  TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	  
+	  double mean = ftemp->GetParameter("Mean");
+	  //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	  //double dmean = ftemp->GetParError(ftemp->GetParameter("Sigma"));
+	  double dmean = ftemp->GetParameter("Sigma");
+
+	  ToffHCAL[i-1] = mean;
+	  dToffHCAL[i-1] = dmean;
+	} else {
+	  ToffHCAL[i-1] = htemp->GetMean();
+	  dToffHCAL[i-1] = htemp->GetRMS();
+	}	  
+      }
+    } else if( htemp->GetEntries() >= 100 ){
+      TFitResultPtr fr = htemp->Fit("gaus","SQ","",htemp->GetMean()-10.0, htemp->GetMean()+10.0);
       
-      ToffHCAL[i-1] = mean;
-      dToffHCAL[i-1] = dmean;
+      if( fr->IsValid() ){
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+	double mean = ftemp->GetParameter("Mean");
+	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	double dmean = ftemp->GetParameter("Sigma");
+
+	ToffHCAL[i-1] = mean;
+	dToffHCAL[i-1] = dmean;
+      } else {
+	ToffHCAL[i-1] = htemp->GetMean();
+	dToffHCAL[i-1] = htemp->GetRMS();
+      }	
     } else {
       listbadHCAL.insert( i );      
     }

@@ -1544,8 +1544,11 @@ bb.preconflag = 1
 #bb.C_pth1 = 0.0
 
 # updated momentum parameters (only significant change is recalibration using updated beam energy):
-bb.A_pth1 =     0.27027769
-bb.B_pth1 =     0.88540651
+#bb.A_pth1 =     0.27027769
+#bb.B_pth1 =     0.88540651
+
+bb.A_pth1 = 0.269976675
+bb.B_pth1 = 0.891956786
 bb.C_pth1 = 0.0
 
 #NOTE: angle and vertex reconstruction coefficients are from newfit_sbs9.dat

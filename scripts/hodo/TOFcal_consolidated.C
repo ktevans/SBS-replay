@@ -206,6 +206,10 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   double dy04vect = 0.0;
   double dxsigma4vect = 0.1;
   double dysigma4vect = 0.1;
+
+  double dtcut_SH = 10.0;
+  double dtcut_PS = 10.0;
+  double dtcut_HCAL = 10.0; 
   
   while( currentline.ReadLine(configfile) && !currentline.BeginsWith("endconfig") ){
     if( !currentline.BeginsWith("#") ){
@@ -379,6 +383,19 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	if( skey.EqualTo("dy04vect") ){
 	  dy04vect = sval.Atof();
 	}
+
+	if( skey.EqualTo( "dtcut_SH" ) ){
+	  dtcut_SH = sval.Atof();
+	}
+
+	if( skey.EqualTo( "dtcut_PS" ) ){
+	  dtcut_PS = sval.Atof();
+	}
+
+	if( skey.EqualTo( "dtcut_HCAL" ) ){
+	  dtcut_HCAL = sval.Atof();
+	}
+	
 	
       }
     }
@@ -1561,7 +1578,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	double atimehit = T->bb_sh_clus_blk_atime[ihit];
 	//Only use hits above threshold in both GeV and fraction of seed energy:
 	if( ehit >= 0.1 && ehit/T->bb_sh_eblk >= 0.05 &&
-	    fabs( atimehit - T->bb_sh_atimeblk ) <= 10.0 ){
+	    fabs( atimehit - T->bb_sh_atimeblk ) <= dtcut_SH ){
 	  bbcal_idtemp.push_back( int( T->bb_sh_clus_blk_id[ihit] ) );
 	  bbcal_etemp.push_back( T->bb_sh_clus_blk_e[ihit] );
 	  bbcal_atimetemp.push_back( T->bb_sh_clus_blk_atime[ihit] );
@@ -1571,7 +1588,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	double ehit = T->bb_ps_clus_blk_e[ihit];
 	double atimehit = T->bb_ps_clus_blk_atime[ihit];
 	if( ehit >= 0.05 && ehit/T->bb_ps_eblk >= 0.1 &&
-	    fabs( atimehit - T->bb_ps_atimeblk ) <= 10.0 ){
+	    fabs( atimehit - T->bb_ps_atimeblk ) <= dtcut_PS ){
 	  bbcal_idtemp.push_back( int(T->bb_ps_clus_blk_id[ihit]) + 189 );
 	  bbcal_etemp.push_back( T->bb_ps_clus_blk_e[ihit] );
 	  bbcal_atimetemp.push_back( T->bb_ps_clus_blk_atime[ihit] );
@@ -1604,9 +1621,9 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  double t_j = T->sbs_hcal_clus_blk_atime[jhit];
 
 	  if( e_i >= 0.025 && e_i > 0.1 * T->sbs_hcal_eblk && T->sbs_hcal_e >= 0.05 &&
-	      fabs( t_i - T->sbs_hcal_atimeblk ) <= 10.0 &&
+	      fabs( t_i - T->sbs_hcal_atimeblk ) <= dtcut_HCAL &&
 	      e_j >= 0.025 && e_j > 0.1 * T->sbs_hcal_eblk && T->sbs_hcal_e >= 0.05 &&
-	      fabs( t_j - T->sbs_hcal_atimeblk ) <= 10.0 ){
+	      fabs( t_j - T->sbs_hcal_atimeblk ) <= dtcut_HCAL ){
 	    nhit_chan_HCAL[id_i] += 1.0;
 	    nhit_chan_HCAL[id_j] += 1.0;
 	    

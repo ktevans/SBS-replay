@@ -547,9 +547,10 @@ bb.gemorigin_xyz = -0.210082 0.0422169 2.95157
 bb.gemtheta = 8.7746 # degrees
 bb.gemphi = 179.351  # degrees
 
-# NOTE: if we use this new alignment result below, we'll need to redo all the optics:
-#bb.gemorigin_xyz = -0.203747 0.039047 2.979716
-#bb.gemangles_xyz = -0.027234 -8.638782 0.00369
+# NOTE: if we use this new alignment result below, we'll need to redo the optics and
+# momentum calibrations
+#bb.gemorigin_xyz =   -0.203854266   0.0390732713     2.98058595
+#bb.gemangles_xyz =  -0.0291579305     -8.6401138   0.0241224677
 
 # note: ZSIEVE = 1.42962 m in this analysis
 

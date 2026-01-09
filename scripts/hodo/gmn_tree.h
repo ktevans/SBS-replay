@@ -757,28 +757,28 @@ public :
    Double_t        sbs_hcal_clus_blk_x[50];   //[Ndata.sbs.hcal.clus_blk.x]
    Int_t           Ndata_sbs_hcal_clus_blk_y;
    Double_t        sbs_hcal_clus_blk_y[50];   //[Ndata.sbs.hcal.clus_blk.y]
-   Int_t           Ndata_sbs_hcal_goodblock_again;
-   Double_t        sbs_hcal_goodblock_again[102];   //[Ndata.sbs.hcal.goodblock.again]
-   Int_t           Ndata_sbs_hcal_goodblock_atime;
-   Double_t        sbs_hcal_goodblock_atime[102];   //[Ndata.sbs.hcal.goodblock.atime]
-   Int_t           Ndata_sbs_hcal_goodblock_cid;
-   Double_t        sbs_hcal_goodblock_cid[102];   //[Ndata.sbs.hcal.goodblock.cid]
-   Int_t           Ndata_sbs_hcal_goodblock_col;
-   Double_t        sbs_hcal_goodblock_col[102];   //[Ndata.sbs.hcal.goodblock.col]
-   Int_t           Ndata_sbs_hcal_goodblock_e;
-   Double_t        sbs_hcal_goodblock_e[102];   //[Ndata.sbs.hcal.goodblock.e]
-   Int_t           Ndata_sbs_hcal_goodblock_id;
-   Double_t        sbs_hcal_goodblock_id[102];   //[Ndata.sbs.hcal.goodblock.id]
-   Int_t           Ndata_sbs_hcal_goodblock_row;
-   Double_t        sbs_hcal_goodblock_row[102];   //[Ndata.sbs.hcal.goodblock.row]
-   Int_t           Ndata_sbs_hcal_goodblock_tdctime;
-   Double_t        sbs_hcal_goodblock_tdctime[102];   //[Ndata.sbs.hcal.goodblock.tdctime]
-   Int_t           Ndata_sbs_hcal_goodblock_tdctime_tw;
-   Double_t        sbs_hcal_goodblock_tdctime_tw[102];   //[Ndata.sbs.hcal.goodblock.tdctime_tw]
-   Int_t           Ndata_sbs_hcal_goodblock_x;
-   Double_t        sbs_hcal_goodblock_x[102];   //[Ndata.sbs.hcal.goodblock.x]
-   Int_t           Ndata_sbs_hcal_goodblock_y;
-   Double_t        sbs_hcal_goodblock_y[102];   //[Ndata.sbs.hcal.goodblock.y]
+   // Int_t           Ndata_sbs_hcal_goodblock_again;
+   // Double_t        sbs_hcal_goodblock_again[102];   //[Ndata.sbs.hcal.goodblock.again]
+   // Int_t           Ndata_sbs_hcal_goodblock_atime;
+   // Double_t        sbs_hcal_goodblock_atime[102];   //[Ndata.sbs.hcal.goodblock.atime]
+   // Int_t           Ndata_sbs_hcal_goodblock_cid;
+   // Double_t        sbs_hcal_goodblock_cid[102];   //[Ndata.sbs.hcal.goodblock.cid]
+   // Int_t           Ndata_sbs_hcal_goodblock_col;
+   // Double_t        sbs_hcal_goodblock_col[102];   //[Ndata.sbs.hcal.goodblock.col]
+   // Int_t           Ndata_sbs_hcal_goodblock_e;
+   // Double_t        sbs_hcal_goodblock_e[102];   //[Ndata.sbs.hcal.goodblock.e]
+   // Int_t           Ndata_sbs_hcal_goodblock_id;
+   // Double_t        sbs_hcal_goodblock_id[102];   //[Ndata.sbs.hcal.goodblock.id]
+   // Int_t           Ndata_sbs_hcal_goodblock_row;
+   // Double_t        sbs_hcal_goodblock_row[102];   //[Ndata.sbs.hcal.goodblock.row]
+   // Int_t           Ndata_sbs_hcal_goodblock_tdctime;
+   // Double_t        sbs_hcal_goodblock_tdctime[102];   //[Ndata.sbs.hcal.goodblock.tdctime]
+   // Int_t           Ndata_sbs_hcal_goodblock_tdctime_tw;
+   // Double_t        sbs_hcal_goodblock_tdctime_tw[102];   //[Ndata.sbs.hcal.goodblock.tdctime_tw]
+   // Int_t           Ndata_sbs_hcal_goodblock_x;
+   // Double_t        sbs_hcal_goodblock_x[102];   //[Ndata.sbs.hcal.goodblock.x]
+   // Int_t           Ndata_sbs_hcal_goodblock_y;
+   // Double_t        sbs_hcal_goodblock_y[102];   //[Ndata.sbs.hcal.goodblock.y]
    Int_t           Ndata_sbs_hcal_ped;
    Double_t        sbs_hcal_ped[102];   //[Ndata.sbs.hcal.ped]
    Int_t           Ndata_sbs_tdctrig_Ref_tdc;
@@ -2016,28 +2016,28 @@ public :
    TBranch        *b_sbs_hcal_clus_blk_x;   //!
    TBranch        *b_Ndata_sbs_hcal_clus_blk_y;   //!
    TBranch        *b_sbs_hcal_clus_blk_y;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_again;   //!
-   TBranch        *b_sbs_hcal_goodblock_again;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_atime;   //!
-   TBranch        *b_sbs_hcal_goodblock_atime;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_cid;   //!
-   TBranch        *b_sbs_hcal_goodblock_cid;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_col;   //!
-   TBranch        *b_sbs_hcal_goodblock_col;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_e;   //!
-   TBranch        *b_sbs_hcal_goodblock_e;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_id;   //!
-   TBranch        *b_sbs_hcal_goodblock_id;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_row;   //!
-   TBranch        *b_sbs_hcal_goodblock_row;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_tdctime;   //!
-   TBranch        *b_sbs_hcal_goodblock_tdctime;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_tdctime_tw;   //!
-   TBranch        *b_sbs_hcal_goodblock_tdctime_tw;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_x;   //!
-   TBranch        *b_sbs_hcal_goodblock_x;   //!
-   TBranch        *b_Ndata_sbs_hcal_goodblock_y;   //!
-   TBranch        *b_sbs_hcal_goodblock_y;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_again;   //!
+   // TBranch        *b_sbs_hcal_goodblock_again;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_atime;   //!
+   // TBranch        *b_sbs_hcal_goodblock_atime;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_cid;   //!
+   // TBranch        *b_sbs_hcal_goodblock_cid;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_col;   //!
+   // TBranch        *b_sbs_hcal_goodblock_col;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_e;   //!
+   // TBranch        *b_sbs_hcal_goodblock_e;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_id;   //!
+   // TBranch        *b_sbs_hcal_goodblock_id;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_row;   //!
+   // TBranch        *b_sbs_hcal_goodblock_row;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_tdctime;   //!
+   // TBranch        *b_sbs_hcal_goodblock_tdctime;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_tdctime_tw;   //!
+   // TBranch        *b_sbs_hcal_goodblock_tdctime_tw;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_x;   //!
+   // TBranch        *b_sbs_hcal_goodblock_x;   //!
+   // TBranch        *b_Ndata_sbs_hcal_goodblock_y;   //!
+   // TBranch        *b_sbs_hcal_goodblock_y;   //!
    TBranch        *b_Ndata_sbs_hcal_ped;   //!
    TBranch        *b_sbs_hcal_ped;   //!
    TBranch        *b_Ndata_sbs_tdctrig_Ref_tdc;   //!
@@ -4008,28 +4008,28 @@ void gmn_tree::Init(TTree *tree)
    fChain->SetBranchAddress("sbs.hcal.clus_blk.x", sbs_hcal_clus_blk_x, &b_sbs_hcal_clus_blk_x);
    fChain->SetBranchAddress("Ndata.sbs.hcal.clus_blk.y", &Ndata_sbs_hcal_clus_blk_y, &b_Ndata_sbs_hcal_clus_blk_y);
    fChain->SetBranchAddress("sbs.hcal.clus_blk.y", sbs_hcal_clus_blk_y, &b_sbs_hcal_clus_blk_y);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.again", &Ndata_sbs_hcal_goodblock_again, &b_Ndata_sbs_hcal_goodblock_again);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.again", sbs_hcal_goodblock_again, &b_sbs_hcal_goodblock_again);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.atime", &Ndata_sbs_hcal_goodblock_atime, &b_Ndata_sbs_hcal_goodblock_atime);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.atime", sbs_hcal_goodblock_atime, &b_sbs_hcal_goodblock_atime);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.cid", &Ndata_sbs_hcal_goodblock_cid, &b_Ndata_sbs_hcal_goodblock_cid);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.cid", sbs_hcal_goodblock_cid, &b_sbs_hcal_goodblock_cid);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.col", &Ndata_sbs_hcal_goodblock_col, &b_Ndata_sbs_hcal_goodblock_col);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.col", sbs_hcal_goodblock_col, &b_sbs_hcal_goodblock_col);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.e", &Ndata_sbs_hcal_goodblock_e, &b_Ndata_sbs_hcal_goodblock_e);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.e", sbs_hcal_goodblock_e, &b_sbs_hcal_goodblock_e);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.id", &Ndata_sbs_hcal_goodblock_id, &b_Ndata_sbs_hcal_goodblock_id);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.id", sbs_hcal_goodblock_id, &b_sbs_hcal_goodblock_id);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.row", &Ndata_sbs_hcal_goodblock_row, &b_Ndata_sbs_hcal_goodblock_row);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.row", sbs_hcal_goodblock_row, &b_sbs_hcal_goodblock_row);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.tdctime", &Ndata_sbs_hcal_goodblock_tdctime, &b_Ndata_sbs_hcal_goodblock_tdctime);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.tdctime", sbs_hcal_goodblock_tdctime, &b_sbs_hcal_goodblock_tdctime);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.tdctime_tw", &Ndata_sbs_hcal_goodblock_tdctime_tw, &b_Ndata_sbs_hcal_goodblock_tdctime_tw);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.tdctime_tw", sbs_hcal_goodblock_tdctime_tw, &b_sbs_hcal_goodblock_tdctime_tw);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.x", &Ndata_sbs_hcal_goodblock_x, &b_Ndata_sbs_hcal_goodblock_x);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.x", sbs_hcal_goodblock_x, &b_sbs_hcal_goodblock_x);
-   fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.y", &Ndata_sbs_hcal_goodblock_y, &b_Ndata_sbs_hcal_goodblock_y);
-   fChain->SetBranchAddress("sbs.hcal.goodblock.y", sbs_hcal_goodblock_y, &b_sbs_hcal_goodblock_y);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.again", &Ndata_sbs_hcal_goodblock_again, &b_Ndata_sbs_hcal_goodblock_again);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.again", sbs_hcal_goodblock_again, &b_sbs_hcal_goodblock_again);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.atime", &Ndata_sbs_hcal_goodblock_atime, &b_Ndata_sbs_hcal_goodblock_atime);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.atime", sbs_hcal_goodblock_atime, &b_sbs_hcal_goodblock_atime);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.cid", &Ndata_sbs_hcal_goodblock_cid, &b_Ndata_sbs_hcal_goodblock_cid);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.cid", sbs_hcal_goodblock_cid, &b_sbs_hcal_goodblock_cid);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.col", &Ndata_sbs_hcal_goodblock_col, &b_Ndata_sbs_hcal_goodblock_col);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.col", sbs_hcal_goodblock_col, &b_sbs_hcal_goodblock_col);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.e", &Ndata_sbs_hcal_goodblock_e, &b_Ndata_sbs_hcal_goodblock_e);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.e", sbs_hcal_goodblock_e, &b_sbs_hcal_goodblock_e);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.id", &Ndata_sbs_hcal_goodblock_id, &b_Ndata_sbs_hcal_goodblock_id);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.id", sbs_hcal_goodblock_id, &b_sbs_hcal_goodblock_id);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.row", &Ndata_sbs_hcal_goodblock_row, &b_Ndata_sbs_hcal_goodblock_row);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.row", sbs_hcal_goodblock_row, &b_sbs_hcal_goodblock_row);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.tdctime", &Ndata_sbs_hcal_goodblock_tdctime, &b_Ndata_sbs_hcal_goodblock_tdctime);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.tdctime", sbs_hcal_goodblock_tdctime, &b_sbs_hcal_goodblock_tdctime);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.tdctime_tw", &Ndata_sbs_hcal_goodblock_tdctime_tw, &b_Ndata_sbs_hcal_goodblock_tdctime_tw);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.tdctime_tw", sbs_hcal_goodblock_tdctime_tw, &b_sbs_hcal_goodblock_tdctime_tw);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.x", &Ndata_sbs_hcal_goodblock_x, &b_Ndata_sbs_hcal_goodblock_x);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.x", sbs_hcal_goodblock_x, &b_sbs_hcal_goodblock_x);
+   // fChain->SetBranchAddress("Ndata.sbs.hcal.goodblock.y", &Ndata_sbs_hcal_goodblock_y, &b_Ndata_sbs_hcal_goodblock_y);
+   // fChain->SetBranchAddress("sbs.hcal.goodblock.y", sbs_hcal_goodblock_y, &b_sbs_hcal_goodblock_y);
    fChain->SetBranchAddress("Ndata.sbs.hcal.ped", &Ndata_sbs_hcal_ped, &b_Ndata_sbs_hcal_ped);
    fChain->SetBranchAddress("sbs.hcal.ped", sbs_hcal_ped, &b_sbs_hcal_ped);
    fChain->SetBranchAddress("Ndata.sbs.tdctrig.Ref.tdc", &Ndata_sbs_tdctrig_Ref_tdc, &b_Ndata_sbs_tdctrig_Ref_tdc);

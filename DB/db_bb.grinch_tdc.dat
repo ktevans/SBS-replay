@@ -312,6 +312,8 @@ bb.grinch_tdc.maxtdiff_clus = 25.0 # time difference limit for adding GRINCH hit
 bb.grinch_tdc.maxtdiff_ref = 100.0 # time difference limit for GRINCH hits relative to shower for consideration in good clusters (ns)
 bb.grinch_tdc.usereftimediffcut = 0 # flag to enable/disable the use of shower ADC time as "reference time" for GRINCH
 
+bb.grinch_tdc.trackmatch_dtsigma = 1.0 # ns (sigma of mean time for "good" GRINCH electron clusters)
+bb.grinch_tdc.trackmatch_dtoffset = 0.0 # ns
 
 ---------[ 2021-12-01 12:00:00 ] # 70-ns timing shift during SBS-11
 

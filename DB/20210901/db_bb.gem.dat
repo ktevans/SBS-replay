@@ -47,7 +47,7 @@ bb.gem.m11.apvmap = 1 # UVA X/Y
 
 # basic flags controlling decoding:
 bb.gem.pedestalmode = 0
-bb.gem.commonmode_flag = 2 # 1 = Danning, 0 = sorting, 2 = histogramming
+bb.gem.commonmode_flag = 0 # 1 = Danning, 0 = sorting, 2 = histogramming
 bb.gem.commonmode_online_flag = 3 # 3 = Danning method during GMn, 4 = Danning \
 method during GEn
 # commenting this out as we can use the new default value of 640

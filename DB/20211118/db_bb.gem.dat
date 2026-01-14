@@ -1784,7 +1784,7 @@ bb.gem.maxnv_pos = 2
 
 bb.gem.sigmahitshape = 0.0004
 bb.gem.zerosuppress = 1
-bb.gem.zerosuppress_nsigma = 5.0
+bb.gem.zerosuppress_nsigma = 3.0
 bb.gem.onlinezerosuppress = 1 # note that this parameter only provides a default value, actual behavior is determined by the flags seen in the raw data:
 
 bb.gem.plot_common_mode = 1

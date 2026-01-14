@@ -308,7 +308,7 @@ bb.grinch_tdc.hit_mintime = -50
 bb.grinch_tdc.hit_maxtime = 50
 
 # start with more open definitions of these cuts for earlier kinematics that aren't yet aligned:
-bb.grinch_tdc.maxtdiff_clus = 25.0 # time difference limit for adding GRINCH hits to clusters (ns)
+bb.grinch_tdc.maxtdiff_clust = 25.0 # time difference limit for adding GRINCH hits to clusters (ns)
 bb.grinch_tdc.maxtdiff_ref = 100.0 # time difference limit for GRINCH hits relative to shower for consideration in good clusters (ns)
 bb.grinch_tdc.usereftimediffcut = 0 # flag to enable/disable the use of shower ADC time as "reference time" for GRINCH
 
@@ -442,7 +442,7 @@ bb.grinch_tdc.hit_mintime = -30.0
 bb.grinch_tdc.hit_maxtime = 30.0
 
 # start with more open definitions of these cuts for earlier kinematics that aren't yet aligned:
-bb.grinch_tdc.maxtdiff_clus = 12.0 # time difference limit for adding GRINCH hits to clusters (ns)
+bb.grinch_tdc.maxtdiff_clust = 12.0 # time difference limit for adding GRINCH hits to clusters (ns)
 bb.grinch_tdc.maxtdiff_ref = 10.0 # time difference limit for GRINCH hits relative to shower for consideration in good clusters (ns)
 bb.grinch_tdc.usereftimediffcut = 1 # flag to enable/disable the use of shower ADC time as "reference time" for GRINCH
 
@@ -522,7 +522,7 @@ bb.grinch_tdc.tdc.offset =
 --------[ 2022-04-01 00:00:00 ]
 
 # back to defaults starting after GMN so as not to step on any toes:
-bb.grinch_tdc.maxtdiff_clus = 30.0 # time difference limit for adding GRINCH hits to clusters (ns)
+bb.grinch_tdc.maxtdiff_clust = 30.0 # time difference limit for adding GRINCH hits to clusters (ns)
 bb.grinch_tdc.maxtdiff_ref = 30.0 # time difference limit for GRINCH hits relative to shower for consideration in good clusters (ns)
 bb.grinch_tdc.usereftimediffcut = 0 # flag to enable/disable the use of shower ADC time as "reference time" for GRINCH
 

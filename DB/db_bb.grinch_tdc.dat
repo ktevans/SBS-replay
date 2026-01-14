@@ -130,8 +130,8 @@ bb.grinch_tdc.trigphasemultiple = 2
 # after defining individual TDC channel offsets, we set "GoodTimeCut" to zero for GRINCH TDC hits:
 bb.grinch_tdc.tdc.GoodTimeCut = 0.0
 # set a somewhat looser software window for GRINCH TDC hits:
-bb.grinch_tdc.hit_mintime = -25.0
-bb.grinch_tdc.hit_maxtime = 25.0
+bb.grinch_tdc.hit_mintime = -50.0
+bb.grinch_tdc.hit_maxtime = 50.0
 #bb.grinch_tdc.reftdcGoodTimeCut = 50
 
 
@@ -303,11 +303,12 @@ bb.grinch_tdc.nmirror = 4
 # 4.5-sigma cut seems sufficiently loose for now:
 bb.grinch_tdc.trackmatch_nsigma_cut = 5.0
 
-bb.grinch_tdc.hit_mintime = -30
-bb.grinch_tdc.hit_maxtime = 30
+# for kinematics not yet calibrated, start with wider timing cuts
+bb.grinch_tdc.hit_mintime = -50
+bb.grinch_tdc.hit_maxtime = 50
 
 # start with more open definitions of these cuts for earlier kinematics that aren't yet aligned:
-bb.grinch_tdc.maxtdiff_clus = 30.0 # time difference limit for adding GRINCH hits to clusters (ns)
+bb.grinch_tdc.maxtdiff_clus = 25.0 # time difference limit for adding GRINCH hits to clusters (ns)
 bb.grinch_tdc.maxtdiff_ref = 100.0 # time difference limit for GRINCH hits relative to shower for consideration in good clusters (ns)
 bb.grinch_tdc.usereftimediffcut = 0 # flag to enable/disable the use of shower ADC time as "reference time" for GRINCH
 
@@ -356,9 +357,9 @@ bb.grinch_tdc.tdc.offset =
 
 ---------[ 2021-12-14 12:00:00 ] # second timing shift during SBS-11:
 
-bb.grinch_tdc.tdc.GoodTimeCut = 0.0
-bb.grinch_tdc.hit_mintime = -30
-bb.grinch_tdc.hit_maxtime = 30
+#bb.grinch_tdc.tdc.GoodTimeCut = 0.0
+#bb.grinch_tdc.hit_mintime = -30
+#bb.grinch_tdc.hit_maxtime = 30
 
 # Back to using SBS-9 offsets for final QA replays:
 bb.grinch_tdc.tdc.offset = 
@@ -434,6 +435,9 @@ bb.grinch_tdc.tdc.offset =
 
 
 --------[ 2022-01-21 00:00:00 ] # approximate start of GMN SBS-8:
+
+bb.grinch_tdc.hit_mintime = -30.0
+bb.grinch_tdc.hit_maxtime = 30.0
 
 # start with more open definitions of these cuts for earlier kinematics that aren't yet aligned:
 bb.grinch_tdc.maxtdiff_clus = 12.0 # time difference limit for adding GRINCH hits to clusters (ns)

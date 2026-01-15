@@ -32,6 +32,7 @@
 #include "TF1.h"
 
 const double Mp=0.938272;
+const double Mn = 0.939565;
 
 // long NEVENTSFIT;
 // vector<int> NHITS_EVENT;
@@ -44,8 +45,37 @@ const double Mp=0.938272;
 
 // }
 
+// TFitResultPtr FitGaus_FWHM( TH1D *Htest, double thresh=0.4 ){
+//   int binmax = Htest->GetMaximumBin();
+//   int binlow = binmax-1, binhigh = binmax+1;
+//   double max = Htest->GetBinContent(binmax);
+
+//   while( binlow > 1 && Htest->GetBinContent(binlow) >= thresh * max ){ binlow--; }
+//   while( binhigh < Htest->GetNbinsX() && Htest->GetBinContent(binhigh) >= thresh * max ){ binhigh++; }
+
+//   double xlow = Htest->GetBinLowEdge(binlow);
+//   double xhigh = Htest->GetBinLowEdge(binhigh+1);
+  
+//   return Htest->Fit("gaus","SQ","",xlow,xhigh);
+// }
+
 TFitResultPtr FitGaus_FWHM( TH1D *Htest, double thresh=0.4 ){
-  int binmax = Htest->GetMaximumBin();
+  //Let's do a 3-neighbor bin content sum to more accurately find the true peak bin from possible noisy neighbors.
+  int binmax = 1;
+  double highest_sum = 0.;
+
+  for ( int i = 2; i < Htest->GetNbinsX(); i++ ){
+    double sum = Htest->GetBinContent(i-1) +
+                 Htest->GetBinContent(i)   +
+                 Htest->GetBinContent(i+1);
+
+    if ( sum > highest_sum ) {
+      highest_sum = sum;
+      binmax = i;
+    }
+  }
+
+  //int binmax = Htest->GetMaximumBin();
   int binlow = binmax-1, binhigh = binmax+1;
   double max = Htest->GetBinContent(binmax);
 
@@ -58,11 +88,14 @@ TFitResultPtr FitGaus_FWHM( TH1D *Htest, double thresh=0.4 ){
   return Htest->Fit("gaus","SQ","",xlow,xhigh);
 }
 
+
 void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="TOFcal_temp.root"){
 
   const int MAXNBLK_HCAL = 50;
   const int MAXNBLK_BBSH = 25;
   const int MAXNBLK_BBPS = 10;
+
+  const int MAXNHIT_GRINCH = 100; //This might need to be adjusted higher for GEN analysis
   
   ifstream configfile(inputfilename);
 
@@ -96,6 +129,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
   int BBSHrefID = 95;
   int BBPSrefID = 22;
+
+  int GRINCHrefID = 275;
   
   double zhodo = 1.854454; //meters
   double Lbar_hodo = 0.6; //meters
@@ -105,7 +140,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   double dHCAL = 11.0;
   double dSBS = 2.25;
 
-  double W2min=0.6, W2max=1.2;
+  double W2min=0.5, W2max=1.1;
+  double W2min_LD2 = 0.1, W2max_LD2 = 1.2;
   bool use_elastic_cut_HCAL = true;
   
   double sbsmaxfield = 1.26;
@@ -119,7 +155,9 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   double tdiff_max = 10.0; //max time difference with respect to cluster maximum
   double ydiff_max = 0.25; // 0.15 m/ (0.18 m/ns) 
   double xdiff_max = 0.06; // vertical position difference of 0.06 m max wrt track projection 
-  
+
+  double GRINCH_TDC_calib = 1.0; //ns/TDC count
+  double GRINCH_tdiff_max = 15.0; //ns
   
   int mineventsperbar = 100;
   
@@ -150,7 +188,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   TString fname_HCAL_ADCtime_offsets="";
   TString fname_BBSH_ADCtime_offsets="";
   TString fname_BBPS_ADCtime_offsets="";
-
+  TString fname_GRINCH_offsets="";
+  
   bool fixhodoparams = false;
   
   bool useRFcorr = false;
@@ -169,6 +208,18 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   double dxsigma = 0.05;
   double dysigma = 0.05;
   double dxdy_nsigma_cut = 3.5;
+
+  double dx04vect = 0.0;
+  double dy04vect = 0.0;
+  double dxsigma4vect = 0.1;
+  double dysigma4vect = 0.1;
+
+  double dtcut_SH = 10.0;
+  double dtcut_PS = 10.0;
+  double dtcut_HCAL = 10.0; 
+
+  int minhits_GRINCH_internal = 100;
+  int minhits_GRINCH_hododiff = 300;
   
   while( currentline.ReadLine(configfile) && !currentline.BeginsWith("endconfig") ){
     if( !currentline.BeginsWith("#") ){
@@ -178,147 +229,201 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
 	TString sval = ( (TObjString*) (*currentline_tokens)[1] )->GetString();
 
-	if( skey.BeginsWith("BBtrig_t0") ){
+	if( skey.EqualTo("BBtrig_t0") ){
 	  BBtrig_t0 = sval.Atof();
 	}
 	
-	if( skey.BeginsWith("totmin") ){
+	if( skey.EqualTo("totmin") ){
 	  totmin = sval.Atof();
 	}
 
-	if( skey.BeginsWith("totmax") ){
+	if( skey.EqualTo("totmax") ){
 	  totmax = sval.Atof();
 	}
 
-	if( skey.BeginsWith("tdiff_max") ){
+	if( skey.EqualTo("tdiff_max") ){
 	  tdiff_max = sval.Atof();
 	}
 
-	if( skey.BeginsWith("ydiff_max") ){
+	if( skey.EqualTo("ydiff_max") ){
 	  ydiff_max = sval.Atof();
 	}
 
-	if( skey.BeginsWith("xdiff_max") ){
+	if( skey.EqualTo("xdiff_max") ){
 	  xdiff_max = sval.Atof();
 	}
 
-	if( skey.BeginsWith("totdiff_max") ){
+	if( skey.EqualTo("totdiff_max") ){
 	  totdiff_max = sval.Atof();
 	}
 	
-	if( skey.BeginsWith("mineventsperbar") ){
+	if( skey.EqualTo("mineventsperbar") ){
 	  mineventsperbar = sval.Atoi();
 	}
 	
-	if( skey.BeginsWith("hodorefID") ){
+	if( skey.EqualTo("hodorefID") ){
 	  hodorefID = sval.Atoi();
 	}
 
-	if( skey.BeginsWith("hcalrefID") ){
+	if( skey.EqualTo("hcalrefID") ){
 	  hcalrefID = sval.Atoi();
 	}
 
-	if( skey.BeginsWith("zhodo") ){
+	if( skey.EqualTo("zhodo") ){
 	  zhodo = sval.Atof();
 	}
 
-	if( skey.BeginsWith("Lbar_hodo") ){
+	if( skey.EqualTo("Lbar_hodo") ){
 	  Lbar_hodo = sval.Atof();
 	}
 
-	if( skey.BeginsWith("etof0") ){
+	if( skey.EqualTo("etof0") ){
 	  etof0 = sval.Atof();
 	}
 
-	if( skey.BeginsWith("bunch_spacing_ns") ){
+	if( skey.EqualTo("bunch_spacing_ns") ){
 	  bunch_spacing_ns = sval.Atof();
 	}
 
-	if( skey.BeginsWith( "RFoffsets" ) ){
+	if( skey.EqualTo( "RFoffsets" ) ){
 	  fname_RFoffsets = sval;
 	}
 
-	if( skey.BeginsWith( "userfcorr" ) ){
+	if( skey.EqualTo( "userfcorr" ) ){
 	  int val = sval.Atoi();
 	  useRFcorr = val > 0;
 	}
 
-	if( skey.BeginsWith("ebeam") ){
+	if( skey.EqualTo("ebeam") ){
 	  Ebeam = sval.Atof();
 	}
 
-	if( skey.BeginsWith("sbsmaxfield") ){
+	if( skey.EqualTo("sbsmaxfield") ){
 	  sbsmaxfield = sval.Atof();
 	}
-	if( skey.BeginsWith("sbsdist") ){
+	if( skey.EqualTo("sbsdist") || skey.EqualTo("dSBS")){
 	  dSBS = sval.Atof();
 	}
-	if( skey.BeginsWith("hcaldist") ){
+	if( skey.EqualTo("hcaldist") || skey.EqualTo("dHCAL") ){
 	  dHCAL = sval.Atof();
 	}
-	if( skey.BeginsWith("thetaHCAL") ){
+	if( skey.EqualTo("thetaHCAL") ){
 	  thetaHCAL = sval.Atof();
 	}
-	if( skey.BeginsWith("W2min") ){
+	if( skey.EqualTo("W2min") ){
 	  W2min = sval.Atof();
 	}
-	if( skey.BeginsWith("W2max") ){
+	if( skey.EqualTo("W2max") ){
 	  W2max = sval.Atof();
 	}
 
-	if( skey.BeginsWith("meantime_offsets_old") ){
+	if( skey.EqualTo("W2min_LD2") ){
+	  W2min_LD2 = sval.Atof();
+	}
+
+	if( skey.EqualTo("W2max_LD2") ){
+	  W2max_LD2 = sval.Atof();
+	}
+	
+	if( skey.EqualTo("meantime_offsets_old") ){
 	  fname_meantime_offsets = sval;
 	}
 
-	if( skey.BeginsWith("vscint_old") ){
+	if( skey.EqualTo("vscint_old") ){
 	  fname_vscint_old = sval;
 	}
 
-	if( skey.BeginsWith("walkcorr_old") ){ //walk correction slopes
+	if( skey.EqualTo("walkcorr_old") ){ //walk correction slopes
 	  fname_walkcorr_old = sval;
 	}
 
-	if( skey.BeginsWith("etofparams_old") ){
+	if( skey.EqualTo("etofparams_old") ){
 	  fname_etof_old = sval;
 	}
 	
-	if( skey.BeginsWith("useelasticcut_HCAL") ){
+	if( skey.EqualTo("useelasticcut_HCAL") ){
 	  use_elastic_cut_HCAL = (sval.Atoi() > 0);
 	}
 
-	if( skey.BeginsWith("HCAL_ADCtime_offsets") ){
+	if( skey.EqualTo("HCAL_ADCtime_offsets") ){
 	  fname_HCAL_ADCtime_offsets = sval;
 	}
-	if( skey.BeginsWith("BBSH_ADCtime_offsets") ){
+	if( skey.EqualTo("BBSH_ADCtime_offsets") ){
 	  fname_BBSH_ADCtime_offsets = sval;
 	}
-	if( skey.BeginsWith("BBPS_ADCtime_offsets") ){
+	if( skey.EqualTo("BBPS_ADCtime_offsets") ){
 	  fname_BBPS_ADCtime_offsets = sval;
 	}
 
-	if( skey.BeginsWith("fixhodoparams") ){
+	if( skey.EqualTo("fixhodoparams") ){
 	  fixhodoparams = ( sval.Atoi() != 0 );
 	}
 
-	if( skey.BeginsWith("dx0") ){
+	if( skey.EqualTo("dx0") ){
 	  dx0 = sval.Atof();
 	}
-	if( skey.BeginsWith("dy0") ){
+	if( skey.EqualTo("dy0") ){
 	  dy0 = sval.Atof();
 	}
 
-	if( skey.BeginsWith("dxsigma") ){
+	if( skey.EqualTo("dxsigma") ){
 	  dxsigma = sval.Atof();
 	}
 
-	if( skey.BeginsWith("dysigma") ){
+	if( skey.EqualTo("dysigma") ){
 	  dysigma = sval.Atof();
 	}
 
-	if( skey.BeginsWith("dxdy_nsigma_cut") ){
+	if( skey.EqualTo("dxdy_nsigma_cut") ){
 	  dxdy_nsigma_cut = sval.Atof();
 	}
+
+	if( skey.EqualTo("dxsigma4vect") ){
+	  dxsigma4vect = sval.Atof();
+	}
+
+	if( skey.EqualTo("dysigma4vect") ){
+	  dysigma4vect = sval.Atof();
+	}
+
+	if( skey.EqualTo("dx04vect") ){
+	  dx04vect = sval.Atof();
+	}
+
+	if( skey.EqualTo("dy04vect") ){
+	  dy04vect = sval.Atof();
+	}
+
+	if( skey.EqualTo( "dtcut_SH" ) ){
+	  dtcut_SH = sval.Atof();
+	}
+
+	if( skey.EqualTo( "dtcut_PS" ) ){
+	  dtcut_PS = sval.Atof();
+	}
+
+	if( skey.EqualTo( "dtcut_HCAL" ) ){
+	  dtcut_HCAL = sval.Atof();
+	}
+
+	if( skey.EqualTo( "GRINCH_TDC_calib" ) ){
+	  GRINCH_TDC_calib = sval.Atof();
+	}
+
+	if( skey.EqualTo( "GRINCH_TDC_offsets" ) ){
+	  fname_GRINCH_offsets = sval;
+	}
 	
+	if( skey.EqualTo( "GRINCH_tdiff_max" ) ){
+	  GRINCH_tdiff_max = sval.Atof();
+	}
+
+	if( skey.EqualTo( "minhits_GRINCH_internal") ){
+	  minhits_GRINCH_internal = sval.Atoi();
+	}
+	if( skey.EqualTo( "minhits_GRINCH_hododiff") ){
+	  minhits_GRINCH_hododiff = sval.Atoi();
+	} 
       }
     }
   }
@@ -343,6 +448,32 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     }
   }
 
+  int ntargsettings=0;
+  
+  vector<int> rmin_tgt, rmax_tgt, targnum; //0 = LH2, 1 = LD2, default = LH2
+  
+  while( currentline.ReadLine(configfile) && !currentline.BeginsWith("endtargetconfig") ){
+    if( !currentline.BeginsWith("#") ){
+      TObjArray *tokens = currentline.Tokenize(" ");
+      //Here we expect three values per line, rmin, rmax, field (as fraction of maximum):
+      if( tokens->GetEntries() >= 3 ){
+	TString srmin = ( (TObjString*) (*tokens)[0] )->GetString();
+	TString srmax = ( (TObjString*) (*tokens)[1] )->GetString();
+	TString stargnum = ( (TObjString*) (*tokens)[2] )->GetString();
+
+	ntargsettings++;
+	rmin_tgt.push_back( srmin.Atoi() );
+	rmax_tgt.push_back( srmax.Atoi() );
+	int targtemp = stargnum.Atoi();
+	if( targtemp >=0 && targtemp <2 ){
+	  targnum.push_back( stargnum.Atoi() );
+	} else {
+	  targnum.push_back( 0 );
+	}
+      }
+    }
+  }
+  
   std::cout << "Number of field settings = " << nfieldsettings << endl;
 
   vector<double> cetof;
@@ -450,6 +581,27 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   int nchan_BBSH = 189;
   int nchan_BBPS = 52;
 
+  int nchan_GRINCH = 512;
+
+  vector<double> oldGRINCHoffsets( nchan_GRINCH, 0.0 );
+  ifstream oldGRINCHoffsetsfile(fname_GRINCH_offsets.Data());
+  if( oldGRINCHoffsetsfile ){
+    int npar=0; double par=0.0;
+    while( oldGRINCHoffsetsfile >> par ){
+      if( npar<nchan_GRINCH ){
+	//Since time = (TDC - offset)*calib, we want to multiply offset by calib
+	// time offset = offset*calib
+	// NOTE: we will have to DIVIDE by calib at the end when writing the NEW offsets
+	oldGRINCHoffsets[npar] = par * GRINCH_TDC_calib;
+      }
+      npar++;
+    }
+    if( npar != nchan_GRINCH ){
+      cout << "Error: old GRINCH offsets file contains incorrect number (" << npar << ", expected 512) of entries; abort" << endl;
+      exit(-1);
+    }
+  }
+  
   // For the moment, we only add the old offsets to the new ones after the analysis is over
   // for ADC times:
   vector<double> oldHCALoffsets( nchan_HCAL, 0.0 );
@@ -524,8 +676,12 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
   double beta_ptheta_central = pp_ptheta_central/(Tp_ptheta_central+Mp);
 
+  double pn_ptheta_central = 2.0*Mn*Ebeam*(Mn+Ebeam)*cos(thetaHCAL)/(pow(Mn,2)+2.0*Mn*Ebeam + pow(Ebeam*sin(thetaHCAL),2));
+  double beta_ntheta_central = pn_ptheta_central/sqrt(pow(pn_ptheta_central,2)+pow(Mn,2));
+  
   double ptof_central_default = dHCAL/(beta_ptheta_central*0.299792458);
-
+  double ntof_central_default = dHCAL/(beta_ntheta_central*0.299792458);
+  
   if( nfieldsettings > 0 ){
     for( int iset=0; iset<nfieldsettings; iset++ ){
       if( sbsfield[iset] > 0. ){
@@ -609,6 +765,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   C->SetBranchStatus("sbs.hcal.atimeblk",1);
   C->SetBranchStatus("sbs.hcal.nblk_goodtdc",1);
   C->SetBranchStatus("bb.tr.*",1);
+  C->SetBranchStatus("bb.grinch_tdc.*",1);
   C->SetBranchStatus("bb.gem.track.*",1);
   C->SetBranchStatus("e.kine.*",1);
   C->SetBranchStatus("bb.tdctrig.*",1);
@@ -1148,7 +1305,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   oldtreenum = -1;
 
   nevent = 0;
-  cout << "Loop 3: Fit hodoscope walk correction slope, propagation delay, and t0 offset, and set up internal alignment of BBCAL and HCAL FADC times" << endl;
+  cout << "Loop 3: Fit hodoscope walk correction slope, propagation delay, and t0 offset, and set up internal alignment of BBCAL and HCAL FADC times and GRINCH TDC time" << endl;
 
   int nchan_BBCAL = 189+52;
   
@@ -1161,6 +1318,17 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   TMatrixD Mint_BBCAL( nchan_BBCAL, nchan_BBCAL );
   TMatrixD Mint_HCAL( nchan_HCAL, nchan_HCAL );
 
+  vector<double> nhit_chan_GRINCH(nchan_GRINCH, 0.0 );
+  TVectorD bint_GRINCH( nchan_GRINCH );
+  TMatrixD Mint_GRINCH( nchan_GRINCH, nchan_GRINCH );
+
+  for( int i=0; i<nchan_GRINCH; i++ ){
+    for( int j=0; j<nchan_GRINCH; j++ ){
+      Mint_GRINCH(i,j) = 0.0;
+    }
+    bint_GRINCH(i) = 0.0;
+  }
+  
   for( int i=0; i<nchan_BBCAL; i++ ){
     for( int j=0; j<nchan_BBCAL; j++ ){
       Mint_BBCAL(i,j) = 0.0;
@@ -1462,15 +1630,51 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
       int nblkPS = std::min(MAXNBLK_BBPS,int(T->bb_ps_nblk));
       int nblkHCAL = std::min(MAXNBLK_HCAL,int(T->sbs_hcal_nblk));
 
+      int nhitGRINCH = std::min(MAXNHIT_GRINCH, int(T->bb_grinch_tdc_ngoodhits) );
+      
       // cout << "event " << nevent << ", (nblkSH, nblkPS, nblkHCAL)=("
       // 	   << nblkSH << ", " << nblkPS << ", " << nblkHCAL << ")" << endl;
+
+      if( T->bb_grinch_tdc_clus_size > 2 && T->bb_grinch_tdc_clus_trackindex==0 ){ //increment
+	// GRINCH internal alignment matrices:
       
+	for( int ihit=0; ihit<nhitGRINCH; ihit++ ){
+	  
+	  
+	  //We don't need the trigger phase correction for the INTERNAL alignment of GRINCH:
+	  double thit_i = T->bb_grinch_tdc_hit_time[ihit];
+
+	  int pmt_i = int(T->bb_grinch_tdc_hit_pmtnum[ihit]);
+	  
+	  bool goodhit_i =  T->bb_grinch_tdc_hit_trackindex[ihit] == 0 && T->bb_grinch_tdc_hit_clustindex[ihit] == T->bb_grinch_tdc_bestcluster && fabs( thit_i - T->bb_grinch_tdc_clus_t_mean ) <= GRINCH_tdiff_max;
+	  
+	  for( int jhit=ihit+1; jhit<nhitGRINCH; jhit++ ){
+	    double thit_j = T->bb_grinch_tdc_hit_time[jhit];
+	    bool goodhit_j = T->bb_grinch_tdc_hit_trackindex[jhit] == 0 && T->bb_grinch_tdc_hit_clustindex[jhit] == T->bb_grinch_tdc_bestcluster && fabs( thit_j - T->bb_grinch_tdc_clus_t_mean ) <= GRINCH_tdiff_max;
+
+	    int pmt_j = int(T->bb_grinch_tdc_hit_pmtnum[jhit]);
+	    
+	    if( goodhit_i && goodhit_j ){
+	      nhit_chan_GRINCH[pmt_i] += 1.0;
+	      nhit_chan_GRINCH[pmt_j] += 1.0;
+	      Mint_GRINCH( pmt_i, pmt_i ) += 1.0;
+	      Mint_GRINCH( pmt_i, pmt_j ) += -1.0;
+	      Mint_GRINCH( pmt_j, pmt_i ) += -1.0;
+	      Mint_GRINCH( pmt_j, pmt_j ) += 1.0;
+	      bint_GRINCH( pmt_i ) += thit_i - thit_j;
+	      bint_GRINCH( pmt_j ) += thit_j - thit_i;
+	    }
+	    
+	  }
+	}
+      }
+	
       for( int ihit=0; ihit<nblkSH; ihit++ ){
 	double ehit = T->bb_sh_clus_blk_e[ihit];
 	double atimehit = T->bb_sh_clus_blk_atime[ihit];
 	//Only use hits above threshold in both GeV and fraction of seed energy:
 	if( ehit >= 0.1 && ehit/T->bb_sh_eblk >= 0.05 &&
-	    fabs( atimehit - T->bb_sh_atimeblk ) <= 10.0 ){
+	    fabs( atimehit - T->bb_sh_atimeblk ) <= dtcut_SH ){
 	  bbcal_idtemp.push_back( int( T->bb_sh_clus_blk_id[ihit] ) );
 	  bbcal_etemp.push_back( T->bb_sh_clus_blk_e[ihit] );
 	  bbcal_atimetemp.push_back( T->bb_sh_clus_blk_atime[ihit] );
@@ -1480,7 +1684,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	double ehit = T->bb_ps_clus_blk_e[ihit];
 	double atimehit = T->bb_ps_clus_blk_atime[ihit];
 	if( ehit >= 0.05 && ehit/T->bb_ps_eblk >= 0.1 &&
-	    fabs( atimehit - T->bb_ps_atimeblk ) <= 10.0 ){
+	    fabs( atimehit - T->bb_ps_atimeblk ) <= dtcut_PS ){
 	  bbcal_idtemp.push_back( int(T->bb_ps_clus_blk_id[ihit]) + 189 );
 	  bbcal_etemp.push_back( T->bb_ps_clus_blk_e[ihit] );
 	  bbcal_atimetemp.push_back( T->bb_ps_clus_blk_atime[ihit] );
@@ -1513,9 +1717,9 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  double t_j = T->sbs_hcal_clus_blk_atime[jhit];
 
 	  if( e_i >= 0.025 && e_i > 0.1 * T->sbs_hcal_eblk && T->sbs_hcal_e >= 0.05 &&
-	      fabs( t_i - T->sbs_hcal_atimeblk ) <= 10.0 &&
+	      fabs( t_i - T->sbs_hcal_atimeblk ) <= dtcut_HCAL &&
 	      e_j >= 0.025 && e_j > 0.1 * T->sbs_hcal_eblk && T->sbs_hcal_e >= 0.05 &&
-	      fabs( t_j - T->sbs_hcal_atimeblk ) <= 10.0 ){
+	      fabs( t_j - T->sbs_hcal_atimeblk ) <= dtcut_HCAL ){
 	    nhit_chan_HCAL[id_i] += 1.0;
 	    nhit_chan_HCAL[id_j] += 1.0;
 	    
@@ -1635,6 +1839,32 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   for( int i=0; i<nchan_HCAL; i++ ){
     HCAL_t0ADC[i] = bint_HCAL(i);
   }
+
+  for( int i=0; i<nchan_GRINCH; i++ ){
+    if( nhit_chan_GRINCH[i] < minhits_GRINCH_internal ){
+      bint_GRINCH(i) = 0.0;
+      Mint_GRINCH(i,i) = 1.0;
+      for( int j=0; j<nchan_GRINCH; j++ ){
+	if( j != i ){
+	  Mint_GRINCH(j,i) = 0.0;
+	  Mint_GRINCH(i,j) = 0.0;
+	}
+      }
+    }
+  }
+
+  TDecompSVD AGRINCH(Mint_GRINCH);
+  AGRINCH.Solve( bint_GRINCH );
+
+  corr = -bint_GRINCH( GRINCHrefID );
+  for( int i=0; i<nchan_GRINCH; i++ ){
+    bint_GRINCH(i) += corr;
+  }
+  
+  vector<double> GRINCH_t0(nchan_GRINCH,0.0);
+  for(int i=0; i<nchan_GRINCH; i++ ){
+    GRINCH_t0[i] = bint_GRINCH(i);
+  }
   
   nevent = 0;
 
@@ -1672,9 +1902,18 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   TH2D *htdiffHCAL_vs_HCALID_new = new TH2D("htdiffHCAL_vs_HCALID_new", "NEW hodo, old HCAL; HCAL ID; t_{HCAL}-t_{HODO,corr} (ns)",289,-0.5,288.5,250,-25,25); 
 
   TH2D *htdiffHCAL_vs_eblk_all = new TH2D("htdiffHCAL_vs_eblk_all", "NEW hodo, old HCAL; energy deposit (GeV); #Deltat(ns)",250,0.0,1.0,250,-25,25);
+
+  TH1D *hW2_xycut = new TH1D("hW2_xycut", "LH2 proton spot cut; W^{2} (GeV^{2});",250,-1,4);
+  TH1D *hW2_xycut_p = new TH1D("hW2_xycut_p", "LD2 proton spot cut; W^{2} (GeV^{2});",250,-1,4);
+  TH1D *hW2_xycut_n = new TH1D("hW2_xycut_n", "LD2 neutron spot cut; W^{2} (GeV^{2});",250,-1,4);
   
   TH2D *hdxdy = new TH2D("hdxdy",";#Deltay (m); #Deltax (m)",250,-1.25,1.25,250,-1.25,1.25);
+  
+  TH2D *hdxdy_p = new TH2D("hdxdy_p", "Proton hypothesis (4-vector); #Deltay (m); #Deltax (m)", 250,-2.5,2.5,500,-5,4);
+  TH2D *hdxdy_n = new TH2D("hdxdy_n", "Neutron hypothesis (4-vector); #Deltay (m); #Deltax (m)", 250,-2.5,2.5,500,-3,2);
 
+  TH2D *hdxdy_nodeflect_LH2 = new TH2D("hdxdy_nodeflect_LH2", "LH2 (no deflection correction); #Deltay (m); #Deltax (m)", 250,-2.5,2.5,250,-3,2);
+  
   vector<double> nevent_blk_HCAL(288,0.0);
   vector<double> nevent_blk_BBSH(189,0.0);
   vector<double> nevent_blk_BBPS(52,0.0);
@@ -1685,6 +1924,9 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   TH2D *hdt_HCAL_hodo_vs_IDHCAL = new TH2D("hdt_HCAL_hodo_vs_IDHCAL","; HCAL block ID ; t_{HCAL}^{(FADC)}-t_{HODO} (ns)", 288,0.5,288.5,500,-50,50);
   TH2D *hdt_BBSH_hodo_vs_IDBBSH = new TH2D("hdt_BBSH_hodo_vs_IDBBSH","; BBSH block ID ; t_{BBSH}^{(FADC)}-t_{HODO} (ns)", 189,-0.5,188.5,500,-50,50);
   TH2D *hdt_BBPS_hodo_vs_IDBBPS = new TH2D("hdt_BBPS_hodo_vs_IDBBPS","; BBPS block ID ; T_{BBPS}^{(FADC)}-t_{HODO} (ns)", 52,-0.5,51.5,500,-50,50); 
+
+  //Add GRINCH:
+  TH2D *hdt_GRINCH_hodo_vs_IDGRINCH = new TH2D("hdt_GRINCH_hodo_vs_IDGRINCH", "; GRINCH PMT; t_{GRINCH}-t_{HODO} (ns)", 512, -0.5, 511.5, 200, -50, 50 );
   
   int bar3counter=0;
   
@@ -1905,6 +2147,31 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	  }
 	}
 
+	int nhitGRINCH = std::min(MAXNHIT_GRINCH, int( T->bb_grinch_tdc_ngoodhits ) );
+	//Add GRINCH: 
+	for( int ihit=0; ihit<nhitGRINCH; ihit++ ){ //For this comparison we DO require trigger phase correction:
+	  //We'll manually correct GRINCH times for trigger phase until we have some
+	  //large replays with the new "corrected time" variables:
+
+	  long timestamp = long(T->g_evtime);
+	  
+	  double trigphasecorr = 4.00802 * ((timestamp%2+1)%2-1);
+
+	  // cout << "timestamp, trigphase, trigphasecorr = " << timestamp
+	  //      << ", " << (timestamp%2+1)%2-1 << ", " << trigphasecorr << endl;
+	  
+	  double time = T->bb_grinch_tdc_hit_time[ihit];
+	  int pmt = int( T->bb_grinch_tdc_hit_pmtnum[ihit] );
+	  
+	  bool goodhit = T->bb_grinch_tdc_hit_trackindex[ihit] == 0 && T->bb_grinch_tdc_hit_clustindex[ihit] == T->bb_grinch_tdc_bestcluster && fabs( time - T->bb_grinch_tdc_clus_t_mean ) <= GRINCH_tdiff_max;
+
+	  //time -= GRINCH_t0[pmt]; //correct GRINCH time for internal alignment offset
+
+	  if( goodhit ){
+	    hdt_GRINCH_hodo_vs_IDGRINCH->Fill( pmt, time - GRINCH_t0[pmt] - trigphasecorr - HodoTmean );
+	  }
+	}
+	  
 	//For HCAL ADC times, we'll fill histogram with a cut on deltax, deltay
 	
 	// HCAL TDC times have already been reference time subtracted;
@@ -1971,29 +2238,47 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	
 	double ptheta_4vect = q.Vect().Theta();
 	double pphi_4vect = q.Vect().Phi();
+	double pp_e4vect = q.Vect().Mag();
 	
 	TVector3 pnhat_expect( sin(ptheta_etheta)*cos(pphi_ephi),
 			       sin(ptheta_etheta)*sin(pphi_ephi),
 			       cos(ptheta_etheta) );
+
+	TVector3 pnhat_expect_4vect( sin(ptheta_4vect)*cos(pphi_4vect),
+				     sin(ptheta_4vect)*sin(pphi_4vect),
+				     cos(ptheta_4vect) );
 	
 	TVector3 vertex(0,0,vz);
 	
 	double sintersect = (HCALorigin-vertex).Dot(zaxis_HCAL)/(pnhat_expect.Dot(zaxis_HCAL));
+	double sint_4vect = (HCALorigin-vertex).Dot(zaxis_HCAL)/(pnhat_expect_4vect.Dot(zaxis_HCAL));
 	
 	TVector3 HCAL_intersect = vertex + sintersect * pnhat_expect;
+	TVector3 HCALint_4vect = vertex + sint_4vect * pnhat_expect_4vect;
 	
 	double xHCAL_expect = (HCAL_intersect - HCALorigin).Dot( xaxis_HCAL );
 	double yHCAL_expect = (HCAL_intersect - HCALorigin).Dot( yaxis_HCAL );
+
+	double xHCAL_expect_4vect = (HCALint_4vect - HCALorigin).Dot( xaxis_HCAL );
+	double yHCAL_expect_4vect = (HCALint_4vect - HCALorigin).Dot( yaxis_HCAL );
 	
 	double Lpath_HCAL_expect = (HCAL_intersect - vertex).Mag();
+	double Lpath_HCAL_expect_4vect = (HCALint_4vect - vertex).Mag();
 	
 	double beta_proton = pp_etheta/sqrt(pow(pp_etheta,2)+pow(Mp,2));
-	
-	double TOF_HCAL_expect = Lpath_HCAL_expect/(beta_proton*0.299792458);
 
-	double protondeflection = 0.0;
+	double betap_4vect = pp_e4vect/sqrt(pow(pp_e4vect,2)+pow(Mp,2));
+	double betan_4vect = pp_e4vect/sqrt(pow(pp_e4vect,2)+pow(Mn,2));
+
+	//expected PROTON TOF
+	double TOF_HCAL_expect = Lpath_HCAL_expect/(beta_proton*0.299792458);
+	double TOF_HCAL_expect_p4vect = Lpath_HCAL_expect_4vect/(betap_4vect*0.299792458);
+	double TOF_HCAL_expect_n4vect = Lpath_HCAL_expect_4vect/(betan_4vect*0.299792458);
 	
-	if( sbsfield_temp != 0. ){ //Calculated expected TOF with correction for magnetic deflection:
+	double protondeflection = 0.0;
+	double protondeflection_4vect = 0.0;
+	
+	if( sbsfield_temp != 0. ){ //Calculated expected proton TOF with correction for magnetic deflection:
 	  double BdL = sbsfield_temp * Dgap;
 	  double Radius = pp_etheta/0.299792458/sbsfield_temp;
 	  double thtar_expect = atan( pnhat_expect.Dot( xaxis_HCAL ) / pnhat_expect.Dot( zaxis_HCAL ) );
@@ -2016,6 +2301,24 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
 	  double xproj_HCAL = x_out + tan(theta_out) * (dHCAL-z_out);
 	  protondeflection = xHCAL_expect - xproj_HCAL;
+
+
+	  //Now do 4-vector calculation:
+	  thtar_expect = atan( pnhat_expect_4vect.Dot(xaxis_HCAL)/pnhat_expect_4vect.Dot(zaxis_HCAL) );
+	  x_in = (dSBS - vertex.Dot(zaxis_HCAL))*tan(thtar_expect);
+	  Radius = pp_e4vect / 0.299792458 / sbsfield_temp;
+	  x_center = x_in - Radius * cos(thtar_expect);
+	  z_center = z_in + Radius * sin(thtar_expect);
+	  B = -2.0*x_center;
+	  C = pow(x_center,2)+pow( z_out - z_center, 2 ) - pow(Radius,2);
+	  x_out = (-B + sqrt(pow(B,2)-4.*A*C))/(2.0*A);
+	  theta_out = asin( (z_center-z_out)/Radius );
+	  phtar_expect = atan( pnhat_expect_4vect.Dot( yaxis_HCAL ) / pnhat_expect_4vect.Dot( zaxis_HCAL ) );
+	  pathL = (dSBS-vertex.Dot(zaxis_HCAL))*sqrt(1.0+pow(tan(thtar_expect),2)+pow(tan(phtar_expect),2)) + Radius * (thtar_expect - theta_out) + (dHCAL-z_out)*sqrt(1.0+pow(tan(theta_out),2)+pow(tan(phtar_expect),2));
+	  TOF_HCAL_expect_p4vect = pathL/(betap_4vect*0.299792458);
+	  
+	  xproj_HCAL = x_out + tan(theta_out) * (dHCAL - z_out);
+	  protondeflection_4vect = xHCAL_expect_4vect - xproj_HCAL;
 	}
 
 	
@@ -2032,21 +2335,89 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	//	double protondeflection = tan(thetabend)*(dHCAL-(dSBS+Dgap/2.0)); 
 	
 	//int idblkHCAL = T->sbs_hcal_idblk;
-	
+
+	double deltax_nodeflect = xHCAL - xHCAL_expect;
 	double deltax = xHCAL-(xHCAL_expect-protondeflection);
 	double deltay = yHCAL-(yHCAL_expect);
 
+	double deltax_p4vect = xHCAL-(xHCAL_expect_4vect-protondeflection_4vect);
+	double deltax_n4vect = xHCAL-(xHCAL_expect_4vect);
+	double deltay_4vect = yHCAL - yHCAL_expect_4vect;
+	
+	
+	
+
+	bool elcut_p_LH2 = W2>W2min && W2<W2max && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut;
+	
+	bool elcut_p_LD2 = W2>W2min_LD2 && W2<W2max_LD2 && sqrt(pow((deltax_p4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut;
+	bool elcut_n_LD2 = W2>W2min_LD2 && W2<W2max_LD2 && sqrt(pow((deltax_n4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut;
+
+	// if( elcut_n_LD2 ){
+	//   cout << "Proton deflection (m), (angles-only, 4-vector)=(" << protondeflection << ", " << protondeflection_4vect << ")" << endl;
+	//   cout << "expected proton momentum (GeV), (angles-only, 4-vector)=(" << pp_etheta << ", " << pp_e4vect << ")" << endl;
+	//   cout << "Expected nucleon three-vector, angles-only = "; pnhat_expect.Print();
+	//   cout << endl << "Expected nucleon three-vector, 4-vector method = "; pnhat_expect_4vect.Print();
+	// }
+	
+	//default proton LH2:
+	bool elcut = elcut_p_LH2 || !use_elastic_cut_HCAL;
+
+	int targtemp = 0;
+	
+	if( ntargsettings > 0 ){
+	  for( int i=0; i<ntargsettings; i++ ){
+	    if( T->g_runnum >= rmin_tgt[i] && T->g_runnum <= rmax_tgt[i] ){
+	      if( targnum[i] == 1 ){ //LD2; switch to 4-vector:
+		elcut = elcut_p_LD2 || elcut_n_LD2 || !use_elastic_cut_HCAL;
+		targtemp = 1;
+	      }
+	    }
+	  }
+	}
+
+	if( targtemp == 0 && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut ){
+	  hW2_xycut->Fill( W2 );
+	}
+
+	if( targtemp == 1 && sqrt(pow((deltax_p4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut ){
+	  hW2_xycut_p->Fill( W2 );
+	}
+
+	if( targtemp == 1 && sqrt(pow((deltax_n4vect-dx04vect)/dxsigma4vect,2)+pow((deltay_4vect-dy04vect)/dysigma4vect,2))<= dxdy_nsigma_cut ){
+	  hW2_xycut_n->Fill( W2 );
+	}
+	
 	if( eblkHCAL > 0.02 && W2>W2min && W2<W2max ){
-	  hdxdy->Fill( deltay,deltax );
+	  if( targtemp == 0 ){
+	    hdxdy->Fill( deltay,deltax );
+	    hdxdy_nodeflect_LH2->Fill( deltay, deltax_nodeflect );
+	  } else {
+	    hdxdy_p->Fill( deltay_4vect, deltax_p4vect );
+	    hdxdy_n->Fill( deltay_4vect, deltax_n4vect );
+	  }
 	}
 	
 	//if( W2min < W2 && W2 < W2max && sqrt(pow(deltax,2)+pow(deltay,2))<=0.24 && eblkHCAL>0.02 ){
-	if( (W2>W2min && W2<W2max && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut) ||
-	    !use_elastic_cut_HCAL ){
-
+	// if( (W2>W2min && W2<W2max && sqrt(pow((deltax-dx0)/dxsigma,2)+pow((deltay-dy0)/dysigma,2))<= dxdy_nsigma_cut) ||
+	//     !use_elastic_cut_HCAL ){
+	if( elcut ){
 	  // cout << "Elastic event found: (pTOF expect, pTOF central, diff)=("
 	  //      << TOF_HCAL_expect << ", " << ptof_central_temp << ", "
 	  //      << TOF_HCAL_expect - ptof_central_temp << ")" << endl;
+
+	  double TOFcorr = 0.0;
+	  if( use_elastic_cut_HCAL ){
+	    if( elcut_p_LH2 ){ //LH2 protons:
+	      TOFcorr = TOF_HCAL_expect - ptof_central_temp;
+	    } else if( targtemp == 1 ){ //LD2:
+	      if( elcut_p_LD2 ){ //LD2 protons:
+		TOFcorr = TOF_HCAL_expect_p4vect - ptof_central_temp;
+	      } else { //LD2 neutrons:
+		TOFcorr = TOF_HCAL_expect_n4vect - ntof_central_default;
+	      }
+	    }
+	  }
+	     
 	  
 	  for( int iblk=0; iblk<nblkHCAL; iblk++ ){
 
@@ -2056,7 +2427,8 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 	    double t0 = HCAL_t0ADC[idblk-1];
 	    
 	    if( eblk >= 0.02 && (iblk == 0 || fabs( atimeblk - T->sbs_hcal_atimeblk) <= 6.0 ) && eblk >= 0.1 * T->sbs_hcal_eblk ){
-	      hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - t0 - (TOF_HCAL_expect - ptof_central_temp) - HodoTmean );
+	      //hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - t0 - (TOF_HCAL_expect - ptof_central_temp) - HodoTmean );
+	      hdt_HCAL_hodo_vs_IDHCAL->Fill( idblk, atimeblk - t0 - TOFcorr - HodoTmean );
 	    }
 	    
 	    if( T->sbs_hcal_clus_blk_tdctime[iblk] != -1000. && T->sbs_hcal_clus_blk_e[iblk] >= 0.025 ){
@@ -2134,11 +2506,14 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   }
   
   //bhodo.Print();
+  TString THdbfilename = outputfilename;
+  THdbfilename.ReplaceAll(".root",".dat");  
 
-  ofstream wLfile("hodowL_temp.dat");
-  ofstream wRfile("hodowR_temp.dat");
-  ofstream vscintfile("hodovscint_temp.dat");
-  ofstream t0file("hodot0_temp.dat");
+  ofstream wLfile(Form("hodowL_%s",THdbfilename.Data()));
+  ofstream wRfile(Form("hodowR_%s",THdbfilename.Data()));
+  ofstream vscintfile(Form("hodovscint_%s",THdbfilename.Data()));
+  ofstream t0file(Form("hodot0_%s",THdbfilename.Data()));
+  ofstream RFfile(Form("hodoRF_%s",THdbfilename.Data()));
   
   TString dbfilename(outputfilename);
   dbfilename.ReplaceAll(".root",".dat");
@@ -2207,9 +2582,11 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   for( int i=0; i<90; i++ ){
     if( i>0 && i%9 == 0 ){
       dbfile << endl;
+      RFfile << endl;
     }
     TString entry;
     dbfile << entry.Format("%15.6g", RFoffsets[i]) << " ";
+    RFfile << entry.Format("%15.6g", RFoffsets[i]) << " ";
   }
   dbfile << endl << endl;
 
@@ -2448,18 +2825,53 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     //    dIDSH[i] = 0.0;
     
     if( htemp->GetEntries() >= 300 ){
-      FitGaus_FWHM( htemp );
+      TFitResultPtr fr = FitGaus_FWHM( htemp );
 
       htemp->Draw();
 
-      TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+      if( fr->IsValid() ){
       
-      double mean = ftemp->GetParameter("Mean");
-      //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
-      double dmean = ftemp->GetParameter("Sigma");
-      
-      ToffSH[i] = mean;
-      dToffSH[i] = dmean;
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+
+	double mean = ftemp->GetParameter("Mean");
+	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	double dmean = ftemp->GetParameter("Sigma");
+	
+	ToffSH[i] = mean;
+	dToffSH[i] = dmean;
+      } else { //try a simpler fit method; Gaussian with mean +/- 10 ns
+	fr = htemp->Fit("gaus","SQ", "", htemp->GetMean()-10.0, htemp->GetMean() + 10.0 );
+
+	if( fr->IsValid() ){
+	  TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	  
+	  double mean = ftemp->GetParameter("Mean");
+	  //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	  double dmean = ftemp->GetParameter("Sigma");
+	  
+	  ToffSH[i] = mean;
+	  dToffSH[i] = dmean;
+	} else {
+	  ToffSH[i] = htemp->GetMean();
+	  dToffSH[i] = htemp->GetRMS();
+	}
+      }
+    } else if( htemp->GetEntries() >= 100 ){
+      TFitResultPtr fr = htemp->Fit("gaus","SQ","",htemp->GetMean()-10.0, htemp->GetMean()+10.0);
+
+      if( fr->IsValid() ){
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+	double mean = ftemp->GetParameter("Mean");
+	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	double dmean = ftemp->GetParameter("Sigma");
+
+	ToffSH[i] = mean;
+	dToffSH[i] = dmean;
+      } else {
+	ToffSH[i] = htemp->GetMean();
+	dToffSH[i] = htemp->GetRMS();
+      }
     } else {
       listbadSH.insert( i );
     }
@@ -2551,7 +2963,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
 
       if( inear >= 0 ){
 	ToffSH[ibad] = ToffSH[inear];
-      }
+      } 
     }
   }
 
@@ -2596,7 +3008,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   
   c1->Clear();
   hdt_BBSH_hodo_vs_IDBBSH->Draw("colz");
-  gT0SH->Draw("PSAME");
+  gT0SH->Draw("PZSAME");
   c1->Update();
   gPad->Modified();
   gSystem->ProcessEvents();
@@ -2633,23 +3045,56 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     //    dIDPS[i] = 0.0;
     
     if( htemp->GetEntries() >= 300 ){
-      FitGaus_FWHM( htemp );
+      TFitResultPtr fr = FitGaus_FWHM( htemp );
 
       htemp->Draw();
 
-      TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
-      
-      double mean = ftemp->GetParameter("Mean");
-      //double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
-      double dmean = ftemp->GetParameter("Sigma");
+      if( fr->IsValid() ){
+	
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+	double mean = ftemp->GetParameter("Mean");
+	//double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	double dmean = ftemp->GetParameter("Sigma");
+	
+	//These lines won't compile under older ROOT versions:
+	// double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
+	// double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
+	
+	ToffPS[i] = mean;
+	dToffPS[i] = dmean;
+      } else { //try a simpler fit method:
+	fr = htemp->Fit("gaus","SQ", "", htemp->GetMean()-10.0, htemp->GetMean() + 10.0 );
+	
+	if( fr->IsValid() ){
+	  TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	  
+	  double mean = ftemp->GetParameter("Mean");
+	  //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	  double dmean = ftemp->GetParameter("Sigma");
+	  
+	  ToffPS[i] = mean;
+	  dToffPS[i] = dmean;
+	} else {
+	  ToffPS[i] = htemp->GetMean();
+	  dToffPS[i] = htemp->GetRMS();
+	}
+      }
+    } else if( htemp->GetEntries() >= 100 ){
+      TFitResultPtr fr = htemp->Fit("gaus","SQ","",htemp->GetMean()-10.0, htemp->GetMean()+10.0);
+      if( fr->IsValid() ){
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+	double mean = ftemp->GetParameter("Mean");
+	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	double dmean = ftemp->GetParameter("Sigma");
 
-      //These lines won't compile under older ROOT versions:
-      // double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
-      // double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
-
-      
-      ToffPS[i] = mean;
-      dToffPS[i] = dmean;
+	ToffPS[i] = mean;
+	dToffPS[i] = dmean;
+      } else {
+	ToffPS[i] = htemp->GetMean();
+	dToffPS[i] = htemp->GetRMS();
+      }
     } else {
       listbadPS.insert( i );
     }
@@ -2760,7 +3205,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   
   c1->Clear();
   hdt_BBPS_hodo_vs_IDBBPS->Draw("colz");
-  gT0PS->Draw("PSAME");
+  gT0PS->Draw("PZSAME");
   c1->Update();
   gPad->Modified();
   gSystem->ProcessEvents();
@@ -2801,24 +3246,59 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     //    dIDHCAL[i] = 0.0;
     
     if( htemp->GetEntries() >= 300 ){
-      FitGaus_FWHM( htemp );
+      TFitResultPtr fr = FitGaus_FWHM( htemp );
 
       htemp->Draw();
 
-      TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+      if( fr->IsValid() ){
       
-      double mean = ftemp->GetParameter("Mean");
-      //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
-      double dmean = ftemp->GetParError(ftemp->GetParameter("Sigma"));
-      //These lines won't compile under older ROOT versions:
-      // double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
-      // double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+	double mean = ftemp->GetParameter("Mean");
+	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	//double dmean = ftemp->GetParError(ftemp->GetParameter("Sigma"));
+	double dmean = ftemp->GetParameter("Sigma");
+	//These lines won't compile under older ROOT versions:
+	// double mean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParameter("Mean");
+	// double dmean = ( (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus") ) )->GetParError("Mean");
 
+	ToffHCAL[i-1] = mean;
+	dToffHCAL[i-1] = dmean;
+      } else { //try a simpler fit method:
+	fr = htemp->Fit("gaus","SQ", "", htemp->GetMean()-10.0, htemp->GetMean() + 10.0 );
+	if( fr->IsValid() ){
+	  TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	  
+	  double mean = ftemp->GetParameter("Mean");
+	  //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	  //double dmean = ftemp->GetParError(ftemp->GetParameter("Sigma"));
+	  double dmean = ftemp->GetParameter("Sigma");
+
+	  ToffHCAL[i-1] = mean;
+	  dToffHCAL[i-1] = dmean;
+	} else {
+	  ToffHCAL[i-1] = htemp->GetMean();
+	  dToffHCAL[i-1] = htemp->GetRMS();
+	}	  
+      }
+    } else if( htemp->GetEntries() >= 100 ){
+      TFitResultPtr fr = htemp->Fit("gaus","SQ","",htemp->GetMean()-10.0, htemp->GetMean()+10.0);
       
-      ToffHCAL[i-1] = mean;
-      dToffHCAL[i-1] = dmean;
+      if( fr->IsValid() ){
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+	double mean = ftemp->GetParameter("Mean");
+	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+	double dmean = ftemp->GetParameter("Sigma");
+
+	ToffHCAL[i-1] = mean;
+	dToffHCAL[i-1] = dmean;
+      } else {
+	ToffHCAL[i-1] = htemp->GetMean();
+	dToffHCAL[i-1] = htemp->GetRMS();
+      }	
     } else {
-      listbadHCAL.insert( i );
+      listbadHCAL.insert( i );      
     }
 
     if( (i)%9 == 0 ){
@@ -2878,7 +3358,7 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
     if( testrow < 24 ){
       testid = testcol + testrow*12 + 1;
       if( listbadHCAL.find(testid) == listbadHCAL.end() ){
-	T0avg_neighbors += ToffSH[testid-1];
+	T0avg_neighbors += ToffHCAL[testid-1];
 	nnear+=1.0;
       }
     }
@@ -2926,15 +3406,171 @@ void TOFcal_consolidated(const char *inputfilename, const char *outputfilename="
   
   c1->Clear();
   hdt_HCAL_hodo_vs_IDHCAL->Draw("colz");
-  gT0HCAL->Draw("PSAME");
+  gT0HCAL->Draw("PZSAME");
   c1->Update();
   gPad->Modified();
   gSystem->ProcessEvents();
-  pdffilename += ")";
+  //pdffilename += ")";
   c1->Print(pdffilename);
 
   gT0HCAL->Write("gT0_HCAL");
+
+  //After HCAL, let's do the GRINCH:
+
+  c1->Clear();
+  c1->Divide(4,4,.001,.001);
+
+  vector<double> IDGRINCH(512);
+  vector<double> dIDGRINCH(512,0.0);
+  vector<double> ToffGRINCH(512,0.0);
+  vector<double> dToffGRINCH(512,2.0);
+
+  set<int> listbadGRINCH; 
   
+  for( int i=0; i<512; i++ ){
+    c1->cd( i%16+1 );
+    TString histname, histtitle;
+    TH1D *htemp = hdt_GRINCH_hodo_vs_IDGRINCH->ProjectionY( Form("hdtGRINCHhodo_pmt%d", i), i+1, i+1 );
+
+    htemp->Draw();
+
+    IDGRINCH[i] = i;
+
+    ToffGRINCH[i] = GRINCH_t0[i]; //default to GRINCH_t0 (internal alignment offset)
+    
+    if( htemp->GetEntries() >= minhits_GRINCH_hododiff ){
+      TFitResultPtr fr = FitGaus_FWHM( htemp );
+
+      htemp->Draw();
+      if( fr->IsValid() ){
+	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+
+	double mean = ftemp->GetParameter("Mean");
+	double sigma = ftemp->GetParameter("Sigma");
+
+	double dmean = ftemp->GetParError( ftemp->GetParNumber("Mean") );
+	double dsigma = ftemp->GetParError( ftemp->GetParNumber("Sigma") );
+	//for a "good" fit, the sigma should be right around 2 ns: 
+
+	if( sigma >= 0.5 && sigma <= 8.0 && dmean < 0.3 && dsigma/sigma < 0.3 ){
+	
+	  ToffGRINCH[i] = mean;
+	  dToffGRINCH[i] = sigma;
+	} else {
+	  listbadGRINCH.insert(i);
+	}
+      } else {
+	listbadGRINCH.insert(i);
+      }
+	// else {
+      // 	fr = htemp->Fit("gaus","SQ", "", htemp->GetMean()-10.0, htemp->GetMean() + 10.0 );
+	
+      // 	if( fr->IsValid() ){
+      // 	  TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	  
+      // 	  double mean = ftemp->GetParameter("Mean");
+      // 	  //      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+      // 	  double dmean = ftemp->GetParameter("Sigma");
+
+      // 	  ToffGRINCH[i] = mean;
+      // 	  dToffGRINCH[i] = dmean;
+      // 	} else {
+      // 	  ToffGRINCH[i] = htemp->GetMean();
+      // 	  dToffGRINCH[i] = htemp->GetRMS();
+      // 	}
+      // }
+      // } // else if( htemp->GetEntries() >= 100 ){
+      // TFitResultPtr fr = htemp->Fit("gaus","SQ","",htemp->GetMean()-10.0, htemp->GetMean()+10.0);
+
+      // if( fr->IsValid() ){
+      // 	TF1 *ftemp = (TF1*) (htemp->GetListOfFunctions()->FindObject("gaus"));
+	
+      // 	double mean = ftemp->GetParameter("Mean");
+      // 	//      double dmean = ftemp->GetParError(ftemp->GetParNumber("Mean"));
+      // 	double dmean = ftemp->GetParameter("Sigma");
+
+      // 	ToffGRINCH[i] = mean;
+      // 	dToffGRINCH[i] = dmean;
+      // } else {
+      // 	ToffGRINCH[i] = htemp->GetMean();
+      // 	dToffGRINCH[i] = htemp->GetRMS();
+      // }
+    } else {
+      listbadGRINCH.insert( i );
+    }
+    if( (i+1)%16 == 0 ){
+      c1->Update();
+      gPad->Modified();
+      gSystem->ProcessEvents();
+      c1->Print( pdffilename );
+    }
+  }
+
+  for( auto ibad : listbadGRINCH ){
+    //Let's just do the most basic test; don't check position, just check PMT number. Find the closest PMT number up or down and take the average:
+    bool gotup=false, gotdown=false;
+    int testup = ibad+1;
+    int testdown = ibad-1;
+    double t0up = 0.0, t0down = 0.0;
+    while( !gotup && testup < 512 ){
+      if( listbadGRINCH.find( testup ) == listbadGRINCH.end() ){
+	gotup = true;
+	t0up = ToffGRINCH[testup];
+      }	
+      testup++;
+    }
+
+    while( !gotdown && testdown >= 0 ){
+      if( listbadGRINCH.find( testdown ) == listbadGRINCH.end() ){
+	gotdown = true;
+	t0down = ToffGRINCH[testdown];
+      }
+      testdown--;
+    }
+
+    double tsum = 0.0;
+    double n = 0.0;
+    if( gotup ){
+      n += 1.0;
+      tsum += t0up;
+    }
+    if( gotdown ){
+      n += 1.0;
+      tsum += t0down;
+    }
+
+    if( n > 0 ) ToffGRINCH[ibad] = tsum/n;
+  }
+    
+  // For the GRINCH, the new TDC offset is to be SUBTRACTED from the "raw" TDC time:
+  // Thus, the value to be subtracted will equal old offset + new offset
+
+  TGraphErrors *gT0GRINCH = new TGraphErrors( 512, &(IDGRINCH[0]), &(ToffGRINCH[0]), &(dIDGRINCH[0]), &(dToffGRINCH[0]) );
+  
+  c1->Clear();
+  hdt_GRINCH_hodo_vs_IDGRINCH->Draw("colz");
+  gT0GRINCH->SetMarkerStyle(20);
+  gT0GRINCH->SetMarkerColor(1);
+  gT0GRINCH->SetLineColor(1);
+
+  gT0GRINCH->Draw("PZSAME");
+
+  gT0GRINCH->Write("gT0_GRINCH");
+  
+  TString GRINCHdbfilename = outputfilename;
+  GRINCHdbfilename.ReplaceAll(".root",".dat");
+  GRINCHdbfilename.Prepend("db_GRINCH_");
+  
+  ofstream dbGRINCH(GRINCHdbfilename.Data());
+
+  dbGRINCH << "bb.grinch_tdc.tdc.offset = " << endl;
+  for( int i=0; i<512; i++ ){
+    if( i%16 == 0 && i > 0 ) dbGRINCH << endl;
+    dbGRINCH << Form( "%12.7g ", (GRINCH_t0[i]+ToffGRINCH[i] + oldGRINCHoffsets[i])/GRINCH_TDC_calib);
+  }
+
+  pdffilename += ")";
+  c1->Print(pdffilename);
   
   // c1->Update();
   // gPad->Modified();

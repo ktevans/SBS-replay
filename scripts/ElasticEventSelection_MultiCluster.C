@@ -183,6 +183,8 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
   int hcal_selectionflag = 0; //0 = choose highest-energy passing ADC coincidence time cut
                               //1 = choose smallest thetapq (proton or neutron)
                               //2 = choose highest-energy regardless of ADC time.
+
+  int HCALatimeflag = 0; //default = use sbs.hcal.clus.atimeblk (current). 1 = OLD = use sbs.hcal.clus.atime
   
   while( currentline.ReadLine( configfile ) && !currentline.BeginsWith("endconfig") ){
     if( !currentline.BeginsWith("#") ){
@@ -206,6 +208,11 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
 	//   TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
 	//   order_ptheta = stemp.Atoi();
 	// }
+
+	if( skey == "HCALatimeflag" ){
+	  TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
+	  HCALatimeflag = stemp.Atoi();
+	}
 	
 	if( skey == "dEdx" ){ //assumed to be given in GeV/(g/cm^2)
 	  TString stemp = ( (TObjString*) (*tokens)[1] )->GetString();
@@ -753,7 +760,11 @@ void ElasticEventSelection_MultiCluster( const char *configfilename, const char 
   C->SetBranchAddress("sbs.hcal.clus.y",yHCAL);
   C->SetBranchAddress("sbs.hcal.clus.e",EHCAL);
   //  C->SetBranchAddress("sbs.hcal.clus.adctime",ADCTIMEHCAL);
-  C->SetBranchAddress("sbs.hcal.clus.atimeblk",ADCTIMEHCAL);
+  if( HCALatimeflag == 0 ){
+    C->SetBranchAddress("sbs.hcal.clus.atimeblk",ADCTIMEHCAL);
+  } else {
+    C->SetBranchAddress("sbs.hcal.clus.atime",ADCTIMEHCAL);
+  }
   C->SetBranchAddress("sbs.hcal.clus.tdctime",TDCTIMEHCAL);
   C->SetBranchAddress("sbs.hcal.clus.eblk",EMAXHCAL);
   C->SetBranchAddress("sbs.hcal.clus.nblk",NBLKHCAL);
